@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import {
     CTable,
@@ -10,9 +11,33 @@ import {
 } from '@coreui/react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faClock, faEye, faDownload, faHourglass } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const UserManagement = () => {
+
+    const [userData, setUserData] = useState([]);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                throw new Error('No token found. Please log in.');
+            }
+            const response = await axios.get(`http://localhost:3000/api/user/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setUserData(response.data.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     return (
         <>
@@ -27,32 +52,25 @@ const UserManagement = () => {
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                    <CTableRow>
-                        <CTableHeaderCell scope="row">1</CTableHeaderCell>
-                        <CTableDataCell>Mark</CTableDataCell>
-                        <CTableDataCell>Otto</CTableDataCell>
-                        <CTableDataCell>@mdo</CTableDataCell>
-                        <CTableDataCell>
-                            <CIcon icon={cilHome } title="View" style={{ cursor: 'pointer' }} />
-                            <CIcon icon={cilEyeSlash } title="View" style={{ cursor: 'pointer' }} />
-                            <CIcon icon={cilPen} title="Edit" style={{ color:'blue', cursor: 'pointer', marginRight: '8px' }} />
-                            <CIcon icon={cilTrash} title="Delete" style={{color:'red', cursor: 'pointer', marginRight: '8px' }} />
-                        </CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                        <CTableHeaderCell scope="row">2</CTableHeaderCell>
-                        <CTableDataCell>Jacob</CTableDataCell>
-                        <CTableDataCell>Thornton</CTableDataCell>
-                        <CTableDataCell>@fat</CTableDataCell>    
-                    </CTableRow>
-                    <CTableRow>
-                        <CTableHeaderCell scope="row">3</CTableHeaderCell>
-                        <CTableDataCell colSpan={2}>Larry the Bird</CTableDataCell>
-                        <CTableDataCell>@twitter</CTableDataCell>
-                    </CTableRow>
+                    {
+                        userData.map((user, index) => (
+                            <CTableRow key={user.id}>
+                                <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                                <CTableDataCell>{user.firstName}</CTableDataCell>
+                                <CTableDataCell>{user.email}</CTableDataCell>
+                                <CTableDataCell>{user.age}</CTableDataCell>
+                                <CTableDataCell>
+                                    <FontAwesomeIcon icon={faEye} title="View" style={{ cursor: 'pointer', marginRight: '8px' }} />
+                                    <FontAwesomeIcon icon={faEdit} title="Edit" style={{ color: 'blue', cursor: 'pointer', marginRight: '8px' }} />
+                                    <FontAwesomeIcon icon={faTrash} title="Delete" style={{ color: 'red', cursor: 'pointer' }} />
+                                </CTableDataCell>
+                            </CTableRow>
+                        ))
+                    }
                 </CTableBody>
             </CTable>
         </>
     );
 }
+
 export default UserManagement;
