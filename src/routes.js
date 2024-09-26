@@ -4,6 +4,11 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const OutfitterManagement = React.lazy(() => import('./views/outfitterManagement/OutfitterManagement'))
 const Oversight = React.lazy(() => import('./views/oversight/Oversight'))
 const UserManagement = React.lazy(() => import('./views/userManagement/UserManagement'))
+const Shoes = React.lazy(() => import('./views/closetManagement/Shoes'));
+const Cloths = React.lazy(() => import('./views/closetManagement/Cloths'));
+const Miscellaneous = React.lazy(() => import('./views/closetManagement/Miscellaneous'));
+const Accessories = React.lazy(() => import('./views/closetManagement/Accessories'));
+// const Check = React.lazy(()=> import('./views/closetManagement/Check'))
 const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
 const CommunicationSupport = React.lazy(() => import('./views/communication&Support/Communication&Support'))
 // const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -58,11 +63,15 @@ const CommunicationSupport = React.lazy(() => import('./views/communication&Supp
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
-  { path: '/oversight', name: 'Oversight', element: Oversight },
   { path: '/userManagement', name: 'UserManagement', element: UserManagement },
-  { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },
-  { path: '/communication&Support', name: 'Communication&Support', element: CommunicationSupport },
+  { path: '/closetManagement/shoes', name: 'Shoes', element: Shoes },
+  { path: '/closetManagement/cloths', name: 'Cloths', element: Cloths },
+  { path: '/closetManagement/miscellaneous', name: 'Miscellaneous', element: Miscellaneous },
+  { path: '/closetManagement/accessories', name: 'Accessories', element: Accessories },
+  // { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
+  // { path: '/oversight', name: 'Oversight', element: Oversight },
+  // { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },
+  // { path: '/communication&Support', name: 'Communication&Support', element: CommunicationSupport },
   // { path: '/theme', name: 'Theme', element: Colors, exact: true },
   // { path: '/theme/colors', name: 'Colors', element: Colors },
   // { path: '/theme/typography', name: 'Typography', element: Typography },
