@@ -28,6 +28,37 @@ const _nav = [
     to: '/userManagement',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
+  {
+    component: CNavGroup,
+    name: 'Closet Management',
+    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Cloths',
+        to: '/closetManagement/cloths',
+        style: { marginLeft: '20px' },
+      },
+      {
+        component: CNavItem,
+        name: 'Shoes',
+        to: '/closetManagement/shoes',
+        style: { marginLeft: '20px' },
+      },
+      {
+        component: CNavItem,
+        name: 'Accessories',
+        to: '/closetManagement/accessories',
+        style: { marginLeft: '20px' },
+      },
+      {
+        component: CNavItem,
+        name: 'Miscellaneous',
+        to: '/closetManagement/miscellaneous',
+        style: { marginLeft: '20px' },
+      },
+    ],
+  },
   // {
   //   component: CNavItem,
   //   name: 'Outfitter Management',

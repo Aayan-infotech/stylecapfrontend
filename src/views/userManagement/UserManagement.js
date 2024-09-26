@@ -3,7 +3,6 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 import {
     CButton,
     CModal,
@@ -114,7 +113,10 @@ const UserManagement = () => {
                 });
             const data = response.data.data.status;
             fetchData();
-            toast.success(`Status changed to ${data} successfully.`);
+            toast.success(`Status changed to ${data} successfully.`
+                , {
+            autoClose: 1000 // Toast will auto close after 2 seconds
+        });
         } catch (error) {
             console.error('Error updating status:', error);
             toast.error('Failed to change status.');
