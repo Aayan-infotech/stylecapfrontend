@@ -1,16 +1,17 @@
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-const OutfitterManagement = React.lazy(() => import('./views/outfitterManagement/OutfitterManagement'))
+// const OutfitterManagement = React.lazy(() => import('./views/outfitterManagement/OutfitterManagement'))
 const Oversight = React.lazy(() => import('./views/oversight/Oversight'))
 const UserManagement = React.lazy(() => import('./views/userManagement/UserManagement'))
-const Shoes = React.lazy(() => import('./views/closetManagement/Shoes'));
-const Cloths = React.lazy(() => import('./views/closetManagement/Cloths'));
-const Miscellaneous = React.lazy(() => import('./views/closetManagement/Miscellaneous'));
-const Accessories = React.lazy(() => import('./views/closetManagement/Accessories'));
+const Shoes = React.lazy(() => import('./views/closetManagement/Shoes'))
+const Cloths = React.lazy(() => import('./views/closetManagement/Cloths'))
+const Miscellaneous = React.lazy(() => import('./views/closetManagement/Miscellaneous'))
+const Accessories = React.lazy(() => import('./views/closetManagement/Accessories'))
+const SubscriptionManagement = React.lazy( () => import('./views/subscriptionManagement/SubscriptionManagement'))
 // const Check = React.lazy(()=> import('./views/closetManagement/Check'))
-const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
-const CommunicationSupport = React.lazy(() => import('./views/communication&Support/Communication&Support'))
+// const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
+// const CommunicationSupport = React.lazy(() => import('./views/communication&Support/Communication&Support'))
 // const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 // const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -68,6 +69,7 @@ const routes = [
   { path: '/closetManagement/cloths', name: 'Cloths', element: Cloths },
   { path: '/closetManagement/miscellaneous', name: 'Miscellaneous', element: Miscellaneous },
   { path: '/closetManagement/accessories', name: 'Accessories', element: Accessories },
+  { path: '/subscriptionManagement', name: 'SubscriptionManagement', element: SubscriptionManagement },
   // { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
   // { path: '/oversight', name: 'Oversight', element: Oversight },
   // { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },
