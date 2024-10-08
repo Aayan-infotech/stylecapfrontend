@@ -9,6 +9,8 @@ import {
   faStar,
   faBell,
   faBoxOpen,
+  faHiking,
+  faUserCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -57,8 +59,14 @@ const _nav = [
         to: '/closetManagement/miscellaneous',
         style: { marginLeft: '20px' },
         icon: <FontAwesomeIcon icon={faBoxOpen} style={{ color: 'teal' }} className="nav-icon" />,
-      }
+      },
     ],
+  },
+  {
+    component: CNavItem,
+    name: 'Subscription Management',
+    to: '/subscriptionManagement',
+    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
   },
 ]
 
