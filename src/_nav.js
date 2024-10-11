@@ -11,6 +11,9 @@ import {
   faBoxOpen,
   faHiking,
   faUserCheck,
+  faSpa,
+  faBrush,
+  faStore,
 } from '@fortawesome/free-solid-svg-icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -67,6 +70,18 @@ const _nav = [
     name: 'Subscription Management',
     to: '/subscriptionManagement',
     icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Stylist Management',
+    to: '/stylistManagement',
+    icon: <FontAwesomeIcon icon={faBrush} style={{ color: 'pink' }} className="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Market Place',
+    to: '/marketPlace',
+    icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
   },
 ]
 

@@ -9,6 +9,8 @@ const Cloths = React.lazy(() => import('./views/closetManagement/Cloths'))
 const Miscellaneous = React.lazy(() => import('./views/closetManagement/Miscellaneous'))
 const Accessories = React.lazy(() => import('./views/closetManagement/Accessories'))
 const SubscriptionManagement = React.lazy( () => import('./views/subscriptionManagement/SubscriptionManagement'))
+const StylistManagement = React.lazy( () => import('./views/stylistManagement/StylistManagement'))
+const MarketPlace = React.lazy( () => import('./views/marketPlaceManagement/MarketPlaceManagement'))
 // const Check = React.lazy(()=> import('./views/closetManagement/Check'))
 // const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
 // const CommunicationSupport = React.lazy(() => import('./views/communication&Support/Communication&Support'))
@@ -70,6 +72,8 @@ const routes = [
   { path: '/closetManagement/miscellaneous', name: 'Miscellaneous', element: Miscellaneous },
   { path: '/closetManagement/accessories', name: 'Accessories', element: Accessories },
   { path: '/subscriptionManagement', name: 'SubscriptionManagement', element: SubscriptionManagement },
+  { path: '/stylistManagement', name: 'StylistManagement', element: StylistManagement },
+  { path: '/marketPlace', name: 'MarketPlace', element: MarketPlace },
   // { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
   // { path: '/oversight', name: 'Oversight', element: Oversight },
   // { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },

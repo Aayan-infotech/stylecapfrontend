@@ -108,7 +108,7 @@ const Shoes = () => {
 
     return (
         <div>
-            <CTable>
+            <CTable responsive>
                 <CTableHead color='primary'>
                     <CTableRow>
                         <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>

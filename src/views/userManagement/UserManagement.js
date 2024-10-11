@@ -126,7 +126,7 @@ const UserManagement = () => {
 
     return (
         <>
-            <CTable>
+            <CTable responsive>
                 <CTableHead>
                     <CTableRow color='primary'>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
