@@ -1,4 +1,4 @@
-import {React, useEffect, useState} from 'react'
+import { React, useEffect, useState } from 'react'
 import {
     CButton,
     CCard,
@@ -12,6 +12,7 @@ import {
     CDropdownItem,
     CDropdownMenu,
     CDropdownToggle,
+    CFormSelect,
     CForm,
     CFormInput,
     CFormLabel,
@@ -47,35 +48,36 @@ const MarketPlaceManagement = () => {
     const [addProductVisible, setAddProductVisible] = useState(false);
     const [responseMessage, setResponseMessage] = useState(null);
     const [addFormData, setAddFormData] = useState({
+        type: '',
         name: '',
         category: '',
         brand: '',
         price: '',
         description: '',
-      });
+    });
 
-    useEffect(()=>{
-      fetchData();
+    useEffect(() => {
+        fetchData();
     })
-  
+
     const fetchData = async () => {
-      try{
-          const token = localStorage.getItem('token');
-          const response = await axios.get(`http://localhost:3000/api/marketplaces/`)
-          setProducts(response.data.data);
-        //   console.log(response.data.data);
-      }catch(error){
-          console.error(error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:3000/api/marketplaces/`)
+            setProducts(response.data.data);
+            //   console.log(response.data.data);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    const getProduct = async(id) => {
-        try{
+    const getProduct = async (id) => {
+        try {
             const response = await axios.get(`http://localhost:3000/api/marketplaces/getProduct/${id}`);
             setOneProduct(response.data.data)
             console.log(response.data);
             setProductVisible(true);
-        }catch(error){
+        } catch (error) {
             console.log(error);
         }
     }
@@ -120,7 +122,7 @@ const MarketPlaceManagement = () => {
             await axios.put(`http://localhost:3000/api/marketplaces/update/${id}`, formDataToSend);
 
             setEditProductVisible(false);
-            fetchData(); 
+            fetchData();
         } catch (error) {
             console.error('Failed to update shoe data', error);
         }
@@ -129,36 +131,37 @@ const MarketPlaceManagement = () => {
     const handleAddChange = (e) => {
         const { name, value } = e.target;
         setAddFormData({
-          ...addFormData,
-          [name]: value,
+            ...addFormData,
+            [name]: value,
         });
-      };
-    
-      const handleAddFileChange = (e) => {
+    };
+
+    const handleAddFileChange = (e) => {
         setAddSelectedFile(e.target.files[0]);
-      };
-    
-      const handleAddSubmit = async (e) => {
+    };
+
+    const handleAddSubmit = async (e) => {
         e.preventDefault();
-        
+
         const form = new FormData();
+        form.append('type', addFormData.type);
         form.append('name', addFormData.name);
         form.append('category', addFormData.category);
         form.append('brand', addFormData.brand);
         form.append('price', addFormData.price);
         form.append('description', addFormData.description);
         if (addSelectedFile) form.append('image', addSelectedFile);
-    
-        try {
-          const response = await axios.post('http://localhost:3000/api/marketplaces/create', form);
-    
-          setResponseMessage(response.data.message);
-        } catch (error) {
-          setResponseMessage(error.response.data.message || 'An error occurred');
-        }
-      };
 
-      const handleDelete = async (id) => {
+        try {
+            const response = await axios.post('http://localhost:3000/api/marketplaces/create', form);
+
+            setResponseMessage(response.data.message);
+        } catch (error) {
+            setResponseMessage(error.response.data.message || 'An error occurred');
+        }
+    };
+
+    const handleDelete = async (id) => {
         const confirmDelete = window.confirm(`Are you sure you want to delete product`);
 
         if (confirmDelete) {
@@ -172,19 +175,19 @@ const MarketPlaceManagement = () => {
     };
 
 
-  
+
     return (
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-            <h5 style={{ margin: 0 }}>Product List</h5>
-            <CButton 
-                color="primary"
-                onClick={() => setAddProductVisible(true)}
-            >
-                Add Product
-            </CButton>
-        </div>
-          <CTable responsive>
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h5 style={{ margin: 0 }}>Market Place List</h5>
+                <CButton
+                    color="primary"
+                    onClick={() => setAddProductVisible(true)}
+                >
+                    Add Product
+                </CButton>
+            </div>
+            <CTable responsive>
                 <CTableHead>
                     <CTableRow color='primary'>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
@@ -203,11 +206,11 @@ const MarketPlaceManagement = () => {
                             <CTableRow key={product._id}>
                                 <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
-                                  <img
-                                      src={product.image} // Ensure this is the correct path to the image
-                                      alt={'N/A'} // Provide an alt text for accessibility
-                                      style={{ width: '50px', height: '50px' }} // Adjust size and shape as needed
-                                  />
+                                    <img
+                                        src={product.image} // Ensure this is the correct path to the image
+                                        alt={'N/A'} // Provide an alt text for accessibility
+                                        style={{ width: '50px', height: '50px' }} // Adjust size and shape as needed
+                                    />
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{product.name}</CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{product.brand}</CTableDataCell>
@@ -216,19 +219,19 @@ const MarketPlaceManagement = () => {
                                 <CTableDataCell style={{ textAlign: 'center' }}>{product.description}</CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                    <FontAwesomeIcon style={{color: 'blue'}} 
-                                            onClick={()=> getProduct(product._id)} 
-                                            icon={faEye}/>
+                                        <FontAwesomeIcon style={{ color: 'blue' }}
+                                            onClick={() => getProduct(product._id)}
+                                            icon={faEye} />
                                     </CButton>
                                     <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                    <FontAwesomeIcon style={{color: 'green'}}
-                                            onClick={()=> handleEditClick(product)}
-                                            icon={faEdit}/>
+                                        <FontAwesomeIcon style={{ color: 'green' }}
+                                            onClick={() => handleEditClick(product)}
+                                            icon={faEdit} />
                                     </CButton>
                                     <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                    <FontAwesomeIcon style={{color: 'red'}} 
-                                            onClick={()=> handleDelete(product._id)}
-                                            icon={faTrash}/>
+                                        <FontAwesomeIcon style={{ color: 'red' }}
+                                            onClick={() => handleDelete(product._id)}
+                                            icon={faTrash} />
                                     </CButton>
                                 </CTableDataCell>
                             </CTableRow>
@@ -237,84 +240,100 @@ const MarketPlaceManagement = () => {
                 </CTableBody>
             </CTable>
 
-            <CModal visible={addProductVisible} onClose={()=>{setAddProductVisible(false)}}>
+            <CModal visible={addProductVisible} onClose={() => { setAddProductVisible(false) }}>
                 <CModalHeader>
                     <CModalTitle>
                         Add Product
                     </CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                        <CForm onSubmit={handleAddSubmit}>
-                            <CRow>
+                    <CForm onSubmit={handleAddSubmit}>
+                        <CRow>
+                            <CCol md="6">
+                                <CFormLabel htmlFor="type">Type Of Market Place</CFormLabel>
+                                <CFormSelect
+                                    id="type"
+                                    name="type"
+                                    value={addFormData.type}
+                                    onChange={handleAddChange}
+                                    required
+                                >
+                                    <option value="">Select Market Place</option>
+                                    <option value="shop_by_style">Shop by Style</option>
+                                    <option value="shop_menswear">Shop Menswear</option>
+                                    <option value="shop_womenswear">Shop Womenswear</option>
+                                </CFormSelect>
+                            </CCol>
+
                             <CCol md="6">
                                 <CFormLabel htmlFor="name">Product Name</CFormLabel>
                                 <CFormInput
-                                id="name"
-                                name="name"
-                                value={addFormData.name}
-                                onChange={handleAddChange}
-                                required
+                                    id="name"
+                                    name="name"
+                                    value={addFormData.name}
+                                    onChange={handleAddChange}
+                                    required
                                 />
                             </CCol>
                             <CCol md="6">
                                 <CFormLabel htmlFor="category">Category</CFormLabel>
                                 <CFormInput
-                                id="category"
-                                name="category"
-                                value={addFormData.category}
-                                onChange={handleAddChange}
-                                required
+                                    id="category"
+                                    name="category"
+                                    value={addFormData.category}
+                                    onChange={handleAddChange}
+                                    required
                                 />
                             </CCol>
-                            </CRow>
-                            <CRow>
+                        </CRow>
+                        <CRow>
                             <CCol md="6">
                                 <CFormLabel htmlFor="brand">Brand</CFormLabel>
                                 <CFormInput
-                                id="brand"
-                                name="brand"
-                                value={addFormData.brand}
-                                onChange={handleAddChange}
-                                required
+                                    id="brand"
+                                    name="brand"
+                                    value={addFormData.brand}
+                                    onChange={handleAddChange}
+                                    required
                                 />
                             </CCol>
                             <CCol md="6">
                                 <CFormLabel htmlFor="price">Price</CFormLabel>
                                 <CFormInput
-                                id="price"
-                                name="price"
-                                value={addFormData.price}
-                                onChange={handleAddChange}
-                                type="number"
-                                required
+                                    id="price"
+                                    name="price"
+                                    value={addFormData.price}
+                                    onChange={handleAddChange}
+                                    type="number"
+                                    required
                                 />
                             </CCol>
-                            </CRow>
-                            <CRow>
+                        </CRow>
+                        <CRow>
                             <CCol md="6">
                                 <CFormLabel htmlFor="description">Description</CFormLabel>
                                 <CFormInput
-                                id="description"
-                                name="description"
-                                value={addFormData.description}
-                                onChange={handleAddChange}
-                                required
+                                    id="description"
+                                    name="description"
+                                    value={addFormData.description}
+                                    onChange={handleAddChange}
+                                    required
                                 />
                             </CCol>
                             <CCol md="6">
                                 <CFormLabel htmlFor="picture">Product Image</CFormLabel>
                                 <CFormInput
-                                type="file"
-                                id="picture"
-                                name="picture"
-                                onChange={handleAddFileChange}
+                                    type="file"
+                                    id="picture"
+                                    name="picture"
+                                    onChange={handleAddFileChange}
                                 />
                             </CCol>
-                            </CRow>
-                            <CButton onClick={()=> setAddProductVisible(false)} type="submit" color="primary" style={{ marginTop: '10px' }}>
+                        </CRow>
+                        <CButton onClick={() => setAddProductVisible(false)} type="submit" color="primary" style={{ marginTop: '10px' }}>
                             Add Product
-                            </CButton>
-                        </CForm>
+                        </CButton>
+                    </CForm>
                 </CModalBody>
             </CModal>
 
@@ -367,7 +386,7 @@ const MarketPlaceManagement = () => {
                 </CModalBody>
             </CModal>
 
-            <CModal visible={editProductVisible} onClose={()=>{setEditProductVisible(false)}}>
+            <CModal visible={editProductVisible} onClose={() => { setEditProductVisible(false) }}>
                 <CModalHeader>
                     <CModalTitle>
                         Edit product
@@ -384,7 +403,7 @@ const MarketPlaceManagement = () => {
                                 <CFormLabel htmlFor='color'>Name</CFormLabel>
                                 <CFormInput id='color' name='color' value={formData.name} onChange={handleFormChange} />
                             </CCol>
-                           
+
                         </CRow>
                         <CRow>
                             <CCol>
@@ -397,7 +416,7 @@ const MarketPlaceManagement = () => {
                             </CCol>
                         </CRow>
                         <CRow>
-                            <CCol md='6'> 
+                            <CCol md='6'>
                                 <CFormLabel htmlFor='description'>Description</CFormLabel>
                                 <CFormInput id='description' name='description' value={formData.description} onChange={handleFormChange} />
                             </CCol>
@@ -407,7 +426,7 @@ const MarketPlaceManagement = () => {
                             </CCol>
                         </CRow>
                     </CForm>
-                    <CModalFooter style={{marginTop:'20px'}}>
+                    <CModalFooter style={{ marginTop: '20px' }}>
                         <CButton color="secondary" onClick={() => setEditProductVisible(false)}>
                             Close
                         </CButton>
@@ -420,7 +439,7 @@ const MarketPlaceManagement = () => {
 
 
 
-      </div>
+        </div>
     )
-  }
+}
 export default MarketPlaceManagement;
