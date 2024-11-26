@@ -18,9 +18,22 @@ const SubcategoryTab = () => {
   const [modal, setModal] = useState(false);
   const [currentSubcategory, setCurrentSubcategory] = useState(null);
 
+  const API_BASE_URL = "http://localhost:3000/api/marketPlaceSubcat"
+
+  // Fetch categories
+  const fetchSubcategories = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/get`); // Assuming a GET endpoint
+      setSubcategories(response.data.data || []);
+      console.log("abc", response.data.data )
+    } catch (err) {
+      console.error('Error fetching subcategories:', err.message);
+    }
+  };
+
   // Fetch subcategories
   useEffect(() => {
-    // Add fetch logic for subcategories
+    fetchSubcategories();
   }, []);
 
   const handleAddSubcategory = () => {

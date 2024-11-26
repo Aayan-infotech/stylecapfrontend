@@ -83,6 +83,12 @@ const _nav = [
     to: '/marketPlace',
     icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Review Managment',
+    to: '/reviewManagement',
+    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+  },
 ]
 
 export default _nav
