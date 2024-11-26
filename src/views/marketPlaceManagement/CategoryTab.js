@@ -14,6 +14,10 @@ import {
   CModalFooter,
 } from '@coreui/react';
 
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+
 const CategoryTab = () => {
   const [categories, setCategories] = useState([]);
   const [modal, setModal] = useState(false);
@@ -97,7 +101,7 @@ const CategoryTab = () => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Name</CTableHeaderCell>
-            <CTableHeaderCell>Actions</CTableHeaderCell>
+            <CTableHeaderCell style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
@@ -105,19 +109,21 @@ const CategoryTab = () => {
             <CTableRow key={category._id}>
               <CTableDataCell>{index + 1}</CTableDataCell>
               <CTableDataCell>{category.Name}</CTableDataCell>
-              <CTableDataCell>
-                <CButton
-                  color="info"
-                  className="me-2"
-                  onClick={() => handleEditCategory(category)}
-                >
-                  Edit
+              <CTableDataCell style={{ textAlign: 'center' }}>
+                <CButton style={{ margin: '0 2px', padding: '4px' }}>
+                  <FontAwesomeIcon style={{ color: 'blue' }}
+                    onClick={() => getProduct(product._id)}
+                    icon={faEye} />
                 </CButton>
-                <CButton
-                  color="danger"
-                  onClick={() => handleDeleteCategory(category._id)}
-                >
-                  Delete
+                <CButton style={{ margin: '0 2px', padding: '4px' }}>
+                  <FontAwesomeIcon style={{ color: 'green' }}
+                    onClick={() => handleEditCategory(category)}
+                    icon={faEdit} />
+                </CButton>
+                <CButton style={{ margin: '0 2px', padding: '4px' }}>
+                  <FontAwesomeIcon style={{ color: 'red' }}
+                    onClick={() => handleDeleteCategory(category._id)}
+                    icon={faTrash} />
                 </CButton>
               </CTableDataCell>
             </CTableRow>
