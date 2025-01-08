@@ -41,7 +41,7 @@ const UserManagement = () => {
             if (!token) {
                 throw new Error('No token found. Please log in.');
             }
-            const response = await axios.get(`http://localhost:3000/api/user/`, {
+            const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -54,7 +54,7 @@ const UserManagement = () => {
 
     const handleView = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/user/get/${id}`)
+            const response = await axios.get(`http://44.196.64.110:3555/api/user/get/${id}`)
             setSingleUSer(response.data.data);
             setVisibleModel(true);
         } catch (error) {
@@ -66,7 +66,7 @@ const UserManagement = () => {
         try {
             const token = localStorage.getItem('token');
 
-            await axios.put(`http://localhost:3000/api/user/update-user/${userId}`, editedUser, {
+            await axios.put(`http://44.196.64.110:3555/api/user/update-user/${userId}`, editedUser, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -89,7 +89,7 @@ const UserManagement = () => {
 
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:3000/api/user/delete/${id}`);
+                await axios.delete(`http://44.196.64.110:3555/api/user/delete/${id}`);
                 toast.success(`${userName} has been deleted successfully.`);
                 fetchData();
             } catch (error) {
@@ -104,7 +104,7 @@ const UserManagement = () => {
             const token = localStorage.getItem('token');
 
             const response = await axios.put(
-                `http://localhost:3000/api/user/update-status/${id}`,
+                `http://44.196.64.110:3555/api/user/update-status/${id}`,
                 {},
                 {
                     headers: {

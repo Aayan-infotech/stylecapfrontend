@@ -32,7 +32,7 @@ const AdminPanel = () => {
           </CNavItem>
           <CNavItem>
             <CNavLink onClick={() => setActiveTab(2)} active={activeTab === 2}>
-              Subcategories
+              Products
             </CNavLink>
           </CNavItem>
         </CNav>

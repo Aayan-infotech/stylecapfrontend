@@ -12,6 +12,7 @@ const SubscriptionManagement = React.lazy( () => import('./views/subscriptionMan
 const StylistManagement = React.lazy( () => import('./views/stylistManagement/StylistManagement'))
 const MarketPlace = React.lazy( () => import('./views/marketPlaceManagement/MarketPlaceManagement'))
 const ReviewManagement = React.lazy( () => import('./views/reviewManagement/ReviewManagement'))
+const MyStyleCapsuleEntity = React.lazy( () => import('./views/myStyleCapsule/MyStyleCapsuleEntity'))
 // const Check = React.lazy(()=> import('./views/closetManagement/Check'))
 // const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
 // const CommunicationSupport = React.lazy(() => import('./views/communication&Support/Communication&Support'))
@@ -76,6 +77,7 @@ const routes = [
   { path: '/stylistManagement', name: 'StylistManagement', element: StylistManagement },
   { path: '/marketPlace', name: 'MarketPlace', element: MarketPlace },
   { path: '/reviewManagement', name: 'ReviewManagement', element: ReviewManagement },
+  { path: '/myStyleCapsuleEntity', name: 'MyStyleCapsuleEntity', element: MyStyleCapsuleEntity },
   // { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
   // { path: '/oversight', name: 'Oversight', element: Oversight },
   // { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },

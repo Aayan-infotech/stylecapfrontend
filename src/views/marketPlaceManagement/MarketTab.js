@@ -63,7 +63,7 @@ const MarketPlaceManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3000/api/marketplaces/`)
+            const response = await axios.get(`http://44.196.64.110:3555/api/marketplaces/`)
             setProducts(response.data.data);
               console.log('111', response.data);
         } catch (error) {
@@ -73,7 +73,7 @@ const MarketPlaceManagement = () => {
 
     const getProduct = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/marketplaces/getProduct/${id}`);
+            const response = await axios.get(`http://44.196.64.110:3555/api/marketplaces/getProduct/${id}`);
             setOneProduct(response.data.data)
             console.log(response.data);
             setProductVisible(true);
@@ -119,7 +119,7 @@ const MarketPlaceManagement = () => {
                 formDataToSend.append('image', selectedFile);
             }
 
-            await axios.put(`http://localhost:3000/api/marketplaces/update/${id}`, formDataToSend);
+            await axios.put(`http://44.196.64.110:3555/api/marketplaces/update/${id}`, formDataToSend);
 
             setEditProductVisible(false);
             fetchData();
@@ -153,7 +153,7 @@ const MarketPlaceManagement = () => {
         if (addSelectedFile) form.append('image', addSelectedFile);
 
         try {
-            const response = await axios.post('http://localhost:3000/api/marketplaces/create', form);
+            const response = await axios.post('http://44.196.64.110:3555/api/marketplaces/create', form);
 
             setResponseMessage(response.data.message);
         } catch (error) {
@@ -166,7 +166,7 @@ const MarketPlaceManagement = () => {
 
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:3000/api/marketplaces/delete/${id}`);
+                await axios.delete(`http://44.196.64.110:3555/api/marketplaces/delete/${id}`);
                 fetchData();
             } catch (error) {
                 console.error('Error Deleting user:', error);

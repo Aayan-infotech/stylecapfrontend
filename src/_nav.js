@@ -89,6 +89,12 @@ const _nav = [
     to: '/reviewManagement',
     icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'MyStyleCapsule Entity',
+    to: '/myStyleCapsuleEntity',
+    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+  },
 ]
 
 export default _nav
