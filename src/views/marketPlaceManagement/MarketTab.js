@@ -48,12 +48,8 @@ const MarketPlaceManagement = () => {
     const [addProductVisible, setAddProductVisible] = useState(false);
     const [responseMessage, setResponseMessage] = useState(null);
     const [addFormData, setAddFormData] = useState({
-        type: '',
         name: '',
-        category: '',
-        brand: '',
-        price: '',
-        description: '',
+        section: ''
     });
 
     useEffect(() => {
@@ -65,7 +61,7 @@ const MarketPlaceManagement = () => {
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://44.196.64.110:3555/api/marketplaces/`)
             setProducts(response.data.data);
-              console.log('111', response.data);
+            //   console.log('111', response.data);
         } catch (error) {
             console.error(error);
         }
@@ -86,11 +82,7 @@ const MarketPlaceManagement = () => {
         setEditProductVisible(true);
         setFormData({
             id: product._id,
-            brand: product.brand,
             name: product.name,
-            category: product.category,
-            price: product.price,
-            description: product.description,
         })
     }
 
@@ -108,12 +100,7 @@ const MarketPlaceManagement = () => {
             const formDataToSend = new FormData();
 
             // Append form data
-            formDataToSend.append('brand', formData.brand);
             formDataToSend.append('name', formData.name);
-            formDataToSend.append('category', formData.category);
-            formDataToSend.append('price', formData.price);
-            formDataToSend.append('description', formData.description);
-
             // Append file if selected
             if (selectedFile) {
                 formDataToSend.append('image', selectedFile);
@@ -124,7 +111,7 @@ const MarketPlaceManagement = () => {
             setEditProductVisible(false);
             fetchData();
         } catch (error) {
-            console.error('Failed to update shoe data', error);
+            console.error('Failed to update data', error);
         }
     };
 
@@ -144,18 +131,15 @@ const MarketPlaceManagement = () => {
         e.preventDefault();
 
         const form = new FormData();
-        form.append('type', addFormData.type);
+        form.append('section', addFormData.section);
         form.append('name', addFormData.name);
-        form.append('category', addFormData.category);
-        form.append('brand', addFormData.brand);
-        form.append('price', addFormData.price);
-        form.append('description', addFormData.description);
-        if (addSelectedFile) form.append('image', addSelectedFile);
+        if (addSelectedFile) form.append('images', addSelectedFile);
 
         try {
-            const response = await axios.post('http://44.196.64.110:3555/api/marketplaces/create', form);
+            const response = await axios.post('http://localhost:3555/api/marketplaces/create', form);
 
             setResponseMessage(response.data.message);
+            fetchData();
         } catch (error) {
             setResponseMessage(error.response.data.message || 'An error occurred');
         }
@@ -166,7 +150,7 @@ const MarketPlaceManagement = () => {
 
         if (confirmDelete) {
             try {
-                await axios.delete(`http://44.196.64.110:3555/api/marketplaces/delete/${id}`);
+                await axios.delete(`http://localhost:3555/api/marketplaces/delete/${id}`);
                 fetchData();
             } catch (error) {
                 console.error('Error Deleting user:', error);
@@ -193,10 +177,7 @@ const MarketPlaceManagement = () => {
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Photo</CTableHeaderCell>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Name</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Brand</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>category</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Price</CTableHeaderCell>
-                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Discription</CTableHeaderCell> */}
+                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Section</CTableHeaderCell>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
@@ -207,16 +188,13 @@ const MarketPlaceManagement = () => {
                                 <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     <img
-                                        src={product.image} // Ensure this is the correct path to the image
+                                        src={product.images} // Ensure this is the correct path to the image
                                         alt={'N/A'} // Provide an alt text for accessibility
                                         style={{ width: '50px', height: '50px' }} // Adjust size and shape as needed
                                     />
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{product.name}</CTableDataCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>{product.brand}</CTableDataCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>{product.category}</CTableDataCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>{product.price}</CTableDataCell>
-                                {/* <CTableDataCell style={{ textAlign: 'center' }}>{product.description}</CTableDataCell> */}
+                                <CTableDataCell style={{ textAlign: 'center' }}>{product.section}</CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     <CButton style={{ margin: '0 2px', padding: '4px' }}>
                                         <FontAwesomeIcon style={{ color: 'blue' }}
@@ -250,18 +228,18 @@ const MarketPlaceManagement = () => {
                     <CForm onSubmit={handleAddSubmit}>
                         <CRow>
                             <CCol md="6">
-                                <CFormLabel htmlFor="type">Type Of Market Place</CFormLabel>
+                                <CFormLabel htmlFor="section">section Of Market Place</CFormLabel>
                                 <CFormSelect
-                                    id="type"
-                                    name="type"
-                                    value={addFormData.type}
+                                    id="section"
+                                    name="section"
+                                    value={addFormData.section}
                                     onChange={handleAddChange}
                                     required
                                 >
                                     <option value="">Select Market Place</option>
-                                    <option value="shop_by_style">Shop by Style</option>
-                                    <option value="shop_menswear">Shop Menswear</option>
-                                    <option value="shop_womenswear">Shop Womenswear</option>
+                                    <option value="Shop by Style">Shop by Style</option>
+                                    <option value="Shop Menswear">Shop Menswear</option>
+                                    <option value="Shop Womenswear">Shop Womenswear</option>
                                 </CFormSelect>
                             </CCol>
 ``
@@ -275,57 +253,14 @@ const MarketPlaceManagement = () => {
                                     required
                                 />
                             </CCol>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="category">Category</CFormLabel>
-                                <CFormInput
-                                    id="category"
-                                    name="category"
-                                    value={addFormData.category}
-                                    onChange={handleAddChange}
-                                    required
-                                />
-                            </CCol>
                         </CRow>
                         <CRow>
                             <CCol md="6">
-                                <CFormLabel htmlFor="brand">Brand</CFormLabel>
-                                <CFormInput
-                                    id="brand"
-                                    name="brand"
-                                    value={addFormData.brand}
-                                    onChange={handleAddChange}
-                                    required
-                                />
-                            </CCol>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="price">Price</CFormLabel>
-                                <CFormInput
-                                    id="price"
-                                    name="price"
-                                    value={addFormData.price}
-                                    onChange={handleAddChange}
-                                    type="number"
-                                    required
-                                />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="description">Description</CFormLabel>
-                                <CFormInput
-                                    id="description"
-                                    name="description"
-                                    value={addFormData.description}
-                                    onChange={handleAddChange}
-                                    required
-                                />
-                            </CCol>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="picture">Product Image</CFormLabel>
+                                <CFormLabel htmlFor="image">Product Image</CFormLabel>
                                 <CFormInput
                                     type="file"
-                                    id="picture"
-                                    name="picture"
+                                    id="image"
+                                    name="Image"
                                     onChange={handleAddFileChange}
                                 />
                             </CCol>
@@ -355,7 +290,7 @@ const MarketPlaceManagement = () => {
                                 <CRow className="align-items-center">
                                     <CCol xs="12" md="6" className="text-center">
                                         <img
-                                            src={oneProduct.image}
+                                            src={oneProduct.images}
                                             alt="Shoe"
                                             style={{
                                                 maxWidth: '100%',
@@ -369,9 +304,7 @@ const MarketPlaceManagement = () => {
                                     <CCol xs="12" md="6">
                                         <div className="mt-3">
                                             <p><strong>Name:</strong> {oneProduct.name}</p>
-                                            <p><strong>Price:</strong> {oneProduct.price}</p>
-                                            <p><strong>Category:</strong> {oneProduct.category}</p>
-                                            <p><strong>Description:</strong> {oneProduct.description}</p>
+                                            <p><strong>Section:</strong> {oneProduct.section}</p>
                                         </div>
                                     </CCol>
                                 </CRow>
@@ -396,33 +329,15 @@ const MarketPlaceManagement = () => {
                     <CForm>
                         <CRow>
                             <CCol md='6'>
-                                <CFormLabel htmlFor='brand'>Brand</CFormLabel>
-                                <CFormInput id='brand' name='brand' value={formData.brand} onChange={handleFormChange} />
-                            </CCol>
-                            <CCol md='6'>
-                                <CFormLabel htmlFor='color'>Name</CFormLabel>
-                                <CFormInput id='color' name='color' value={formData.name} onChange={handleFormChange} />
+                                <CFormLabel htmlFor='name'>Name</CFormLabel>
+                                <CFormInput id='name' name='Name' type='text' value={formData.name} onChange={handleFormChange} />
                             </CCol>
 
                         </CRow>
                         <CRow>
-                            <CCol>
-                                <CFormLabel htmlFor='typesOfproduct'>Price</CFormLabel>
-                                <CFormInput id='typesOfproduct' name='typesOfproduct' value={formData.price} onChange={handleFormChange} />
-                            </CCol>
                             <CCol md='6'>
-                                <CFormLabel htmlFor='season'>Category</CFormLabel>
-                                <CFormInput id='season' name='season' value={formData.category} onChange={handleFormChange} />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol md='6'>
-                                <CFormLabel htmlFor='description'>Description</CFormLabel>
-                                <CFormInput id='description' name='description' value={formData.description} onChange={handleFormChange} />
-                            </CCol>
-                            <CCol md='6'>
-                                <CFormLabel htmlFor='picture'>Edit Image</CFormLabel>
-                                <CFormInput id='season' type='file' onChange={(e) => setSelectedFile(e.target.files[0])} />
+                                <CFormLabel htmlFor='image'>Edit Image</CFormLabel>
+                                <CFormInput id='image' type='file' onChange={(e) => setSelectedFile(e.target.files[0])} />
                             </CCol>
                         </CRow>
                     </CForm>

@@ -35,7 +35,7 @@ const SubcategoryManagement = () => {
     const [selectedSubcategory, setSelectedSubcategory] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        category: '',
+        marketplaceId: '',
         sellType: '',
         description: '',
         price: '',
@@ -44,16 +44,19 @@ const SubcategoryManagement = () => {
         image: null,
     });
     const [error, setError] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [responseMessage, setResponseMessage] = useState("");
 
     useEffect(() => {
-        fetchSubcategories();
         fetchCategories();
+        fetchSubcategories();
     }, []);
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://44.196.64.110:3555/api/category');
+            const response = await axios.get('http://44.196.64.110:3555/api/marketplaces/');
             setCategories(response.data.data);
+            // console.log(response.data.data)
         } catch (error) {
             setError('Error fetching categories');
             console.error('Error fetching categories:', error);
@@ -70,35 +73,83 @@ const SubcategoryManagement = () => {
         }
     };
 
-    const handleAddSubcategory = async (event) => {
-        event.preventDefault();
-        try {
-            const imageUrl = await uploadImageToCloudinary(formData.image);
-            const newSubcategory = {
-                name: formData.name,
-                category: formData.category,
-                sellType: formData.sellType,
-                description: formData.description,
-                price: formData.price,
-                discount: formData.discount,
-                brand: formData.brand,
-                image: imageUrl,
-            };
-            await axios.post('http://44.196.64.110:3129/api/subcategory/add', newSubcategory);
-            setVisible(false);
-            resetFormData();
-            fetchSubcategories(); // Re-fetch subcategories
-        } catch (error) {
-            setError('Error adding subcategory');
-            console.error('Error adding subcategory:', error);
-        }
-    };
+    // const handleAddSubcategory = async (event) => {
+    //     event.preventDefault();
+    //     try {
+    //         // const imageUrl = await uploadImageToCloudinary(formData.image);
+    //         const newSubcategory = {
+    //             name: formData.name,
+    //             marketplaceId: formData.marketplaceId,
+    //             sellType: formData.sellType,
+    //             description: formData.description,
+    //             price: formData.price,
+    //             discount: formData.discount,
+    //             brand: formData.brand,
+    //             image: imageUrl,
+    //         };
+    //         await axios.post(`http://localhost:3555/api/marketPlaceSubcat/add`, newSubcategory);
+    //         setVisible(false);
+    //         resetFormData();
+    //         fetchSubcategories(); // Re-fetch subcategories
+    //     } catch (error) {
+    //         setError('Error adding subcategory');
+    //         console.error('Error adding subcategory:', error);
+    //     }
+    // };
 
+    const handleAddSubcategory = async (e) => {
+        e.preventDefault();
+    
+        const form = new FormData();
+        form.append("name", formData.name);
+        form.append("sellType", formData.sellType);
+        form.append("description", formData.description);
+        form.append("price", formData.price);
+        form.append("brand", formData.brand);
+        form.append("discount", formData.discount);
+        form.append("marketplaceId", formData.marketplaceId);
+        if (selectedFile) form.append("image", selectedFile); // Attach image file
+    
+        try {
+          const response = await axios.post(
+            "http://localhost:3555/api/marketPlaceSubcat/add",
+            form,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          if(response.data.success){
+            setVisible(false);
+          }
+
+          fetchSubcategories();
+    
+          setResponseMessage(response.data.message || "Subcategory added successfully!");
+          // Optionally, reset form and fetch data after successful submission
+          setFormData({
+            name: "",
+            sellType: "",
+            description: "",
+            price: "",
+            brand: "",
+            discount: "",
+            marketplaceId: "",
+          });
+          setSelectedFile(null);
+        } catch (error) {
+          setResponseMessage(error.response?.data?.message || "An error occurred");
+        }
+      };
+
+      
     const handleEdit = (subcategory) => {
         setSelectedSubcategory(subcategory);
         setFormData({
             name: subcategory.name || '',
-            category: subcategory.category || '',
+            marketplaceId: subcategory.marketplaceId || '',
             sellType: subcategory.sellType || '',
             description: subcategory.description || '',
             price: subcategory.price || '',
@@ -116,7 +167,7 @@ const SubcategoryManagement = () => {
             const imageUrl = formData.image instanceof File ? await uploadImageToCloudinary(formData.image) : formData.image;
             const updatedSubcategory = {
                 name: formData.name,
-                category: formData.category,
+                marketplaceId: formData.marketplaceId,
                 sellType: formData.sellType,
                 description: formData.description,
                 price: formData.price,
@@ -124,7 +175,7 @@ const SubcategoryManagement = () => {
                 brand: formData.brand,
                 image: imageUrl,
             };
-            await axios.put(`http://44.196.64.110:3129/api/subcategory/update/${_id}`, updatedSubcategory);
+            await axios.put(`http://44.196.64.110:3129/api/marketplacesubcat/update/${_id}`, updatedSubcategory);
             setEditVisible(false);
             resetFormData();
             fetchSubcategories(); // Fetch the latest data
@@ -136,7 +187,7 @@ const SubcategoryManagement = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://44.196.64.110:3555/api/marketPlaceSubcat/delete/${id}`);
+            await axios.delete(`http://localhost:3555/api/marketPlaceSubcat/delete/${id}`);
             setSubcategories(subcategories.filter(subcategory => subcategory._id !== id));
         } catch (error) {
             setError('Error deleting subcategory');
@@ -149,15 +200,24 @@ const SubcategoryManagement = () => {
         setFormData({ ...formData, [id]: value });
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+      };
+
+    // const handleFileChange = (e) => {
+    //     const file = e.target.files[0];
+    //     setFormData({ ...formData, image: file });
+    // };
+
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setFormData({ ...formData, image: file });
-    };
+        setSelectedFile(e.target.files[0]);
+      };
 
     const resetFormData = () => {
         setFormData({
             name: '',
-            category: '',
+            marketplaceId: '',
             sellType: '',
             description: '',
             price: '',
@@ -214,7 +274,7 @@ const SubcategoryManagement = () => {
                             <CTableRow key={subcategory._id}>
                                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.name || 'null'}</CTableDataCell>
-                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.category || 'null'}</CTableDataCell>
+                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.marketplaceId || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.sellType || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>${subcategory.price || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.discount || 'null'}%</CTableDataCell>
@@ -238,10 +298,10 @@ const SubcategoryManagement = () => {
                 <CModalBody>
                     <CForm className="row g-3" onSubmit={handleAddSubcategory}>
                         <CCol md={6}>
-                            <CFormInput type="text" id="name" label="Name" value={formData.name} onChange={handleChange} required />
+                            <CFormInput type="text" id="name" name="name" label="Name" value={formData.name} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormSelect id="category" label="Category" value={formData.category} onChange={handleChange} required>
+                            <CFormSelect id="marketplaceId" name='marketplaceId' label="Market Place Category" value={formData.marketplaceId} onChange={handleInputChange} required>
                                 <option value="">Select Category</option>
                                 {categories.map(category => (
                                     <option key={category._id} value={category._id}>{category.name}</option>
@@ -249,22 +309,22 @@ const SubcategoryManagement = () => {
                             </CFormSelect>
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="text" id="sellType" label="Sell Type" value={formData.sellType} onChange={handleChange} required />
+                            <CFormInput type="text" id="sellType" name='sellType' label="Sell Type" value={formData.sellType} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} required />
+                            <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="discount" label="Discount" value={formData.discount} onChange={handleChange} required />
+                            <CFormInput type="number" id="discount" name='discount' label="Discount" value={formData.discount} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="text" id="brand" label="Brand" value={formData.brand} onChange={handleChange} required />
+                            <CFormInput type="text" id="brand" name='brand' label="Brand" value={formData.brand} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="text" id="description" label="Description" value={formData.description} onChange={handleChange} required />
+                            <CFormInput type="text" id="description" name='description' label="Description" value={formData.description} onChange={handleInputChange} required />
                         </CCol>
                         <CCol xs="auto">
                             <CButton type="submit" color="primary">Save</CButton>
@@ -284,7 +344,7 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="name" label="Name" value={formData.name} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormSelect id="category" label="Category" value={formData.category} onChange={handleChange} required>
+                            <CFormSelect id="category" label="Category" value={formData.marketplaceId} onChange={handleChange} required>
                                 <option value="">Select Category</option>
                                 {categories.map(category => (
                                     <option key={category._id} value={category._id}>{category.name}</option>

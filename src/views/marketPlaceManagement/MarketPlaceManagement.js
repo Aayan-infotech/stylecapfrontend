@@ -25,11 +25,11 @@ const AdminPanel = () => {
               Marketplace
             </CNavLink>
           </CNavItem>
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink onClick={() => setActiveTab(1)} active={activeTab === 1}>
               Categories
             </CNavLink>
-          </CNavItem>
+          </CNavItem> */}
           <CNavItem>
             <CNavLink onClick={() => setActiveTab(2)} active={activeTab === 2}>
               Products
