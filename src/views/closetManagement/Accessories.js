@@ -8,29 +8,55 @@ const accessories = () => {
 
   const [data, setData] = useState([]);
   const [userData, setUserData] = useState([]);
-  const [userShoesData, setUserShoesData] = useState([]);
-  const [visibleModal, setVisibleModal] = useState(false);
+  const [userAccessoriesData, setUserAccessoriesData] = useState([]);
+  const [visibleModel, setVisibleModel] = useState(false);
   const [acessoriesData, setAcessoriesData] = useState([]);
   const [viewAccessories, setViewAccessories] = useState(false);
   const [editAccessoriesVisible, setEditAccessoriesVisible] = useState(false);
   const [formData, setFormData] = useState([]);
   const [selectedFile, setSelectedFile] = useState([]);
-
+  const category = "accessories"
   useEffect(() => {
     fetchData();
-  })
+  }, [])
+
+  // const fetchData = async () => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await axios.get(`http://44.196.64.110:3555/api/cloths/get-by-category/accessories`, {
+  //       headers: {
+  //         'Authorization': `Bearer ${token}`
+  //       },
+  //     });
+  //     setData(response.data);
+  //   } catch (error) {
+  //     console.log("Error fetching Data", error);
+  //   }
+  // }
 
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://44.196.64.110:3555/api/cloths/get-by-category/accessories`, {
+      const response = await axios.get(`http://44.196.64.110:3555/api/user`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          // 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
       });
-      setData(response.data);
+      setUserData(response.data.data);
+      console.log("abc", response.data)
     } catch (error) {
-      console.log("Error fetching Data", error);
+      console.error('Not able to fetch cloth data', error);
+    }
+  }
+
+  const handleView = async (category, userId) => {
+    try {
+      const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
+      setUserAccessoriesData(response.data.cloths);
+      setVisibleModel(true);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   }
 
@@ -42,7 +68,7 @@ const accessories = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setAcessoriesData(response.data);
+      setAcessoriesData(response.data.data);
       setViewAccessories(true);
 
     } catch (error) {
@@ -106,7 +132,7 @@ const accessories = () => {
 
   return (
     <div>
-      <CTable responsive>
+      {/* <CTable responsive>
         <CTableHead color='primary'>
           <CTableRow>
             <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
@@ -150,7 +176,97 @@ const accessories = () => {
             </CTableRow>
           ))}
         </CTableBody>
+      </CTable> */}
+      <CTable responsive>
+        <CTableHead color='primary'>
+          <CTableRow color='primary'>
+            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
+            <CTableHeaderCell scope="col" style={{}}>Name</CTableHeaderCell>
+            <CTableHeaderCell scope="col" style={{}}>Email</CTableHeaderCell>
+            {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Age</CTableHeaderCell>
+                              <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell> */}
+            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
+        <CTableBody>
+          {userData.map((user, index) => (
+            <CTableRow key={index}>
+              <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
+              <CTableDataCell style={{}}>{user.firstName}</CTableDataCell>
+              <CTableDataCell style={{}}>{user.email}</CTableDataCell>
+              <CTableDataCell style={{ textAlign: 'center' }}>
+                <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
+                  title="View" onClick={() => handleView(category, user._id)}>
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+              </CTableDataCell>
+            </CTableRow>
+          ))}
+        </CTableBody>
       </CTable>
+
+      {/* clothes from userId */}
+      <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
+        <CModalHeader onClose={() => setVisibleModel(false)}>
+          <CModalTitle>Accessories Details of User</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {userAccessoriesData ? (
+            <CTable responsive>
+            <CTableHead color='primary'>
+              <CTableRow>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Image</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Brand</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Color</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Season</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell>
+                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              {userAccessoriesData.map((accessories, index) => (
+                <CTableRow key={index}>
+                  <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>
+                    {accessories.picture ? (
+                      <img src={accessories.picture} alt="shoe" width="50" height="50" />
+                    ) : (
+                      'No Image Available'
+                    )}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>{accessories.brand}</CTableDataCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>{accessories.typesOfCloths}</CTableDataCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>{accessories.color}</CTableDataCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>{accessories.season}</CTableDataCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>
+                    {accessories.purchaseDate
+                      ? new Date(accessories.purchaseDate).toLocaleDateString()
+                      : 'No Date Available'}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ textAlign: 'center' }}>
+                    <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchaccessoriesData(accessories._id)}>
+                      <FontAwesomeIcon icon={faEye} color='blue' />
+                    </button>
+                    <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(accessories)}>
+                      <FontAwesomeIcon icon={faEdit} color='green' />
+                    </button>
+                  </CTableDataCell>
+                </CTableRow>
+              ))}
+            </CTableBody>
+          </CTable>
+          ) : (
+            <p>Loading...</p>
+          )}
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisibleModel(false)}>
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
       <CModal size='lg' visible={viewAccessories} onClose={() => { setViewAccessories(false) }} >
         <CModalHeader>
