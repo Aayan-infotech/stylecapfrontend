@@ -1,5 +1,5 @@
 import { CButton, CCard, CCardBody, CCardFooter, CCardHeader, CCol, CForm, CFormInput, CFormLabel, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react';
-import { faEdit, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
@@ -7,15 +7,19 @@ import React, { useEffect, useState } from 'react'
 const cloths = () => {
 
     const [clothData, setClothData] = useState([]);
+    const [userClothsData, setUserClothsData] = useState([]);
+    const [userData, setUserData] = useState([]);
     const [singleClothsData, setSingleClothsData] = useState([]);
+    const [visibleModel, setVisibleModel] = useState(false);
     const [clothVisible, setClothVisible] = useState(false);
     const [editClothsVisible, setEditClothsVisible] = useState(false);
     const [formData, setFormData] = useState([]);
     const [selectedFile, setSelectedFile] = useState();
+    const category = 'clothes'
 
     useEffect(() => {
         fetchData();
-    },[])
+    }, [])
 
 
     const fetchData = async () => {
@@ -23,13 +27,40 @@ const cloths = () => {
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://44.196.64.110:3555/api/user`, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
             });
-            setClothData(response.data);
+            setUserData(response.data.data);
+            console.log("abc", response.data)
         } catch (error) {
             console.error('Not able to fetch cloth data', error);
+        }
+    }
+
+    // const fetchData = async () => {
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         const response = await axios.get(`http://44.196.64.110:3555/api/user`, {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //         });
+    //         setClothData(response.data);
+    //     } catch (error) {
+    //         console.error('Not able to fetch cloth data', error);
+    //     }
+    // }
+
+    const handleView = async (category, userId) => {
+        try {
+            const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
+            setUserClothsData(response.data.cloths);
+            console.log(response.data.cloths)
+            setVisibleModel(true);
+        } catch (error) {
+            console.error('Error fetching data:', error);
         }
     }
 
@@ -42,7 +73,8 @@ const cloths = () => {
                 }
             });
             setClothVisible(true);
-            setSingleClothsData(response.data);
+            setSingleClothsData(response.data.data);
+            console.log("setSingleClothsData" ,response.data.data)
         } catch (error) {
             console.error('Failed to fetch shoe details', error);
         }
@@ -107,49 +139,94 @@ const cloths = () => {
         <div>
             <CTable responsive>
                 <CTableHead color='primary'>
-                    <CTableRow>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Image</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Brand</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Color</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Season</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
+                    <CTableRow color='primary'>
+                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{}}>Name</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{}}>Email</CTableHeaderCell>
+                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Age</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell> */}
+                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                    {clothData.map((cloths, index) => (
+                    {userData.map((user, index) => (
                         <CTableRow key={index}>
-                            <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                            <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
+                            <CTableDataCell style={{}}>{user.firstName}</CTableDataCell>
+                            <CTableDataCell style={{}}>{user.email}</CTableDataCell>
                             <CTableDataCell style={{ textAlign: 'center' }}>
-                                {cloths.picture ? (
-                                    <img src={cloths.picture} alt="shoe" width="50" height="50" />
-                                ) : (
-                                    'No Image Available'
-                                )}
-                            </CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{cloths.brand}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{cloths.typesOfCloths}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{cloths.color}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{cloths.season}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>
-                                {cloths.purchaseDate
-                                    ? new Date(cloths.purchaseDate).toLocaleDateString()
-                                    : 'No Date Available'}
-                            </CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>
-                                <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchClothData(cloths._id)}>
-                                    <FontAwesomeIcon icon={faEye} color='blue' />
-                                </button>
-                                <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
-                                    <FontAwesomeIcon icon={faEdit} color='green' />
+                                <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
+                                    title="View" onClick={() => handleView(category, user._id)}>
+                                    <FontAwesomeIcon icon={faEye} />
                                 </button>
                             </CTableDataCell>
                         </CTableRow>
                     ))}
                 </CTableBody>
             </CTable>
+
+            {/* clothes from userId */}
+            <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
+                <CModalHeader onClose={() => setVisibleModel(false)}>
+                    <CModalTitle>Cloth Details of User</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    {userClothsData ? (
+                        <CTable responsive>
+                        <CTableHead color='primary'>
+                            <CTableRow>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Image</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Brand</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Color</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Season</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
+                            </CTableRow>
+                        </CTableHead>
+                        <CTableBody>
+                            {userClothsData.map((cloths, index) => (
+                                <CTableRow key={index}>
+                                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>
+                                        {cloths.picture ? (
+                                            <img src={cloths.picture} alt="shoe" width="50" height="50" />
+                                        ) : (
+                                            'No Image Available'
+                                        )}
+                                    </CTableDataCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.brand}</CTableDataCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.typesOfCloths}</CTableDataCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.color}</CTableDataCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.season}</CTableDataCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>
+                                        {cloths.purchaseDate
+                                            ? new Date(cloths.purchaseDate).toLocaleDateString()
+                                            : 'No Date Available'}
+                                    </CTableDataCell>
+                                    <CTableDataCell style={{ textAlign: 'center' }}>
+                                        <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchClothData(cloths._id)}>
+                                            <FontAwesomeIcon icon={faEye} color='blue' />
+                                        </button>
+                                        <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
+                                            <FontAwesomeIcon icon={faEdit} color='green' />
+                                        </button>
+                                    </CTableDataCell>
+                                </CTableRow>
+                            ))}
+                        </CTableBody>
+                    </CTable>
+                    ) : (
+                        <p>Loading...</p>
+                    )}
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={() => setVisibleModel(false)}>
+                        Close
+                    </CButton>
+                </CModalFooter>
+            </CModal>
 
             <CModal size='lg' visible={clothVisible} onClose={() => setClothVisible(false)}>
                 <CModalHeader closeButton>
@@ -201,7 +278,9 @@ const cloths = () => {
                 </CModalBody>
             </CModal>
 
-            <CModal visible={editClothsVisible} onClose={()=>{setEditClothsVisible(false)}}>
+
+
+            <CModal visible={editClothsVisible} onClose={() => { setEditClothsVisible(false) }}>
                 <CModalHeader>
                     <CModalTitle>
                         Edit Cloths
