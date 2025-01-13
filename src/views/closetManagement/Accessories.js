@@ -7,6 +7,9 @@ import React, { useEffect, useState } from 'react'
 const accessories = () => {
 
   const [data, setData] = useState([]);
+  const [userData, setUserData] = useState([]);
+  const [userShoesData, setUserShoesData] = useState([]);
+  const [visibleModal, setVisibleModal] = useState(false);
   const [acessoriesData, setAcessoriesData] = useState([]);
   const [viewAccessories, setViewAccessories] = useState(false);
   const [editAccessoriesVisible, setEditAccessoriesVisible] = useState(false);
@@ -31,74 +34,74 @@ const accessories = () => {
     }
   }
 
-  const fetchaccessoriesData = async(id) =>{
-    try{
+  const fetchaccessoriesData = async (id) => {
+    try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://44.196.64.110:3555/api/cloths/getClothById/${id}`,{
-        headers:{
+      const response = await axios.get(`http://44.196.64.110:3555/api/cloths/getClothById/${id}`, {
+        headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       setAcessoriesData(response.data);
       setViewAccessories(true);
 
-    }catch(error){
+    } catch (error) {
       console.error("Error fetching Acessories", error);
     }
   }
-  
+
   const handleEditClick = (accessories) => {
     setEditAccessoriesVisible(true);
     setFormData({
-        id: accessories._id,
-        brand: accessories.brand,
-        color: accessories.color,
-        typesOfCloths: accessories.typesOfCloths,
-        season: accessories.season,
-        purchaseDate: new Date(accessories.purchaseDate).toISOString().split('T')[0],
-        description: accessories.description,
+      id: accessories._id,
+      brand: accessories.brand,
+      color: accessories.color,
+      typesOfCloths: accessories.typesOfCloths,
+      season: accessories.season,
+      purchaseDate: new Date(accessories.purchaseDate).toISOString().split('T')[0],
+      description: accessories.description,
     });
-}
+  }
 
-const handleFormChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
-        ...prevState,
-        [name]: value,
+      ...prevState,
+      [name]: value,
     }));
-}
+  }
 
-const handleFormSubmit = async (id) => {
+  const handleFormSubmit = async (id) => {
     try {
-        const token = localStorage.getItem('token');
-        const formDataToSend = new FormData();
+      const token = localStorage.getItem('token');
+      const formDataToSend = new FormData();
 
-        // Append form data
-        formDataToSend.append('brand', formData.brand);
-        formDataToSend.append('color', formData.color);
-        formDataToSend.append('typesOfCloths', formData.typesOfCloths);
-        formDataToSend.append('season', formData.season);
-        formDataToSend.append('purchaseDate', formData.purchaseDate);
-        formDataToSend.append('description', formData.description);
+      // Append form data
+      formDataToSend.append('brand', formData.brand);
+      formDataToSend.append('color', formData.color);
+      formDataToSend.append('typesOfCloths', formData.typesOfCloths);
+      formDataToSend.append('season', formData.season);
+      formDataToSend.append('purchaseDate', formData.purchaseDate);
+      formDataToSend.append('description', formData.description);
 
-        // Append file if selected
-        if (selectedFile) {
-            formDataToSend.append('picture', selectedFile);
-        }
+      // Append file if selected
+      if (selectedFile) {
+        formDataToSend.append('picture', selectedFile);
+      }
 
-        await axios.put(`http://44.196.64.110:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
-            },
-        });
+      await axios.put(`http://44.196.64.110:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
+        },
+      });
 
-        setEditAccessoriesVisible(false);
-        fetchData();  // Refresh the list after editing
+      setEditAccessoriesVisible(false);
+      fetchData();  // Refresh the list after editing
     } catch (error) {
-        console.error('Failed to update shoe data', error);
+      console.error('Failed to update shoe data', error);
     }
-}
+  }
 
 
   return (
@@ -149,7 +152,7 @@ const handleFormSubmit = async (id) => {
         </CTableBody>
       </CTable>
 
-      <CModal size='lg' visible={viewAccessories} onClose={()=> {setViewAccessories(false)}} >
+      <CModal size='lg' visible={viewAccessories} onClose={() => { setViewAccessories(false) }} >
         <CModalHeader>
           <CModalTitle style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}>
             accessories Details
@@ -198,62 +201,62 @@ const handleFormSubmit = async (id) => {
       </CModal>
 
       <CModal size="lg" visible={editAccessoriesVisible} onClose={() => setEditAccessoriesVisible(false)}>
-                <CModalHeader closeButton>
-                    <CModalTitle>Edit Accessories</CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                    <CForm>
-                        <CRow>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="brand">Brand</CFormLabel>
-                                <CFormInput id="brand" name="brand" value={formData.brand} onChange={handleFormChange} />
-                            </CCol>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="color">Color</CFormLabel>
-                                <CFormInput id="color" name="color" value={formData.color} onChange={handleFormChange} />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="typesOfCloths">Type</CFormLabel>
-                                <CFormInput id="typesOfCloths" name="typesOfCloths" value={formData.typesOfCloths} onChange={handleFormChange} />
-                            </CCol>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="season">Season</CFormLabel>
-                                <CFormInput id="season" name="season" value={formData.season} onChange={handleFormChange} />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="purchaseDate">Purchase Date</CFormLabel>
-                                <CFormInput type="date" id="purchaseDate" name="purchaseDate" value={formData.purchaseDate} onChange={handleFormChange} />
-                            </CCol>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="description">Description</CFormLabel>
-                                <CFormInput id="description" name="description" value={formData.description} onChange={handleFormChange} />
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol md="6">
-                                <CFormLabel htmlFor="image">Edit Image</CFormLabel>
-                                <CFormInput
-                                    id="image"
-                                    type="file"
-                                    onChange={(e) => setSelectedFile(e.target.files[0])}  // Capture file input
-                                />
-                            </CCol>
-                        </CRow>
-                    </CForm>
-                </CModalBody>
-                <CModalFooter>
-                    <CButton color="secondary" onClick={() => setEditShoesVisible(false)}>
-                        Close
-                    </CButton>
-                    <CButton color="primary" onClick={() => handleFormSubmit(formData.id)}>
-                        Save Changes
-                    </CButton>
-                </CModalFooter>
-            </CModal>
+        <CModalHeader closeButton>
+          <CModalTitle>Edit Accessories</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm>
+            <CRow>
+              <CCol md="6">
+                <CFormLabel htmlFor="brand">Brand</CFormLabel>
+                <CFormInput id="brand" name="brand" value={formData.brand} onChange={handleFormChange} />
+              </CCol>
+              <CCol md="6">
+                <CFormLabel htmlFor="color">Color</CFormLabel>
+                <CFormInput id="color" name="color" value={formData.color} onChange={handleFormChange} />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="6">
+                <CFormLabel htmlFor="typesOfCloths">Type</CFormLabel>
+                <CFormInput id="typesOfCloths" name="typesOfCloths" value={formData.typesOfCloths} onChange={handleFormChange} />
+              </CCol>
+              <CCol md="6">
+                <CFormLabel htmlFor="season">Season</CFormLabel>
+                <CFormInput id="season" name="season" value={formData.season} onChange={handleFormChange} />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="6">
+                <CFormLabel htmlFor="purchaseDate">Purchase Date</CFormLabel>
+                <CFormInput type="date" id="purchaseDate" name="purchaseDate" value={formData.purchaseDate} onChange={handleFormChange} />
+              </CCol>
+              <CCol md="6">
+                <CFormLabel htmlFor="description">Description</CFormLabel>
+                <CFormInput id="description" name="description" value={formData.description} onChange={handleFormChange} />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="6">
+                <CFormLabel htmlFor="image">Edit Image</CFormLabel>
+                <CFormInput
+                  id="image"
+                  type="file"
+                  onChange={(e) => setSelectedFile(e.target.files[0])}  // Capture file input
+                />
+              </CCol>
+            </CRow>
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setEditShoesVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={() => handleFormSubmit(formData.id)}>
+            Save Changes
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
     </div>
   )
