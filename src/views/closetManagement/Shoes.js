@@ -139,51 +139,6 @@ const Shoes = () => {
 
     return (
         <div>
-            {/* <CTable responsive>
-                <CTableHead color='primary'>
-                    <CTableRow>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Image</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Brand</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Color</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Season</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell>
-                        <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
-                    </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                    {shoesData.map((shoes, index) => (
-                        <CTableRow key={index}>
-                            <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>
-                                {shoes.picture ? (
-                                    <img src={shoes.picture} alt="shoe" width="50" height="50" />
-                                ) : (
-                                    'No Image Available'
-                                )}
-                            </CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{shoes.brand}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{shoes.typesOfCloths}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{shoes.color}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>{shoes.season}</CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>
-                                {shoes.purchaseDate
-                                    ? new Date(shoes.purchaseDate).toLocaleDateString()
-                                    : 'No Date Available'}
-                            </CTableDataCell>
-                            <CTableDataCell style={{ textAlign: 'center' }}>
-                                <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchShoesData(shoes._id)}>
-                                    <FontAwesomeIcon icon={faEye} color='blue' />
-                                </button>
-                                <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(shoes)}>
-                                    <FontAwesomeIcon icon={faEdit} color='green' />
-                                </button>
-                            </CTableDataCell>
-                        </CTableRow>
-                    ))}
-                </CTableBody>
-            </CTable> */}
             <CTable responsive>
                 <CTableHead color='primary'>
                     <CTableRow color='primary'>
