@@ -84,10 +84,25 @@ const _nav = [
     icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
   },
   {
-    component: CNavItem,
-    name: 'Review Managment',
-    to: '/reviewManagement',
-    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+    component: CNavGroup,
+    name: 'Review Management',
+    icon: <FontAwesomeIcon icon={faTshirt} style={{ color: 'orange' }} className="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Stylist',
+        to: '/reviewManagement/stylist',
+        style: { marginLeft: '20px' },
+        icon: <FontAwesomeIcon icon={faTshirt} style={{ color: 'purple' }} className="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: 'Garment Care',
+        to: '/reviewManagement/garmentCare',
+        style: { marginLeft: '20px' },
+        icon: <FontAwesomeIcon icon={faShoePrints} style={{ color: 'brown' }} className="nav-icon" />,
+      },
+    ],
   },
   {
     component: CNavItem,
