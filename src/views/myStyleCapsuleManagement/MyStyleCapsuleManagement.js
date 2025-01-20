@@ -4,14 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
-const cloths = () => {
+const StyleCapsuleManagement = () => {
 
     const [clothData, setClothData] = useState([]);
     const [userClothsData, setUserClothsData] = useState([]);
     const [userData, setUserData] = useState([]);
     const [singleClothsData, setSingleClothsData] = useState([]);
     const [visibleModel, setVisibleModel] = useState(false);
-    const [clothVisible, setClothVisible] = useState(false);
+    const [styleVisible, setStyleVisible] = useState(false);
     const [editClothsVisible, setEditClothsVisible] = useState(false);
     const [formData, setFormData] = useState([]);
     const [selectedFile, setSelectedFile] = useState();
@@ -53,32 +53,38 @@ const cloths = () => {
     //     }
     // }
 
-    const handleView = async (category, userId) => {
+    const handleView = async (userId) => {
         try {
-            const response = await axios.get(`http://44.196.64.110:3555/api/cloths/all-cloths/${category}/${userId}`)
-            setUserClothsData(response.data.cloths);
-            console.log(response.data.cloths)
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://44.196.64.110:3555/api/myStyleCapsule/getStyle?userId=${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            setUserClothsData(response.data.data.styleOfTheDay);
+            console.log(response.data.data.styleOfTheDay)
             setVisibleModel(true);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     }
 
-    const fetchClothData = async (id) => {
+    const fetchStyleData = async (date) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/cloths/getClothById/${id}`, {
+            const response = await axios.get(`http://44.196.64.110:3555/api/myStyleCapsule/styleByDate/${date}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
                 }
             });
-            setClothVisible(true);
+            setStyleVisible(true);
             setSingleClothsData(response.data.data);
-            console.log("setSingleClothsData" ,response.data.data)
+            console.log("setSingleClothsData", response.data.data);
         } catch (error) {
-            console.error('Failed to fetch shoe details', error);
+            console.error('Failed to fetch style data', error);
         }
-    }
+    };
+
 
     const handleEditClick = async (cloths) => {
         setEditClothsVisible(true);
@@ -156,7 +162,7 @@ const cloths = () => {
                             <CTableDataCell style={{}}>{user.email}</CTableDataCell>
                             <CTableDataCell style={{ textAlign: 'center' }}>
                                 <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
-                                    title="View" onClick={() => handleView(category, user._id)}>
+                                    title="View" onClick={() => handleView(user._id)}>
                                     <FontAwesomeIcon icon={faEye} />
                                 </button>
                             </CTableDataCell>
@@ -165,38 +171,39 @@ const cloths = () => {
                 </CTableBody>
             </CTable>
 
-            {/* clothes from userId */}
+            {/* style fethcing from userId */}
             <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
                 <CModalHeader onClose={() => setVisibleModel(false)}>
-                    <CModalTitle>Cloth Details of User</CModalTitle>
+                    <CModalTitle>Style Details of User</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
                     {userClothsData ? (
                         <CTable responsive>
-                        <CTableHead color='primary'>
-                            <CTableRow>
-                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
-                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Image</CTableHeaderCell>
-                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Brand</CTableHeaderCell>
-                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
+                            <CTableHead color='primary'>
+                                <CTableRow>
+                                    <CTableHeaderCell style={{}} scope="col">#</CTableHeaderCell>
+                                    {/* <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">User</CTableHeaderCell> */}
+                                    <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Date</CTableHeaderCell>
+                                    {/* <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
                                 <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Color</CTableHeaderCell>
                                 <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Season</CTableHeaderCell>
-                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell>
-                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
-                            </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                            {userClothsData.map((cloths, index) => (
-                                <CTableRow key={index}>
-                                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>
+                                <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell> */}
+                                    <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
+                                </CTableRow>
+                            </CTableHead>
+                            <CTableBody>
+                                {userClothsData.map((cloths, index) => (
+                                    <CTableRow key={index}>
+                                        <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                                        {/* <CTableDataCell style={{ textAlign: 'center' }}>
                                         {cloths.picture ? (
                                             <img src={cloths.picture} alt="shoe" width="50" height="50" />
                                         ) : (
                                             'No Image Available'
                                         )}
-                                    </CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.brand}</CTableDataCell>
+                                    </CTableDataCell> */}
+                                        <CTableDataCell style={{ textAlign: 'center' }}>{cloths.date}</CTableDataCell>
+                                        {/* <CTableDataCell style={{ textAlign: 'center' }}>{cloths.brand}</CTableDataCell>
                                     <CTableDataCell style={{ textAlign: 'center' }}>{cloths.typesOfCloths}</CTableDataCell>
                                     <CTableDataCell style={{ textAlign: 'center' }}>{cloths.color}</CTableDataCell>
                                     <CTableDataCell style={{ textAlign: 'center' }}>{cloths.season}</CTableDataCell>
@@ -204,19 +211,19 @@ const cloths = () => {
                                         {cloths.purchaseDate
                                             ? new Date(cloths.purchaseDate).toLocaleDateString()
                                             : 'No Date Available'}
-                                    </CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>
-                                        <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchClothData(cloths._id)}>
-                                            <FontAwesomeIcon icon={faEye} color='blue' />
-                                        </button>
-                                        <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
-                                            <FontAwesomeIcon icon={faEdit} color='green' />
-                                        </button>
-                                    </CTableDataCell>
-                                </CTableRow>
-                            ))}
-                        </CTableBody>
-                    </CTable>
+                                    </CTableDataCell> */}
+                                        <CTableDataCell style={{ textAlign: 'center' }}>
+                                            <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchStyleData(cloths.date)}>
+                                                <FontAwesomeIcon icon={faEye} color='blue' />
+                                            </button>
+                                            <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
+                                                <FontAwesomeIcon icon={faEdit} color='green' />
+                                            </button>
+                                        </CTableDataCell>
+                                    </CTableRow>
+                                ))}
+                            </CTableBody>
+                        </CTable>
                     ) : (
                         <p>Loading...</p>
                     )}
@@ -228,56 +235,84 @@ const cloths = () => {
                 </CModalFooter>
             </CModal>
 
-            <CModal size='lg' visible={clothVisible} onClose={() => setClothVisible(false)}>
-                <CModalHeader closeButton>
-                    <CModalTitle style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}>
-                        Cloths Details
-                    </CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                    {singleClothsData && (
+            {singleClothsData && (
+                <CModal size='lg' visible={styleVisible} onClose={() => setStyleVisible(false)}>
+                    <CModalHeader closeButton>
+                        <CModalTitle style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}>
+                            Style Details of {singleClothsData.styleOfTheDay?.[0]?.date || 'N/A'}
+                        </CModalTitle>
+
+                    </CModalHeader>
+                    <CModalBody>
                         <CCard className="shadow-sm">
                             <CCardHeader className="bg-primary text-white">
-                                <h5 style={{ textAlign: 'center', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                    {singleClothsData.brand}
-                                </h5>
+                                {/* <h5 style={{ textAlign: 'center', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                    {singleClothsData.date}
+                                </h5> */}
                             </CCardHeader>
                             <CCardBody>
                                 <CRow className="align-items-center">
-                                    <CCol xs="12" md="6" className="text-center">
-                                        <img
-                                            src={singleClothsData.picture}
-                                            alt="Shoe"
-                                            style={{
-                                                maxWidth: '100%',
-                                                maxHeight: '300px',
-                                                objectFit: 'cover',
-                                                borderRadius: '10px',
-                                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
-                                            }}
-                                        />
-                                    </CCol>
-                                    <CCol xs="12" md="6">
-                                        <div className="mt-3">
-                                            <p><strong>Color:</strong> {singleClothsData.color}</p>
-                                            <p><strong>Type:</strong> {singleClothsData.typesOfCloths}</p>
-                                            <p><strong>Season:</strong> {singleClothsData.season}</p>
-                                            <p><strong>Purchase Date:</strong> {new Date(singleClothsData.purchaseDate).toLocaleDateString()}</p>
-                                            <p><strong>Description:</strong> {singleClothsData.description}</p>
-                                        </div>
-                                    </CCol>
+                                    {singleClothsData.styleOfTheDay && singleClothsData.styleOfTheDay.length > 0 ? (
+                                        singleClothsData.styleOfTheDay.map((item, outerIndex) => (
+                                            <React.Fragment key={outerIndex}>
+                                                {/* Render the Date */}
+                                                {/* <CCol xs="12" className="text-center mb-3">
+                                                    <h5>{item.date}</h5>
+                                                </CCol> */}
+
+                                                {/* Render Pictures for this Date */}
+                                                {item.picture && item.picture.length > 0 ? (
+                                                    item.picture.map((picture, innerIndex) => (
+                                                        <CCol xs="12" md="6" className="text-center" key={`${outerIndex}-${innerIndex}`}>
+                                                            <img
+                                                                src={`http://44.196.64.110:3555/uploads/${picture}`}
+                                                                alt={`Cloth ${outerIndex + 1}-${innerIndex + 1}`}
+                                                                style={{
+                                                                    maxWidth: '100%',
+                                                                    maxHeight: '300px',
+                                                                    objectFit: 'cover',
+                                                                    borderRadius: '10px',
+                                                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                                                                    marginBottom: '15px',
+                                                                }}
+                                                            />
+                                                        </CCol>
+                                                    ))
+                                                ) : (
+                                                    <CCol xs="12" className="text-center">
+                                                        <p>No pictures found for {item.date}</p>
+                                                    </CCol>
+                                                )}
+                                            </React.Fragment>
+                                        ))
+                                    ) : (
+                                        <CCol xs="12" className="text-center">
+                                            <img
+                                                src="https://via.placeholder.com/150"
+                                                alt="No Cloth Found"
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    maxHeight: '300px',
+                                                    objectFit: 'cover',
+                                                    borderRadius: '10px',
+                                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                                                }}
+                                            />
+                                        </CCol>
+                                    )}
                                 </CRow>
+
+
                             </CCardBody>
                             <CCardFooter className="d-flex justify-content-end">
-                                <CButton color="secondary" onClick={() => setClothVisible(false)}>
+                                <CButton color="secondary" onClick={() => setStyleVisible(false)}>
                                     Close
                                 </CButton>
                             </CCardFooter>
                         </CCard>
-                    )}
-                </CModalBody>
-            </CModal>
-
+                    </CModalBody>
+                </CModal>
+            )}
 
 
             <CModal visible={editClothsVisible} onClose={() => { setEditClothsVisible(false) }}>
@@ -340,4 +375,4 @@ const cloths = () => {
     )
 }
 
-export default cloths
+export default StyleCapsuleManagement

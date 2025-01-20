@@ -25,7 +25,7 @@ const ReviewManagement = () => {
     const fetchData = async () => {
         try {
             setLoading(true); // Set loading to true before fetching
-            const response = await axios.get(`http://localhost:3555/api/review/get`);
+            const response = await axios.get(`http://44.196.64.110:3555/api/review/get`);
             setReview(response.data.data);
         } catch (error) {
             console.error('Error fetching reviews:', error);

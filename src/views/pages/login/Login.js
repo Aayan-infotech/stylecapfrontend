@@ -13,6 +13,7 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
+  CSpinner,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
@@ -23,35 +24,42 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await axios.post(API_URL, { email, password }, { withCredentials: true });
 
+
       console.log('Logging in with:', { email, password });
-  
+
       if (response.status === 200) {
         console.log('Login successful');
-        
+
         // Save the token to local storage
         const token = response.data.token; // Adjust based on your API response structure
         localStorage.setItem('token', token); // Store token in local storage
-        
-        navigate('/dashboard'); // Ensure this route exists
+        setLoading(false);
+
+        navigate('/userManagement'); // Ensure this route exists
       }
     } catch (error) {
       console.error('Login Error:', error.response ? error.response.data : error.message);
-  
+
       if (error.response) {
         setError(error.response.data.message || 'Failed to login. Please check your credentials.');
       } else {
         setError('Failed to login. Please check your credentials.');
       }
     }
+    finally {
+      setLoading(false);
+    }
   };
-  
+
 
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
@@ -95,9 +103,20 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol className="text-center">
-                        <CButton type="submit" color="primary" className="px-4">
-                          Login
-                        </CButton>
+                        {loading ? (
+                          <div style={{ textAlign: 'center', padding: '20px' }}>
+                            <CSpinner color="primary" size="lg" />
+                          </div>
+                        ) : (
+                          <CButton
+                            type="submit"
+                            color="primary"
+                            className="px-4"
+                            disabled={loading} // Disable the button when loading
+                          >
+                            Login
+                          </CButton>
+                        )}
                       </CCol>
                     </CRow>
                   </CForm>

@@ -16,6 +16,8 @@ import {
     CTableHead,
     CTableHeaderCell,
     CTableRow,
+    CPagination,
+    CPaginationItem,
 } from '@coreui/react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,12 +31,15 @@ const UserManagement = () => {
     const [visibleModel, setVisibleModel] = useState(false);
     const [visibleEditModel, setVisibleEditModel] = useState(false);
     const [editedUser, setEditedUser] = useState({});
+    const [currentPage, setCurrentPage] = useState(1); // Current page number
+    const [totalUsers, setTotalUsers] = useState(0); // Total number of users
+    const [usersPerPage] = useState(10); // Users per page (constant)
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(currentPage);
+    }, [currentPage]);
 
-    const fetchData = async () => {
+    const fetchData = async (page) => {
         try {
             const token = localStorage.getItem('token');
 
@@ -44,13 +49,22 @@ const UserManagement = () => {
             const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                params: {
+                    page,
+                    limit: usersPerPage, // Send the limit as a query param
+                },
             });
             setUserData(response.data.data);
+            setTotalUsers(response.data.metadata.totalUsers)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     }
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page); // Set the current page
+    };
 
     const handleView = async (id) => {
         try {
@@ -115,8 +129,8 @@ const UserManagement = () => {
             fetchData();
             toast.success(`Status changed to ${data} successfully.`
                 , {
-            autoClose: 1000 // Toast will auto close after 2 seconds
-        });
+                    autoClose: 1000 // Toast will auto close after 2 seconds
+                });
         } catch (error) {
             console.error('Error updating status:', error);
             toast.error('Failed to change status.');
@@ -181,6 +195,18 @@ const UserManagement = () => {
                     }
                 </CTableBody>
             </CTable>
+
+            <CPagination className="justify-content-center mt-4">
+                {Array.from({ length: Math.ceil(totalUsers / usersPerPage) }).map((_, index) => (
+                    <CPaginationItem
+                        key={index}
+                        active={index + 1 === currentPage}
+                        onClick={() => handlePageChange(index + 1)}
+                    >
+                        {index + 1}
+                    </CPaginationItem>
+                ))}
+            </CPagination>
 
             <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
                 <CModalHeader onClose={() => setVisibleModel(false)}>
@@ -423,6 +449,7 @@ const UserManagement = () => {
                     </CButton>
                 </CModalFooter>
             </CModal>
+
             <ToastContainer />
         </>
     );

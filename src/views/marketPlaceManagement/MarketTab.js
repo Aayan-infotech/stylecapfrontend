@@ -136,7 +136,7 @@ const MarketPlaceManagement = () => {
         if (addSelectedFile) form.append('images', addSelectedFile);
 
         try {
-            const response = await axios.post('http://localhost:3555/api/marketplaces/create', form);
+            const response = await axios.post('http://44.196.64.110:3555/api/marketplaces/create', form);
 
             setResponseMessage(response.data.message);
             fetchData();
@@ -150,7 +150,7 @@ const MarketPlaceManagement = () => {
 
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:3555/api/marketplaces/delete/${id}`);
+                await axios.delete(`http://44.196.64.110:3555/api/marketplaces/delete/${id}`);
                 fetchData();
             } catch (error) {
                 console.error('Error Deleting user:', error);
@@ -242,7 +242,6 @@ const MarketPlaceManagement = () => {
                                     <option value="Shop Womenswear">Shop Womenswear</option>
                                 </CFormSelect>
                             </CCol>
-``
                             <CCol md="6">
                                 <CFormLabel htmlFor="name">Product Name</CFormLabel>
                                 <CFormInput

@@ -60,7 +60,7 @@ const Shoes = () => {
 
     const handleView = async (category, userId) => {
         try {
-            const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
+            const response = await axios.get(`http://44.196.64.110:3555/api/cloths/all-cloths/${category}/${userId}`)
             setUserShoesData(response.data.cloths);
             console.log(response.data.cloths)
             setVisibleModal(true);

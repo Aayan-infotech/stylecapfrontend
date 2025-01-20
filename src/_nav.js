@@ -14,16 +14,17 @@ import {
   faSpa,
   faBrush,
   faStore,
+  faPuzzlePiece,
 } from '@fortawesome/free-solid-svg-icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
-  {
-    component: CNavItem,
-    name: 'Dashboard',
-    to: '/dashboard',
-    icon: <FontAwesomeIcon icon={faTachometerAlt} style={{ color: 'blue' }} className="nav-icon" />,
-  },
+  // {
+  //   component: CNavItem,
+  //   name: 'Dashboard',
+  //   to: '/dashboard',
+  //   icon: <FontAwesomeIcon icon={faTachometerAlt} style={{ color: 'blue' }} className="nav-icon" />,
+  // },
   {
     component: CNavItem,
     name: 'User Management',
@@ -71,6 +72,18 @@ const _nav = [
     to: '/subscriptionManagement',
     icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
   },
+  // {
+  //   component: CNavItem,
+  //   name: 'Appointment Management',
+  //   to: '/appointmentManagement',
+  //   icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+  // },
+  {
+    component: CNavItem,
+    name: 'Style Capsule Management',
+    to: '/myStyleCapsuleManagement',
+    icon: <FontAwesomeIcon icon={faTshirt} style={{ color: 'lightBlue' }} className="nav-icon" />,
+  },
   {
     component: CNavItem,
     name: 'Stylist Management',
@@ -86,21 +99,21 @@ const _nav = [
   {
     component: CNavGroup,
     name: 'Review Management',
-    icon: <FontAwesomeIcon icon={faTshirt} style={{ color: 'orange' }} className="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faStar}  style={{ color: 'yellow' }} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Stylist',
         to: '/reviewManagement/stylist',
         style: { marginLeft: '20px' },
-        icon: <FontAwesomeIcon icon={faTshirt} style={{ color: 'purple' }} className="nav-icon" />,
+        icon: <FontAwesomeIcon icon={faStar} style={{ color: 'orange' }} className="nav-icon" />,
       },
       {
         component: CNavItem,
         name: 'Garment Care',
         to: '/reviewManagement/garmentCare',
         style: { marginLeft: '20px' },
-        icon: <FontAwesomeIcon icon={faShoePrints} style={{ color: 'brown' }} className="nav-icon" />,
+        icon: <FontAwesomeIcon icon={faStar} style={{ color: 'skyblue' }} className="nav-icon" />,
       },
     ],
   },
@@ -108,7 +121,7 @@ const _nav = [
     component: CNavItem,
     name: 'MyStyleCapsule Entity',
     to: '/myStyleCapsuleEntity',
-    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faPuzzlePiece} style={{ color: 'brown' }} className="nav-icon" />,
   },
 ]
 

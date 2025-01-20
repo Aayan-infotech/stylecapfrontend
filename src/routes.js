@@ -9,8 +9,10 @@ const Cloths = React.lazy(() => import('./views/closetManagement/Cloths'))
 const Miscellaneous = React.lazy(() => import('./views/closetManagement/Miscellaneous'))
 const Accessories = React.lazy(() => import('./views/closetManagement/Accessories'))
 const SubscriptionManagement = React.lazy( () => import('./views/subscriptionManagement/SubscriptionManagement'))
+const AppointmentManagement = React.lazy( () => import('./views/appointmentManagement/AppointmentManagement'))
 const StylistManagement = React.lazy( () => import('./views/stylistManagement/StylistManagement'))
 const MarketPlace = React.lazy( () => import('./views/marketPlaceManagement/MarketPlaceManagement'))
+const StyleCapsuleManagement = React.lazy( () => import('./views/myStyleCapsuleManagement/MyStyleCapsuleManagement'))
 // const ReviewManagement = React.lazy( () => import('./views/reviewManagement/ReviewManagement'))
 const StylistReviewManagement = React.lazy( () => import('./views/reviewManagement/StylistReviewManagement'))
 const GarmentCareReviewManagement = React.lazy( () => import('./views/reviewManagement/GarmentCareReviewManagement'))
@@ -76,8 +78,10 @@ const routes = [
   { path: '/closetManagement/miscellaneous', name: 'Miscellaneous', element: Miscellaneous },
   { path: '/closetManagement/accessories', name: 'Accessories', element: Accessories },
   { path: '/subscriptionManagement', name: 'SubscriptionManagement', element: SubscriptionManagement },
+  { path: '/appointmentManagement', name: 'AppointmentManagement', element: AppointmentManagement },
   { path: '/stylistManagement', name: 'StylistManagement', element: StylistManagement },
   { path: '/marketPlace', name: 'MarketPlace', element: MarketPlace },
+  { path: '/myStyleCapsuleManagement', name: 'StyleCapsuleManagement', element: StyleCapsuleManagement },
   { path: '/reviewManagement/stylist', name: 'StylistReviewManagement', element: StylistReviewManagement },
   { path: '/reviewManagement/garmentCare', name: 'GarmentCareReviewManagement', element: GarmentCareReviewManagement },
   { path: '/myStyleCapsuleEntity', name: 'MyStyleCapsuleEntity', element: MyStyleCapsuleEntity },

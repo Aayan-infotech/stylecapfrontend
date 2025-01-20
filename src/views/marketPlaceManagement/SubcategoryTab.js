@@ -87,7 +87,7 @@ const SubcategoryManagement = () => {
     //             brand: formData.brand,
     //             image: imageUrl,
     //         };
-    //         await axios.post(`http://localhost:3555/api/marketPlaceSubcat/add`, newSubcategory);
+    //         await axios.post(`http://44.196.64.110:3555/api/marketPlaceSubcat/add`, newSubcategory);
     //         setVisible(false);
     //         resetFormData();
     //         fetchSubcategories(); // Re-fetch subcategories
@@ -112,7 +112,7 @@ const SubcategoryManagement = () => {
     
         try {
           const response = await axios.post(
-            "http://localhost:3555/api/marketPlaceSubcat/add",
+            "http://44.196.64.110:3555/api/marketPlaceSubcat/add",
             form,
             {
               headers: {
@@ -187,7 +187,7 @@ const SubcategoryManagement = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:3555/api/marketPlaceSubcat/delete/${id}`);
+            await axios.delete(`http://44.196.64.110:3555/api/marketPlaceSubcat/delete/${id}`);
             setSubcategories(subcategories.filter(subcategory => subcategory._id !== id));
         } catch (error) {
             setError('Error deleting subcategory');
