@@ -287,7 +287,7 @@ const StyleCapsuleManagement = () => {
                                         ))
                                     ) : (
                                         <CCol xs="12" className="text-center">
-                                            <img
+                                            {/* <img
                                                 src="https://via.placeholder.com/150"
                                                 alt="No Cloth Found"
                                                 style={{
@@ -297,7 +297,8 @@ const StyleCapsuleManagement = () => {
                                                     borderRadius: '10px',
                                                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
                                                 }}
-                                            />
+                                            /> */}
+                                            <p>No style found for the date!</p>
                                         </CCol>
                                     )}
                                 </CRow>
