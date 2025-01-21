@@ -46,7 +46,7 @@ const UserManagement = () => {
             if (!token) {
                 throw new Error('No token found. Please log in.');
             }
-            const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
+            const response = await axios.get(`http://localhost:3555/api/user/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },

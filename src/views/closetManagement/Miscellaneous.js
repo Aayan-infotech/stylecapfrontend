@@ -212,7 +212,7 @@ const miscellaneous = () => {
           <CModalTitle>Cloth Details of User</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {userMiscellaneousData ? (
+          {userMiscellaneousData && userMiscellaneousData.length ? (
             <CTable responsive>
               <CTableHead color='primary'>
                 <CTableRow>
@@ -259,7 +259,7 @@ const miscellaneous = () => {
               </CTableBody>
             </CTable>
           ) : (
-            <p>Loading...</p>
+            <p>No miscellaneous items added yet!</p>
           )}
         </CModalBody>
         <CModalFooter>

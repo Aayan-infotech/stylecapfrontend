@@ -46,7 +46,7 @@ const Shoes = () => {
     // const fetchData = async () => {
     //     try {
     //         const token = localStorage.getItem('token');
-    //         const response = await axios.get(`http://44.196.64.110:3555/api/cloths/get-by-category/shoes`, {
+    //         const response = await axios.get(`http://localhost:3555/api/cloths/get-by-category/shoes`, {
     //             headers: {
     //                 'Content-Type': 'application/json',
     //                 'Authorization': `Bearer ${token}`,
@@ -60,7 +60,7 @@ const Shoes = () => {
 
     const handleView = async (category, userId) => {
         try {
-            const response = await axios.get(`http://44.196.64.110:3555/api/cloths/all-cloths/${category}/${userId}`)
+            const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
             setUserShoesData(response.data.cloths);
             console.log(response.data.cloths)
             setVisibleModal(true);
@@ -72,7 +72,7 @@ const Shoes = () => {
     const fetchShoesData = async (id) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/cloths/getClothById/${id}`, {
+            const response = await axios.get(`http://localhost:3555/api/cloths/getClothById/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -123,7 +123,7 @@ const Shoes = () => {
                 formDataToSend.append('picture', selectedFile);
             }
 
-            await axios.put(`http://44.196.64.110:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+            await axios.put(`http://localhost:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
@@ -173,7 +173,7 @@ const Shoes = () => {
                     <CModalTitle>Cloth Details of User</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    {userShoesData ? (
+                    {userShoesData && userShoesData.length > 0 ? (
                         <CTable responsive>
                             <CTableHead color='primary'>
                                 <CTableRow>
@@ -220,7 +220,7 @@ const Shoes = () => {
                             </CTableBody>
                         </CTable>
                     ) : (
-                        <p>Loading...</p>
+                        <p>No styles added</p>
                     )}
                 </CModalBody>
                 <CModalFooter>

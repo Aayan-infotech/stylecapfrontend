@@ -171,7 +171,7 @@ const cloths = () => {
                     <CModalTitle>Cloth Details of User</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    {userClothsData ? (
+                    {userClothsData && userClothsData.length > 0 ? (
                         <CTable responsive>
                         <CTableHead color='primary'>
                             <CTableRow>
@@ -218,7 +218,7 @@ const cloths = () => {
                         </CTableBody>
                     </CTable>
                     ) : (
-                        <p>Loading...</p>
+                        <p>No cloths added yet!</p>
                     )}
                 </CModalBody>
                 <CModalFooter>

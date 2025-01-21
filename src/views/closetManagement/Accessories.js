@@ -211,7 +211,7 @@ const accessories = () => {
           <CModalTitle>Accessories Details of User</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {userAccessoriesData ? (
+          {userAccessoriesData && userAccessoriesData.length ? (
             <CTable responsive>
             <CTableHead color='primary'>
               <CTableRow>
@@ -258,7 +258,7 @@ const accessories = () => {
             </CTableBody>
           </CTable>
           ) : (
-            <p>Loading...</p>
+            <p>No accessories added yet!</p>
           )}
         </CModalBody>
         <CModalFooter>

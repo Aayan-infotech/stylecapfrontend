@@ -123,6 +123,12 @@ const _nav = [
     to: '/myStyleCapsuleEntity',
     icon: <FontAwesomeIcon icon={faPuzzlePiece} style={{ color: 'brown' }} className="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Contact Us',
+    to: '/contactUsManagement',
+    icon: <FontAwesomeIcon icon={faPuzzlePiece} style={{ color: 'brown' }} className="nav-icon" />,
+  },
 ]
 
 export default _nav
