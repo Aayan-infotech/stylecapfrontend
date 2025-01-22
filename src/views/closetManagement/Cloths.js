@@ -25,7 +25,7 @@ const cloths = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/user`, {
+            const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
                 headers: {
                     // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,

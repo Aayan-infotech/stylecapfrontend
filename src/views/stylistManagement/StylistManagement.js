@@ -36,9 +36,11 @@ import axios from 'axios';
 const StylistManagement = () => {
 
     const [stylist, setStylist] = useState([]);
+    const [selectedStylist, setSelectedStylist] = useState();
     const [visible, setVisible] = useState(false);
     const [editVisible, setEditVisible] = useState();
     const [error, setError] = useState();
+    const [selectedFile, setSelectedFile] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -103,6 +105,8 @@ const StylistManagement = () => {
     const handleAddStylist = async (event) => {
         event.preventDefault();
         try {
+            console.log("Image Data:", formData.image); // Debug image data before uploading
+
             const imageUrl = await uploadImageToCloudinary(formData.image);
             const newStylist = {
                 name: formData.name,
@@ -219,6 +223,8 @@ const StylistManagement = () => {
         if (files && files.length > 0) {
             // For file input fields (e.g., image upload)
             const file = files[0];
+
+            console.log("Selected File:", file); // Debug the file data
 
             // Update the formData with the selected file
             setFormData(prevState => ({
