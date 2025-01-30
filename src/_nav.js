@@ -72,12 +72,12 @@ const _nav = [
     to: '/subscriptionManagement',
     icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
   },
-  // {
-  //   component: CNavItem,
-  //   name: 'Appointment Management',
-  //   to: '/appointmentManagement',
-  //   icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
-  // },
+  {
+    component: CNavItem,
+    name: 'Appointment Management',
+    to: '/appointmentManagement',
+    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+  },
   {
     component: CNavItem,
     name: 'Style Capsule Management',
