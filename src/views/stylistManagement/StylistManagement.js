@@ -62,7 +62,7 @@ const StylistManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3555/api/stylist/get-all-stylist-admin`,
+            const response = await axios.get(`http://44.196.64.110:3555/api/stylist/get-all-stylist-admin`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -120,7 +120,7 @@ const StylistManagement = () => {
                 image: imageUrl,
                 workHistory: formData.workHistory, // Include work history
             };
-            await axios.post('http://localhost:3555/api/stylist/add-stylist', newStylist);
+            await axios.post('http://44.196.64.110:3555/api/stylist/add-stylist', newStylist);
             setVisible(false);
             resetFormData();
             fetchData(); // Re-fetch after adding a stylist
