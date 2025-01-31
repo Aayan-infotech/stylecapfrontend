@@ -91,7 +91,7 @@ const AppointmentManagement = () => {
         approveStatus: action
       });
 
-      handleView(selectedAppointment.userId._id);
+      handleView(selectedAppointment.user._id);
       setActionModal(false);
     } catch (error) {
       console.error(`Error ${action} appointment:`, error);
@@ -101,7 +101,6 @@ const AppointmentManagement = () => {
   const handleDelete = async (userId, appointmentId) => {
     try {
 
-      console.log("data incoming in delete: ", userId, appointmentId)
       await axios.delete(`http://44.196.64.110:3555/api/appointment/delete-appointment/${appointmentId}`)
       handleView(userId);
     }
@@ -111,7 +110,7 @@ const AppointmentManagement = () => {
   }
 
   const handleOpenModal = (appointment) => {
-    setSelectedStylist(appointment.stylistId?._id);
+    setSelectedStylist(appointment.stylist?._id);
     setModalVisible(true);
   }
 
@@ -178,10 +177,10 @@ const AppointmentManagement = () => {
                       {index + 1}
                     </CTableHeaderCell>
                     <CTableDataCell style={{ textAlign: 'center' }}>
-                      {appointment.userId?.firstName || 'N/A'}
+                      {appointment.user?.firstName || 'N/A'}
                     </CTableDataCell>
                     <CTableDataCell style={{ textAlign: 'center' }} onClick={() => handleOpenModal(appointment)}>
-                      {appointment.stylistId?.name || 'N/A'}
+                      {appointment.stylist?.name || 'N/A'}
                     </CTableDataCell>
                     <CTableDataCell style={{ textAlign: 'center' }}>
                       {new Date(appointment.date).toLocaleDateString()}
@@ -221,7 +220,7 @@ const AppointmentManagement = () => {
                         onClick={() => {
                           // setSelectedAppointment(appointment);
                           // setActionModal(true);
-                          handleDelete(appointment.userId._id, appointment._id);
+                          handleDelete(appointment.user._id, appointment._id);
                         }}
                       >
                         Delete
@@ -259,7 +258,7 @@ const AppointmentManagement = () => {
             <CModalFooter>
               <CButton
                 color="success"
-                onClick={() => handleAction(selectedAppointment.userId._id, selectedAppointment._id, 'approved')}
+                onClick={() => handleAction(selectedAppointment.user._id, selectedAppointment._id, 'approved')}
               >
                 Approve
               </CButton>

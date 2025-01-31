@@ -51,7 +51,7 @@ const StylistManagement = () => {
         description: '',
         price: '',
         image: null,
-        workHistory: [{ title: '', subtitle: '', workLocation: '', duration: '' }] // Adding work history as an array of objects
+        workHistory: [{ title: '', subtitle: '', workLocation: '', previous_experience: '', duration: '' }] // Adding work history as an array of objects
     });
 
 
@@ -62,7 +62,7 @@ const StylistManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/stylist/get-stylist`,
+            const response = await axios.get(`http://localhost:3555/api/stylist/get-all-stylist-admin`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -80,7 +80,7 @@ const StylistManagement = () => {
     const addWorkHistory = () => {
         setFormData((prevData) => ({
             ...prevData,
-            workHistory: [...prevData.workHistory, { title: '', subtitle: '', workLocation: '', duration: '' }],
+            workHistory: [...prevData.workHistory, { title: '', subtitle: '', workLocation: '', previous_experience: '', duration: '' }],
         }));
     };
 
@@ -120,7 +120,7 @@ const StylistManagement = () => {
                 image: imageUrl,
                 workHistory: formData.workHistory, // Include work history
             };
-            await axios.post('http://44.196.64.110:3555/api/stylist/add-stylist', newStylist);
+            await axios.post('http://localhost:3555/api/stylist/add-stylist', newStylist);
             setVisible(false);
             resetFormData();
             fetchData(); // Re-fetch after adding a stylist
@@ -168,7 +168,7 @@ const StylistManagement = () => {
             description: '',
             price: '',
             image: null,
-            workHistory: [{ title: '', subtitle: '', workLocation: '', duration: '' }],
+            workHistory: [{ title: '', subtitle: '', workLocation: '', previous_experience: '', duration: '' }],
         });
     };
 
@@ -384,6 +384,13 @@ const StylistManagement = () => {
                                         label="Work Location"
                                         value={history.workLocation}
                                         onChange={(e) => handleWorkHistoryChange(index, 'workLocation', e.target.value)}
+                                    />
+                                    <CFormInput
+                                        type="text"
+                                        id={`previous_experience-${index}`}
+                                        label="Previous Experience Description"
+                                        value={history.previous_experience}
+                                        onChange={(e) => handleWorkHistoryChange(index, 'previous_experience', e.target.value)}
                                     />
                                     <CFormInput
                                         type="text"
