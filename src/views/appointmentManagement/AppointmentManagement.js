@@ -17,7 +17,7 @@ import {
 import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faTrash, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 
 const AppointmentManagement = () => {
@@ -33,13 +33,14 @@ const AppointmentManagement = () => {
   const [userData, setUserData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false)
 
+
   useEffect(() => {
     fetchAppointments();
     fetchData();
   }, []);
 
   useEffect(() => {
-    if (selectedStylist) {      
+    if (selectedStylist) {
       fetchStylistDetails(selectedStylist);
     }
   }, [selectedStylist])
@@ -108,9 +109,11 @@ const AppointmentManagement = () => {
 
   const handleDelete = async (userId, appointmentId) => {
     try {
-
-      await axios.delete(`http://localhost:3555/api/appointment/delete-appointment/${appointmentId}`)
-      handleView(userId);
+      const confirmDelete = window.confirm('Are you sure you want to delete this appointment?');
+      if (confirmDelete) {
+        await axios.delete(`http://localhost:3555/api/appointment/delete-appointment/${appointmentId}`)
+        handleView(userId);
+      }
     }
     catch (err) {
       console.error("Error deleting the appointment:", err.message);
@@ -147,6 +150,26 @@ const AppointmentManagement = () => {
       setLoading(false);
     }
   }
+
+  // const handleAction = async (userId, id, currentStatus) => {
+  //   try {
+  //     const newStatus = currentStatus === 'approved' ? 'pending' : 'approved'; // Toggle status
+
+  //     await axios.put(`http://localhost:3555/api/appointment/approve-appointment/${userId}`, {
+  //       appointmentId: id,
+  //       approveStatus: newStatus
+  //     });
+
+  //     handleView(userId);
+
+
+  //     toast.success(`Appointment ${newStatus === 'approved' ? 'approved' : 'set to pending'}`);
+  //     fetchData(); // Refresh data
+  //   } catch (error) {
+  //     console.error('Error updating appointment status:', error);
+  //     toast.error('Failed to update appointment status.');
+  //   }
+  // };
 
   return (
     <div>
@@ -225,8 +248,26 @@ const AppointmentManagement = () => {
                     <CTableDataCell style={{ textAlign: 'center' }}>
                       {appointment.approvedByStylist === 'pending' && (
                         <>
+                          <CTableDataCell style={{ textAlign: 'center' }}>
+                            {/* <div
+                              className="form-check form-switch"
+                              style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                            >
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                id={`flexSwitchCheckChecked-${appointment._id}`}
+                                checked={appointment.approvedByStylist === 'approved'}
+                                onChange={() => handleAction(appointment.user._id, appointment._id, appointment.approvedByStylist)}
+                                style={{
+                                  backgroundColor: appointment.approvedByStylist === 'approved' ? 'green' : ''
+                                }}
+                              />
+                            </div> */}
+                          </CTableDataCell>
+
                           <CButton
-                            color="success"
                             size="sm"
                             className="me-2"
                             onClick={() => {
@@ -234,32 +275,46 @@ const AppointmentManagement = () => {
                               setActionModal(true);
                             }}
                           >
-                            Approve
+                            <FontAwesomeIcon color="green" icon={faThumbsUp} /> {/* Thumbs Up for Approve */}
                           </CButton>
                           <CButton
-                            color="danger"
+
                             size="sm"
                             onClick={() => {
                               setSelectedAppointment(appointment);
                               setActionModal(true);
                             }}
                           >
-                            Decline
+                            <FontAwesomeIcon color="red" icon={faThumbsDown} />
                           </CButton>
                         </>
                       )}
                       <CButton
-                        color="danger"
                         size="sm"
                         onClick={() => {
                           // setSelectedAppointment(appointment);
                           // setActionModal(true);
                           handleDelete(appointment.user._id, appointment._id);
                         }}
-                      >
-                        Delete
+                      ><FontAwesomeIcon color="red" icon={faTrash} />
+
                       </CButton>
                     </CTableDataCell>
+                    {/* <CTableDataCell>
+                      <div className="form-check form-switch" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id={`flexSwitchCheckChecked-${user._id}`}
+                          checked={user.status === 'activated'}
+                          onChange={() => handleToggleStatus(user._id)}
+                          style={{
+                            backgroundColor: user.status === 'activated' ? 'green' : ''
+                          }}
+                        />
+                      </div>
+                    </CTableDataCell> */}
                   </CTableRow>
                 ))}
               </CTableBody>
@@ -294,13 +349,14 @@ const AppointmentManagement = () => {
                 color="success"
                 onClick={() => handleAction(selectedAppointment.user._id, selectedAppointment._id, 'approved')}
               >
-                Approve
+                <FontAwesomeIcon color="green" icon={faThumbsUp} /> {/* Thumbs Up for Approve */}
+
               </CButton>
               <CButton
                 color="danger"
                 onClick={() => handleAction(selectedAppointment._id, 'declined')}
               >
-                Decline
+                <FontAwesomeIcon color="red" icon={faThumbsDown} />
               </CButton>
               <CButton color="secondary" onClick={() => setActionModal(false)}>
                 Cancel
@@ -323,7 +379,7 @@ const AppointmentManagement = () => {
               <p>{error}</p>
             ) : stylistDetails ? (
               <div>
-                <img src={stylistDetails.profilePicture} alt={stylistDetails.name} width="150px" style={{ display: 'block', margin: '0 auto' }}  />
+                <img src={stylistDetails.profilePicture} alt={stylistDetails.name} width="150px" style={{ display: 'block', margin: '0 auto' }} />
                 <p><strong>Name:</strong> {stylistDetails.name}</p>
                 <p><strong>Email:</strong> {stylistDetails.email}</p>
                 <p><strong>Experience:</strong> {stylistDetails.experience} years</p>

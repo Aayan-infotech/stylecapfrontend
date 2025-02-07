@@ -100,10 +100,14 @@ const UserManagement = () => {
 
     const handleDelete = async (id, userName) => {
         const confirmDelete = window.confirm(`Are you sure you want to delete user: ${userName}?`);
-
         if (confirmDelete) {
             try {
-                await axios.delete(`http://44.196.64.110:3555/api/user/delete/${id}`);
+                const token = localStorage.getItem('token');
+                await axios.delete(`http://44.196.64.110:3555/api/user/delete/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 toast.success(`${userName} has been deleted successfully.`);
                 fetchData();
             } catch (error) {
@@ -144,10 +148,10 @@ const UserManagement = () => {
                 <CTableHead>
                     <CTableRow color='primary'>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Name</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Email</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Age</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{ }}>Name</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{ }}>Email</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{ }}>Age</CTableHeaderCell>
+                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell> */}
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
@@ -156,10 +160,10 @@ const UserManagement = () => {
                         userData.map((user, index) => (
                             <CTableRow key={user.id}>
                                 <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>{user.firstName}</CTableDataCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>{user.email}</CTableDataCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>{user.age}</CTableDataCell>
-                                <CTableDataCell>
+                                <CTableDataCell style={{ }}>{user.firstName}</CTableDataCell>
+                                <CTableDataCell style={{ }}>{user.email}</CTableDataCell>
+                                <CTableDataCell style={{ }}>{user.age}</CTableDataCell>
+                                {/* <CTableDataCell>
                                     <div className="form-check form-switch" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                         <input
                                             className="form-check-input"
@@ -173,7 +177,7 @@ const UserManagement = () => {
                                             }}
                                         />
                                     </div>
-                                </CTableDataCell>
+                                </CTableDataCell> */}
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
                                         title="View" onClick={() => handleView(user._id)}>

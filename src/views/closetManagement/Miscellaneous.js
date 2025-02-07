@@ -70,7 +70,7 @@ const miscellaneous = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setMiscellaneousData(response.data);
+      setMiscellaneousData(response.data.data);
       setViewMiscellaneous(true);
 
     } catch (error) {
@@ -134,52 +134,6 @@ const miscellaneous = () => {
 
   return (
     <div>
-      {/* <CTable responsive>
-        <CTableHead color='primary'>
-          <CTableRow>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">#</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Image</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Brand</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Type</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Color</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Season</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Purchase Date</CTableHeaderCell>
-            <CTableHeaderCell style={{ textAlign: 'center' }} scope="col">Actions</CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
-          {data.map((accessories, index) => (
-            <CTableRow key={index}>
-              <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>
-                {accessories.picture ? (
-                  <img src={accessories.picture} alt="shoe" width="50" height="50" />
-                ) : (
-                  'No Image Available'
-                )}
-              </CTableDataCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>{accessories.brand}</CTableDataCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>{accessories.typesOfCloths}</CTableDataCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>{accessories.color}</CTableDataCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>{accessories.season}</CTableDataCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>
-                {accessories.purchaseDate
-                  ? new Date(accessories.purchaseDate).toLocaleDateString()
-                  : 'No Date Available'}
-              </CTableDataCell>
-              <CTableDataCell style={{ textAlign: 'center' }}>
-                <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchaccessoriesData(accessories._id)}>
-                  <FontAwesomeIcon icon={faEye} color='blue' />
-                </button>
-                <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(accessories)}>
-                  <FontAwesomeIcon icon={faEdit} color='green' />
-                </button>
-              </CTableDataCell>
-            </CTableRow>
-          ))}
-        </CTableBody>
-      </CTable> */}
-
       <CTable responsive>
         <CTableHead color='primary'>
           <CTableRow color='primary'>
@@ -247,7 +201,7 @@ const miscellaneous = () => {
                         : 'No Date Available'}
                     </CTableDataCell>
                     <CTableDataCell style={{ textAlign: 'center' }}>
-                      <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchShoesData(shoes._id)}>
+                      <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchaccessoriesData(shoes._id)}>
                         <FontAwesomeIcon icon={faEye} color='blue' />
                       </button>
                       <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(shoes)}>

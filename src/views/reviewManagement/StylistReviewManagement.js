@@ -102,7 +102,6 @@ const ReviewManagement = () => {
                                             size="sm"
                                             onClick={() => handleDelete(filteredReview._id)}
                                         >
-                                            <FontAwesomeIcon icon={faTrash} />
                                         </CButton>
                                     </CTableDataCell>
                                 </CTableRow>
