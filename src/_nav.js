@@ -66,12 +66,12 @@ const _nav = [
       },
     ],
   },
-  {
-    component: CNavItem,
-    name: 'Subscription Management',
-    to: '/subscriptionManagement',
-    icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
-  },
+  // {
+  //   component: CNavItem,
+  //   name: 'Subscription Management',
+  //   to: '/subscriptionManagement',
+  //   icon: <FontAwesomeIcon icon={faStar} style={{ color: 'brown' }} className="nav-icon" />,
+  // },
   {
     component: CNavItem,
     name: 'Appointment Management',

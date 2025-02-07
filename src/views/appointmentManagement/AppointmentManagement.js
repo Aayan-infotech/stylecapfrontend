@@ -25,19 +25,29 @@ const AppointmentManagement = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [selectedAppointment, setSelectedAppointment] = useState(null); // For modal
   const [userAppointmentData, setUserAppointmentData] = useState([]);
+  const [selectedStylist, setSelectedStylist] = useState(null);
+  const [stylistDetails, setStylistDetails] = useState(null);
   const [visibleModel, setVisibleModel] = useState(false);
   const [actionModal, setActionModal] = useState(false); // Toggle modal
+  const [error, setError] = useState(null);
   const [userData, setUserData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false)
 
   useEffect(() => {
     fetchAppointments();
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (selectedStylist) {      
+      fetchStylistDetails(selectedStylist);
+    }
+  }, [selectedStylist])
+
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
+      const response = await axios.get(`http://localhost:3555/api/user/`, {
         headers: {
           // 'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -52,7 +62,7 @@ const AppointmentManagement = () => {
   const handleView = async (userId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://44.196.64.110:3555/api/appointment/get-appointment/${userId}`,
+      const response = await axios.get(`http://localhost:3555/api/appointment/get-appointment/${userId}`,
         {
 
           headers: {
@@ -62,8 +72,6 @@ const AppointmentManagement = () => {
         }
       )
       setUserAppointmentData(response.data.data);
-      console.log('userAppointmentData', userAppointmentData);
-
       setVisibleModel(true);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -74,7 +82,7 @@ const AppointmentManagement = () => {
   const fetchAppointments = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://44.196.64.110:3555/api/appointment/get-appointment?userId=${id}`);
+      const response = await axios.get(`http://localhost:3555/api/appointment/get-appointment?userId=${id}`);
       setAppointments(response.data.data); // Update appointments
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -86,7 +94,7 @@ const AppointmentManagement = () => {
   // Handle approve or decline actions
   const handleAction = async (userId, id, action) => {
     try {
-      await axios.put(`http://44.196.64.110:3555/api/appointment/approve-appointment/${userId}`, {
+      await axios.put(`http://localhost:3555/api/appointment/approve-appointment/${userId}`, {
         appointmentId: id,
         approveStatus: action
       });
@@ -101,7 +109,7 @@ const AppointmentManagement = () => {
   const handleDelete = async (userId, appointmentId) => {
     try {
 
-      await axios.delete(`http://44.196.64.110:3555/api/appointment/delete-appointment/${appointmentId}`)
+      await axios.delete(`http://localhost:3555/api/appointment/delete-appointment/${appointmentId}`)
       handleView(userId);
     }
     catch (err) {
@@ -110,8 +118,34 @@ const AppointmentManagement = () => {
   }
 
   const handleOpenModal = (appointment) => {
-    setSelectedStylist(appointment.stylist?._id);
+    if (appointment?.stylist) {
+      setSelectedStylist(appointment.stylist?._id);
+    }
     setModalVisible(true);
+  }
+
+  const fetchStylistDetails = async (stylistId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:3555/api/stylist/stylist-profile/${stylistId}`,
+        {
+
+          headers: {
+            // 'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      setStylistDetails(response.data.stylist);
+    }
+    catch (error) {
+      setError(error.message)
+    }
+    finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -179,7 +213,7 @@ const AppointmentManagement = () => {
                     <CTableDataCell style={{ textAlign: 'center' }}>
                       {appointment.user?.firstName || 'N/A'}
                     </CTableDataCell>
-                    <CTableDataCell style={{ textAlign: 'center' }} onClick={() => handleOpenModal(appointment)}>
+                    <CTableDataCell style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => handleOpenModal(appointment)}>
                       {appointment.stylist?.name || 'N/A'}
                     </CTableDataCell>
                     <CTableDataCell style={{ textAlign: 'center' }}>
@@ -275,6 +309,32 @@ const AppointmentManagement = () => {
           </CModal>
         )
       }
+
+      {/* Modal for stylist details */}
+      {modalVisible && (
+        <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+          <CModalHeader>
+            <CModalTitle>Stylist Details</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p>{error}</p>
+            ) : stylistDetails ? (
+              <div>
+                <img src={stylistDetails.profilePicture} alt={stylistDetails.name} width="150px" style={{ display: 'block', margin: '0 auto' }}  />
+                <p><strong>Name:</strong> {stylistDetails.name}</p>
+                <p><strong>Email:</strong> {stylistDetails.email}</p>
+                <p><strong>Experience:</strong> {stylistDetails.experience} years</p>
+              </div>
+            ) : (
+              <p>No details available</p>
+            )}
+          </CModalBody>
+        </CModal>
+      )}
+
     </div >
   );
 };

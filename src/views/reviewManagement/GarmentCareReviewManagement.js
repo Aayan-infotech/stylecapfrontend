@@ -97,8 +97,15 @@ const ReviewManagement = () => {
                                     <CTableDataCell style={{ textAlign: 'center' }}>
                                         {filteredReview.reviewerId?.firstName || "null"}
                                     </CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>
+                                    {/* <CTableDataCell style={{ textAlign: 'center' }}>
                                         {filteredReview.ratings}
+                                    </CTableDataCell> */}
+                                    <CTableDataCell style={{ textAlign: 'center' }}>
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                            <span key={index} style={{ color: index < filteredReview.ratings ? 'gold' : 'lightgray', fontSize: '24px' }}>
+                                                {index < filteredReview.ratings ? '★' : '☆'}
+                                            </span>
+                                        ))}
                                     </CTableDataCell>
                                     <CTableDataCell style={{ textAlign: 'center' }}>
                                         {filteredReview.createdAt.split('T')[0]}

@@ -27,6 +27,9 @@ import {
     CFormTextarea,
     CTooltip
 } from '@coreui/react';
+import { Lock, Unlock } from "lucide-react"; // Import lock icons
+import { FaLock, FaLockOpen, FaTrash } from "react-icons/fa";
+
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -41,6 +44,9 @@ const StylistManagement = () => {
     const [editVisible, setEditVisible] = useState();
     const [error, setError] = useState();
     const [selectedFile, setSelectedFile] = useState(null);
+    const [stylistDetails, setStylistDetails] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -58,6 +64,12 @@ const StylistManagement = () => {
     useEffect(() => {
         fetchData();
     }, [])
+
+    useEffect(() => {
+        if (selectedStylist) {
+            fetchStylistDetails(selectedStylist);
+        }
+    }, [selectedStylist])
 
     const fetchData = async () => {
         try {
@@ -184,7 +196,7 @@ const StylistManagement = () => {
     const handleApprove = async (stylistId) => {
         try {
             const response = await axios.post(`http://44.196.64.110:3555/api/stylist/approve/${stylistId}`)
-            alert(response.data.message); // Display success message
+            // alert(response.data.message); // Display success message
             setStylist((prevStylists) =>
                 prevStylists.map((stylist) =>
                     stylist._id === stylistId ? { ...stylist, approved: !stylist.approved } : stylist
@@ -248,9 +260,63 @@ const StylistManagement = () => {
         }
     };
 
+    const handleOpenModal = (stylist) => {
+        if (stylist?._id) {
+            setSelectedStylist(stylist._id);
+        }
+        setModalVisible(true);
+    }
+
+    const fetchStylistDetails = async (stylistId) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:3555/api/stylist/stylist-profile/${stylistId}`,
+                {
+
+                    headers: {
+                        // 'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+            setStylistDetails(response.data.stylist);
+        }
+        catch (error) {
+            setError(error.message)
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    // delete stylist
+    const handleDelete = async (stylistId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this stylist?');
+        const token = localStorage.getItem('token')
+        try{
+            await axios.delete(`http://localhost:3555/api/stylist/delete-stylist/${stylistId}`, 
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            fetchData();
+        }
+        catch(error){
+            console.error(error);
+        }
+    }
+
+
     return (
         <div>
-            <CButton color="primary" onClick={() => setVisible(true)}>Add Stylist</CButton>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h5 style={{ margin: 0 }}>Stylist Management</h5>
+                <CButton color="primary" onClick={() => setVisible(true)}>Add Stylist</CButton>
+            </div>
             <CTable responsive>
                 <CTableHead>
                     <CTableRow color='primary'>
@@ -278,7 +344,7 @@ const StylistManagement = () => {
                                     />
                                 </CTableDataCell>
 
-                                <CTableDataCell style={{ textAlign: 'center' }}>{stylist.name}</CTableDataCell>
+                                <CTableDataCell style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => handleOpenModal(stylist)}>{stylist.name}</CTableDataCell>
                                 {/* <CTableDataCell style={{ textAlign: 'center' }}>{stylist.email}</CTableDataCell> */}
                                 <CTableDataCell>
                                     {stylist.approved ? (
@@ -311,12 +377,15 @@ const StylistManagement = () => {
                                 <CTableDataCell>
                                     <CTooltip content={stylist.approved ? "Disapprove" : "Approve"}>
                                         <CButton
-                                            // color={stylist.approved ? "danger" : "success"}
                                             onClick={() => handleApprove(stylist._id)}
+                                            style={{ transition: "0.3s ease-in-out" }} // Smooth transition
                                         >
-                                            {stylist.approved ? "❌" : "✅"}
+                                            {stylist.approved ? <Lock size={20} /> : <Unlock size={20} />}
                                         </CButton>
                                     </CTooltip>
+                                    <CButton  onClick={() => handleDelete(stylist._id)}>
+                                        <FaTrash color="red" size={16} />
+                                    </CButton>
                                 </CTableDataCell>
 
                             </CTableRow>
@@ -530,6 +599,44 @@ const StylistManagement = () => {
                     </CForm>
                 </CModalBody>
             </CModal>
+
+            {/* Modal for stylist details */}
+            {modalVisible && (
+                <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+                    <CModalHeader>
+                        <CModalTitle>Stylist Details</CModalTitle>
+                    </CModalHeader>
+                    <CModalBody>
+                        {loading ? (
+                            <p>Loading...</p>
+                        ) : error ? (
+                            <p>{error}</p>
+                        ) : stylistDetails ? (
+                            <div>
+                                <img src={stylistDetails.profilePicture} alt={stylistDetails.name} width="150px" style={{ display: 'block', margin: '0 auto' }} />
+                                <p><strong>Name:</strong> {stylistDetails.name}</p>
+                                <p><strong>Email:</strong> {stylistDetails.email}</p>
+                                <p><strong>Description:</strong> {stylistDetails.description} </p>
+                                <p><strong>Specialization:</strong> {stylistDetails.specialization.join(", ")} </p>
+                                <p><strong>Location:</strong> {stylistDetails.location} </p>
+                                <p><strong>Work History:</strong></p>
+                                <ul>
+                                    {stylistDetails.workHistory.map((history, index) => (
+                                        <li>
+                                            <strong>{history.title}</strong> -{history.subtitle} ({history.duration})
+                                            <br />
+                                            <span>{history.previous_experience}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                            </div>
+                        ) : (
+                            <p>No details available</p>
+                        )}
+                    </CModalBody>
+                </CModal>
+            )}
 
         </div>
     )
