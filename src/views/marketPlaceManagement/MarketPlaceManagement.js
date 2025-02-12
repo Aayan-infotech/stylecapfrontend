@@ -41,9 +41,9 @@ const AdminPanel = () => {
           <CTabPane visible={activeTab === 0}>
             <MarketplaceTab />
           </CTabPane>
-          <CTabPane visible={activeTab === 1}>
+          {/* <CTabPane visible={activeTab === 1}>
             <CategoryTab />
-          </CTabPane>
+          </CTabPane> */}
           <CTabPane visible={activeTab === 2}>
             <SubcategoryTab />
           </CTabPane>

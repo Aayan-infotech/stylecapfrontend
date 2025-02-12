@@ -32,7 +32,7 @@ const ContactUsManagement = () => {
 
     const fetchContactUsData = async () => {
         try {
-            const response = await axios.get("http://localhost:3555/api/contact/get-all-query"); // Update API URL as needed
+            const response = await axios.get("http://44.196.64.110:3555/api/contact/get-all-query"); // Update API URL as needed
             setContactData(response.data.data);
             setLoading(false);
         } catch (error) {
@@ -61,7 +61,7 @@ const ContactUsManagement = () => {
 
     const handleSendReply = async (contact) => {
         try {
-            const response = await axios.post("http://localhost:3555/api/contact/reply-query", {
+            const response = await axios.post("http://44.196.64.110:3555/api/contact/reply-query", {
                 queryId: contact._id,
                 replyMessage: contact.replyMessage,
             });

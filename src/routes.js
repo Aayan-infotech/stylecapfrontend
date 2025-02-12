@@ -18,6 +18,8 @@ const StylistReviewManagement = React.lazy( () => import('./views/reviewManageme
 const GarmentCareReviewManagement = React.lazy( () => import('./views/reviewManagement/GarmentCareReviewManagement'))
 const MyStyleCapsuleEntity = React.lazy( () => import('./views/myStyleCapsule/MyStyleCapsuleEntity'))
 const ContactUs = React.lazy( () => import('./views/contactUsManagement/ContactUsManagement'))
+const OrderManagement = React.lazy( () => import('./views/orderManagement/OrderManagement'))
+
 // const Check = React.lazy(()=> import('./views/closetManagement/Check'))
 // const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
 // const CommunicationSupport = React.lazy(() => import('./views/communication&Support/Communication&Support'))
@@ -87,6 +89,7 @@ const routes = [
   { path: '/reviewManagement/garmentCare', name: 'GarmentCareReviewManagement', element: GarmentCareReviewManagement },
   { path: '/myStyleCapsuleEntity', name: 'MyStyleCapsuleEntity', element: MyStyleCapsuleEntity },
   { path: '/contactUsManagement', name: 'ContactUs', element: ContactUs },
+  { path: '/orderManagement', name: 'OrderManagement', element: OrderManagement },
   // { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
   // { path: '/oversight', name: 'Oversight', element: Oversight },
   // { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },

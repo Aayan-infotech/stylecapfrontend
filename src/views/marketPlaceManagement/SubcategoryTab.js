@@ -41,6 +41,7 @@ const SubcategoryManagement = () => {
         price: '',
         discount: '',
         brand: '',
+        quantityStock: '',
         image: null,
     });
     const [error, setError] = useState(null);
@@ -99,7 +100,7 @@ const SubcategoryManagement = () => {
 
     const handleAddSubcategory = async (e) => {
         e.preventDefault();
-    
+
         const form = new FormData();
         form.append("name", formData.name);
         form.append("sellType", formData.sellType);
@@ -107,44 +108,46 @@ const SubcategoryManagement = () => {
         form.append("price", formData.price);
         form.append("brand", formData.brand);
         form.append("discount", formData.discount);
+
         form.append("marketplaceId", formData.marketplaceId);
         if (selectedFile) form.append("image", selectedFile); // Attach image file
-    
+
         try {
-          const response = await axios.post(
-            "http://44.196.64.110:3555/api/marketPlaceSubcat/add",
-            form,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+            const response = await axios.post(
+                "http://44.196.64.110:3555/api/marketPlaceSubcat/add",
+                form,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            if (response.data.success) {
+                setVisible(false);
             }
-          );
 
-          if(response.data.success){
-            setVisible(false);
-          }
+            fetchSubcategories();
 
-          fetchSubcategories();
-    
-          setResponseMessage(response.data.message || "Subcategory added successfully!");
-          // Optionally, reset form and fetch data after successful submission
-          setFormData({
-            name: "",
-            sellType: "",
-            description: "",
-            price: "",
-            brand: "",
-            discount: "",
-            marketplaceId: "",
-          });
-          setSelectedFile(null);
+            setResponseMessage(response.data.message || "Subcategory added successfully!");
+            // Optionally, reset form and fetch data after successful submission
+            setFormData({
+                name: "",
+                sellType: "",
+                description: "",
+                price: "",
+                brand: "",
+                discount: "",
+                quantityStock: '',
+                marketplaceId: "",
+            });
+            setSelectedFile(null);
         } catch (error) {
-          setResponseMessage(error.response?.data?.message || "An error occurred");
+            setResponseMessage(error.response?.data?.message || "An error occurred");
         }
-      };
+    };
 
-      
+
     const handleEdit = (subcategory) => {
         setSelectedSubcategory(subcategory);
         setFormData({
@@ -155,6 +158,7 @@ const SubcategoryManagement = () => {
             price: subcategory.price || '',
             discount: subcategory.discount || '',
             brand: subcategory.brand || '',
+            quantityStock: subcategory.quantityStock || '',
             image: subcategory.image || null,
         });
         setEditVisible(true);
@@ -173,6 +177,7 @@ const SubcategoryManagement = () => {
                 price: formData.price,
                 discount: formData.discount,
                 brand: formData.brand,
+                quantityStock: formData.quantityStock,
                 image: imageUrl,
             };
             await axios.put(`http://44.196.64.110:3129/api/marketplacesubcat/update/${_id}`, updatedSubcategory);
@@ -203,7 +208,7 @@ const SubcategoryManagement = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-      };
+    };
 
     // const handleFileChange = (e) => {
     //     const file = e.target.files[0];
@@ -212,7 +217,7 @@ const SubcategoryManagement = () => {
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
-      };
+    };
 
     const resetFormData = () => {
         setFormData({
@@ -223,6 +228,7 @@ const SubcategoryManagement = () => {
             price: '',
             discount: '',
             brand: '',
+            quantityStock: '',
             image: null,
         });
     };
@@ -319,6 +325,9 @@ const SubcategoryManagement = () => {
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="brand" name='brand' label="Brand" value={formData.brand} onChange={handleInputChange} required />
+                        </CCol>
+                        <CCol md={12}>
+                            <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />

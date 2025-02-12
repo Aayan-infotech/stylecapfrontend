@@ -125,6 +125,12 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: 'Order Management',
+    to: '/orderManagement',
+    icon: <FontAwesomeIcon icon={faUser} style={{ color: 'green' }} className="nav-icon" />,
+  },
+  {
+    component: CNavItem,
     name: 'Contact Us',
     to: '/contactUsManagement',
     icon: <FontAwesomeIcon icon={faPuzzlePiece} style={{ color: 'brown' }} className="nav-icon" />,

@@ -195,23 +195,7 @@ const StyleCapsuleManagement = () => {
                                 {userClothsData.map((cloths, index) => (
                                     <CTableRow key={index}>
                                         <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                                        {/* <CTableDataCell style={{ textAlign: 'center' }}>
-                                        {cloths.picture ? (
-                                            <img src={cloths.picture} alt="shoe" width="50" height="50" />
-                                        ) : (
-                                            'No Image Available'
-                                        )}
-                                    </CTableDataCell> */}
                                         <CTableDataCell style={{ textAlign: 'center' }}>{cloths.date}</CTableDataCell>
-                                        {/* <CTableDataCell style={{ textAlign: 'center' }}>{cloths.brand}</CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.typesOfCloths}</CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.color}</CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>{cloths.season}</CTableDataCell>
-                                    <CTableDataCell style={{ textAlign: 'center' }}>
-                                        {cloths.purchaseDate
-                                            ? new Date(cloths.purchaseDate).toLocaleDateString()
-                                            : 'No Date Available'}
-                                    </CTableDataCell> */}
                                         <CTableDataCell style={{ textAlign: 'center' }}>
                                             <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchStyleData(cloths.date)}>
                                                 <FontAwesomeIcon icon={faEye} color='blue' />
@@ -287,17 +271,6 @@ const StyleCapsuleManagement = () => {
                                         ))
                                     ) : (
                                         <CCol xs="12" className="text-center">
-                                            {/* <img
-                                                src="https://via.placeholder.com/150"
-                                                alt="No Cloth Found"
-                                                style={{
-                                                    maxWidth: '100%',
-                                                    maxHeight: '300px',
-                                                    objectFit: 'cover',
-                                                    borderRadius: '10px',
-                                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                                                }}
-                                            /> */}
                                             <p>No style found for the date!</p>
                                         </CCol>
                                     )}

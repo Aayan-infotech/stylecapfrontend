@@ -27,17 +27,19 @@ import {
     CFormTextarea,
     CTooltip
 } from '@coreui/react';
-import { Lock, Unlock } from "lucide-react"; // Import lock icons
 import { FaLock, FaLockOpen, FaTrash } from "react-icons/fa";
-
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { height } from '@fortawesome/free-solid-svg-icons/fa0';
+import { Lock, Unlock, Eye } from "lucide-react";
 import axios from 'axios';
+import ChatBox from '../../chatBox/chatBox'
+import { database } from "../../firebase/firebaseConfig"; // Firebase config
+import { ref, push, onValue } from "firebase/database";
 
 const StylistManagement = () => {
 
+    const adminId = "ADMIN"
     const [stylist, setStylist] = useState([]);
     const [selectedStylist, setSelectedStylist] = useState();
     const [visible, setVisible] = useState(false);
@@ -46,7 +48,13 @@ const StylistManagement = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [stylistDetails, setStylistDetails] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [chatHistory, setChatHistory] = useState([]); // Stores fetched messages
+    const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
     const [loading, setLoading] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [chatPath, setChatPath] = useState();
+    const chatRef = ref(database, chatPath); // Firebase path for this stylist or a default chat
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -272,7 +280,7 @@ const StylistManagement = () => {
         setError(null);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3555/api/stylist/stylist-profile/${stylistId}`,
+            const response = await axios.get(`http://44.196.64.110:3555/api/stylist/stylist-profile/${stylistId}`,
                 {
 
                     headers: {
@@ -295,20 +303,60 @@ const StylistManagement = () => {
     const handleDelete = async (stylistId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this stylist?');
         const token = localStorage.getItem('token')
-        try{
-            await axios.delete(`http://localhost:3555/api/stylist/delete-stylist/${stylistId}`, 
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
+        try {
+            if (confirmDelete) {
+                await axios.delete(`http://44.196.64.110:3555/api/stylist/delete-stylist/${stylistId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
                     }
-                }
-            );
+                );
+            }
             fetchData();
         }
-        catch(error){
+        catch (error) {
             console.error(error);
         }
     }
+
+
+    const handleChat = (stylistId) => {
+        if (!messages[stylistId]) {
+            setMessages((prev) => ({ ...prev, [stylistId]: "" })); // Initialize empty chat if not present
+        }
+    };
+
+    const sendMessage = (e, stylistId) => {
+        if (e.key === "Enter" && messages[stylistId].trim() !== "") {
+            console.log("Sending message:", messages[stylistId]);
+
+            // Send to Firebase Realtime Database
+            const chatRef = ref(database, `chats/${stylistId}`);
+            push(chatRef, { message: messages[stylistId], timestamp: Date.now() });
+
+            // Clear input after sending
+            setMessages((prev) => ({ ...prev, [stylistId]: "" }));
+        }
+    };
+
+    const fetchChatHistory = (stylistId) => {
+        setSelectedStylist(stylistId);
+        const chatRef = ref(database, `chats/${stylistId}`);
+
+        onValue(chatRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const chatArray = Object.values(data);
+                setChatHistory(chatArray);
+            } else {
+                setChatHistory([]); // Empty if no messages
+            }
+        });
+
+        setIsModalOpen(true);
+    };
+
 
 
     return (
@@ -326,9 +374,9 @@ const StylistManagement = () => {
                         {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Email</CTableHeaderCell> */}
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Phone No.</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Communicate</CTableHeaderCell>
+                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Communicate</CTableHeaderCell> */}
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Performance</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{ paddingLeft: '1.5%' }}>Actions</CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -344,9 +392,28 @@ const StylistManagement = () => {
                                     />
                                 </CTableDataCell>
 
-                                <CTableDataCell style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => handleOpenModal(stylist)}>{stylist.name}</CTableDataCell>
+                                <CTableDataCell
+                                    style={{
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        color: 'black',
+                                        transition: 'color 0.3s ease-in-out'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = 'blue';
+                                        e.target.style.textDecoration = 'underline';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = 'black';
+                                        e.target.style.textDecoration = 'none';
+                                    }}
+                                    onClick={() => handleOpenModal(stylist)}
+                                >
+                                    {stylist.name}
+                                </CTableDataCell>
+
                                 {/* <CTableDataCell style={{ textAlign: 'center' }}>{stylist.email}</CTableDataCell> */}
-                                <CTableDataCell>
+                                <CTableDataCell style={{ textAlign: 'center' }}>
                                     {stylist.approved ? (
                                         <span className="text-success">Approved</span>
                                     ) : (
@@ -354,10 +421,16 @@ const StylistManagement = () => {
                                     )}
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{stylist.phone}</CTableDataCell>
-                                <CTableDataCell style={{ textAlign: 'center' }}>
+                                {/* <CTableDataCell style={{ textAlign: 'center' }}>
                                     <input
                                         type="text"
+                                        value={messages[stylist._id] || ""} // Use separate state for each stylist
+                                        onChange={(e) =>
+                                            setMessages((prev) => ({ ...prev, [stylist._id]: e.target.value }))
+                                        }
+                                        onKeyPress={(e) => sendMessage(e, stylist._id)} // Pass stylist ID to sendMessage
                                         placeholder="Type a message..."
+                                        onClick={() => handleChat(stylist._id)} // Ensure chat initializes
                                         style={{
                                             width: '80%',
                                             padding: '0.5rem',
@@ -366,7 +439,14 @@ const StylistManagement = () => {
                                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                                         }}
                                     />
-                                </CTableDataCell>
+                                    <CButton
+                                        className="p-0"
+                                        onClick={() => fetchChatHistory(stylist._id)}
+                                    >
+                                        <Eye size={15} />
+                                    </CButton>
+                                </CTableDataCell> */}
+
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     {Array.from({ length: 5 }, (_, index) => (
                                         <span key={index} style={{ color: index < stylist.ratings ? 'gold' : 'lightgray', fontSize: '24px' }}>
@@ -374,18 +454,26 @@ const StylistManagement = () => {
                                         </span>
                                     ))}
                                 </CTableDataCell>
-                                <CTableDataCell>
-                                    <CTooltip content={stylist.approved ? "Disapprove" : "Approve"}>
+                                <CTableDataCell style={{ textAlign: 'center' }}>
+
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <CTooltip content={stylist.approved ? "Disapprove" : "Approve"}>
+                                            <CButton
+                                                className="p-0"
+                                                onClick={() => handleApprove(stylist._id)}
+                                                style={{ transition: "0.3s ease-in-out" }} // Smooth transition
+                                            >
+                                                {stylist.approved ? <Lock size={15} /> : <Unlock size={15} />}
+                                            </CButton>
+                                        </CTooltip>
                                         <CButton
-                                            onClick={() => handleApprove(stylist._id)}
-                                            style={{ transition: "0.3s ease-in-out" }} // Smooth transition
-                                        >
-                                            {stylist.approved ? <Lock size={20} /> : <Unlock size={20} />}
+                                            className="p-0"
+                                            onClick={() => handleDelete(stylist._id)}>
+                                            <FaTrash color="red" size={16} />
                                         </CButton>
-                                    </CTooltip>
-                                    <CButton  onClick={() => handleDelete(stylist._id)}>
-                                        <FaTrash color="red" size={16} />
-                                    </CButton>
+                                        <ChatBox
+                                            stylist={stylist._id} />
+                                    </div>
                                 </CTableDataCell>
 
                             </CTableRow>
@@ -637,6 +725,26 @@ const StylistManagement = () => {
                     </CModalBody>
                 </CModal>
             )}
+
+            <CModal visible={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <CModalHeader>
+                    <CModalTitle>Chat with Stylist</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    {chatHistory.length > 0 ? (
+                        chatHistory.map((msg, index) => (
+                            <p key={index} style={{ padding: "5px", background: "#f5f5f5", borderRadius: "5px" }}>
+                                {msg.message}
+                            </p>
+                        ))
+                    ) : (
+                        <p>No messages yet.</p>
+                    )}
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={() => setIsModalOpen(false)}>Close</CButton>
+                </CModalFooter>
+            </CModal>
 
         </div>
     )

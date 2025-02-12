@@ -34,10 +34,9 @@ const App = () => {
     setColorMode(storedTheme)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // useTokenValidation(); // Activate continuous token checking
-
   return (
-    <BrowserRouter>
+    // <BrowserRouter>
+    <HashRouter>
       <Suspense
         fallback={
           <div className="pt-3 text-center">
@@ -56,7 +55,8 @@ const App = () => {
           </Route>
         </Routes>
       </Suspense>
-    </BrowserRouter>
+    </HashRouter>
+    //  </BrowserRouter> 
   )
 }
 

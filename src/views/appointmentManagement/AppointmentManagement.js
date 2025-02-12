@@ -48,7 +48,7 @@ const AppointmentManagement = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3555/api/user/`, {
+      const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
         headers: {
           // 'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -63,7 +63,7 @@ const AppointmentManagement = () => {
   const handleView = async (userId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3555/api/appointment/get-appointment/${userId}`,
+      const response = await axios.get(`http://44.196.64.110:3555/api/appointment/get-appointment/${userId}`,
         {
 
           headers: {
@@ -83,7 +83,7 @@ const AppointmentManagement = () => {
   const fetchAppointments = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3555/api/appointment/get-appointment?userId=${id}`);
+      const response = await axios.get(`http://44.196.64.110:3555/api/appointment/get-appointment?userId=${id}`);
       setAppointments(response.data.data); // Update appointments
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -95,7 +95,7 @@ const AppointmentManagement = () => {
   // Handle approve or decline actions
   const handleAction = async (userId, id, action) => {
     try {
-      await axios.put(`http://localhost:3555/api/appointment/approve-appointment/${userId}`, {
+      await axios.put(`http://44.196.64.110:3555/api/appointment/approve-appointment/${userId}`, {
         appointmentId: id,
         approveStatus: action
       });
@@ -111,7 +111,7 @@ const AppointmentManagement = () => {
     try {
       const confirmDelete = window.confirm('Are you sure you want to delete this appointment?');
       if (confirmDelete) {
-        await axios.delete(`http://localhost:3555/api/appointment/delete-appointment/${appointmentId}`)
+        await axios.delete(`http://44.196.64.110:3555/api/appointment/delete-appointment/${appointmentId}`)
         handleView(userId);
       }
     }
@@ -132,7 +132,7 @@ const AppointmentManagement = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3555/api/stylist/stylist-profile/${stylistId}`,
+      const response = await axios.get(`http://44.196.64.110:3555/api/stylist/stylist-profile/${stylistId}`,
         {
 
           headers: {
@@ -155,7 +155,7 @@ const AppointmentManagement = () => {
   //   try {
   //     const newStatus = currentStatus === 'approved' ? 'pending' : 'approved'; // Toggle status
 
-  //     await axios.put(`http://localhost:3555/api/appointment/approve-appointment/${userId}`, {
+  //     await axios.put(`http://44.196.64.110:3555/api/appointment/approve-appointment/${userId}`, {
   //       appointmentId: id,
   //       approveStatus: newStatus
   //     });
