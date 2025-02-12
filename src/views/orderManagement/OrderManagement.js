@@ -49,7 +49,7 @@ const OrderManagement = () => {
 
     const handleUpdateStatus = async (orderId, newStatus) => {
         try {
-            await axios.put(`http://44.196.64.110:3555/api/order/update-status/${orderId}`, { orderStatus: newStatus });
+            await axios.post(`http://44.196.64.110:3555/api/order/update-status/${orderId}`, { status: newStatus });
             fetchOrders();
         } catch (error) {
             console.error("Error updating order status:", error);
@@ -90,20 +90,23 @@ const OrderManagement = () => {
                                 <CButton color="info" size="sm" onClick={() => handleViewOrder(order)}>
                                     <Eye size={15} />
                                 </CButton>
-                                {order.orderStatus === "Delivered" ? (
-                                    <CTooltip content="Delivered">
-                                        <CheckCircle size={20} color="green" style={{ cursor: 'pointer' }} />
-                                    </CTooltip>
+                                {order.orderStatus === "delivered" ? (
+                                    <CButton className="p-2">
+                                        <CTooltip content="Delivered">
+                                            <CheckCircle size={20} color="green" style={{ cursor: 'pointer' }} />
+                                        </CTooltip>
+                                    </CButton>
+
                                 ) : (
-                                    <CButton color="warning" size="sm" onClick={() => handleUpdateStatus(order._id, "Shipped")}>
+                                    <CButton color="warning" size="sm" onClick={() => handleUpdateStatus(order._id, "delivered")}>
                                         <CTooltip content="Mark as Delivered">
                                             <PackageCheck size={20} color="green" style={{ cursor: 'pointer' }} />
                                         </CTooltip>
                                     </CButton>
                                 )}
-                                <CTooltip content="Cancel Order">
+                                {/* <CTooltip content="Cancel Order">
                                     <XCircle size={20} color="red" style={{ cursor: 'pointer' }} />
-                                </CTooltip>
+                                </CTooltip> */}
                             </CTableDataCell>
                         </CTableRow>
                     ))}
