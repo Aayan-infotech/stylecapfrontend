@@ -346,21 +346,19 @@ const AppointmentManagement = () => {
             </CModalBody>
             <CModalFooter>
               <CButton
-                color="success"
                 onClick={() => handleAction(selectedAppointment.user._id, selectedAppointment._id, 'approved')}
               >
                 <FontAwesomeIcon color="green" icon={faThumbsUp} /> {/* Thumbs Up for Approve */}
 
               </CButton>
               <CButton
-                color="danger"
                 onClick={() => handleAction(selectedAppointment._id, 'declined')}
               >
                 <FontAwesomeIcon color="red" icon={faThumbsDown} />
               </CButton>
-              <CButton color="secondary" onClick={() => setActionModal(false)}>
+              {/* <CButton color="secondary" onClick={() => setActionModal(false)}>
                 Cancel
-              </CButton>
+              </CButton> */}
             </CModalFooter>
           </CModal>
         )
