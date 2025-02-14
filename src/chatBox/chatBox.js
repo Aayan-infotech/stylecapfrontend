@@ -11,7 +11,7 @@ import {
 import { FaTrash, FaCommentDots } from "react-icons/fa";
 import { Lock, Unlock } from "lucide-react";
 import { database } from "../firebase/firebaseConfig"; // Firebase config
-import { ref, push, onValue } from "firebase/database";
+import { ref, push, onValue, off } from "firebase/database";
 
 const ChatBox = ({ stylist }) => {
     const [chatVisible, setChatVisible] = useState(false);
@@ -19,21 +19,23 @@ const ChatBox = ({ stylist }) => {
     const [newMessage, setNewMessage] = useState("");
 
     // const chatRef = ref(database, `chats/${stylist._id}`); // Firebase path for this stylist
-    const chatPath = stylist?._id ? `chats/${stylist._id}` : "chats/tempChat";
+    const chatPath = `chats/${stylist._id}`;
     const chatRef = ref(database, chatPath); // Firebase path for this stylist or a default chat
 
-    // Fetch messages from Firebase
-    useEffect(() => {
-        const unsubscribe = onValue(chatRef, (snapshot) => {
-            if (snapshot.exists()) {
-                setMessages(Object.values(snapshot.val()));
-            } else {
-                setMessages([]);
-            }
-        });
+   // Fetch messages from Firebase
+   useEffect(() => {
+    const unsubscribe = onValue(chatRef, (snapshot) => {
+        if (snapshot.exists()) {
+            setMessages(Object.values(snapshot.val()));
+        } else {
+            setMessages([]);
+        }
+    });
 
-        return () => unsubscribe();
-    }, [chatRef]);
+    return () => {
+        off(chatRef); // Detach listener on unmount
+    };
+}, [stylist?._id]);
 
     // Send a message
     const sendMessage = (e) => {
@@ -49,24 +51,12 @@ const ChatBox = ({ stylist }) => {
 
     return (
         <CTableDataCell>
-            {/* Approve / Disapprove Button */}
-            {/* <CTooltip content={stylist.approved ? "Disapprove" : "Approve"}>
-                <CButton onClick={() => handleApprove(stylist._id)} style={{ transition: "0.3s ease-in-out" }}>
-                    {stylist.approved ? <Lock size={20} /> : <Unlock size={20} />}
-                </CButton>
-            </CTooltip> */}
-
-            {/* Delete Button */}
-            {/* <CButton onClick={() => handleDelete(stylist._id)}>
-                <FaTrash color="red" size={16} />
-            </CButton> */}
-
             {/* Chat Button */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {/* Other icons here */}
-                <CButton style={{ padding: "5px", minWidth: "auto" }} 
-                                        className="p-0"
-                                        onClick={() => setChatVisible(true)}>
+                <CButton style={{ padding: "5px", minWidth: "auto" }}
+                    className="p-0"
+                    onClick={() => setChatVisible(true)}>
                     <FaCommentDots color="blue" size={16} />
                 </CButton>
             </div>

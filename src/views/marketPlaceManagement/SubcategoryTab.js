@@ -29,6 +29,7 @@ import { faEdit, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
 
 const SubcategoryManagement = () => {
     const [visible, setVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
     const [editVisible, setEditVisible] = useState(false);
     const [subcategories, setSubcategories] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -55,7 +56,7 @@ const SubcategoryManagement = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://44.196.64.110:3555/api/marketplaces/');
+            const response = await axios.get('http://localhost:3555/api/marketplaces/');
             setCategories(response.data.data);
             // console.log(response.data.data)
         } catch (error) {
@@ -66,7 +67,7 @@ const SubcategoryManagement = () => {
 
     const fetchSubcategories = async () => {
         try {
-            const response = await axios.get('http://44.196.64.110:3555/api/marketPlaceSubcat/get');
+            const response = await axios.get('http://localhost:3555/api/marketPlaceSubcat/get');
             setSubcategories(response.data.data);
         } catch (error) {
             setError('Error fetching subcategories');
@@ -88,7 +89,7 @@ const SubcategoryManagement = () => {
     //             brand: formData.brand,
     //             image: imageUrl,
     //         };
-    //         await axios.post(`http://44.196.64.110:3555/api/marketPlaceSubcat/add`, newSubcategory);
+    //         await axios.post(`http://localhost:3555/api/marketPlaceSubcat/add`, newSubcategory);
     //         setVisible(false);
     //         resetFormData();
     //         fetchSubcategories(); // Re-fetch subcategories
@@ -114,7 +115,7 @@ const SubcategoryManagement = () => {
 
         try {
             const response = await axios.post(
-                "http://44.196.64.110:3555/api/marketPlaceSubcat/add",
+                "http://localhost:3555/api/marketPlaceSubcat/add",
                 form,
                 {
                     headers: {
@@ -180,7 +181,15 @@ const SubcategoryManagement = () => {
                 quantityStock: formData.quantityStock,
                 image: imageUrl,
             };
-            await axios.put(`http://44.196.64.110:3129/api/marketplacesubcat/update/${_id}`, updatedSubcategory);
+            const token = localStorage.getItem('token');
+            await axios.put(`http://localhost:3555/api/marketplacesubcat/update-subcategory/${_id}`,
+                updatedSubcategory,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                },
+            );
             setEditVisible(false);
             resetFormData();
             fetchSubcategories(); // Fetch the latest data
@@ -192,7 +201,7 @@ const SubcategoryManagement = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://44.196.64.110:3555/api/marketPlaceSubcat/delete/${id}`);
+            await axios.delete(`http://localhost:3555/api/marketPlaceSubcat/delete/${id}`);
             setSubcategories(subcategories.filter(subcategory => subcategory._id !== id));
         } catch (error) {
             setError('Error deleting subcategory');
@@ -247,6 +256,11 @@ const SubcategoryManagement = () => {
         }
     };
 
+    const handleViewSubcategory = async (subcategory) => {
+        setSelectedSubcategory(subcategory);
+        setModalVisible(true);
+    }
+
     return (
         <>
             {error && <CAlert color="danger">{error}</CAlert>}
@@ -279,11 +293,27 @@ const SubcategoryManagement = () => {
                         {subcategories.map((subcategory, index) => (
                             <CTableRow key={subcategory._id}>
                                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.name || 'null'}</CTableDataCell>
-                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.marketplaceId || 'null'}</CTableDataCell>
+                                <CTableDataCell
+                                    style={{
+                                        fontSize: '0.870rem',
+                                        cursor: 'pointer',
+                                        color: 'black',
+                                        transition: 'color 0.3s ease-in-out'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = 'blue';
+                                        e.target.style.textDecoration = 'underline';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = 'black';
+                                        e.target.style.textDecoration = 'none';
+                                    }}
+                                    onClick={() => handleViewSubcategory(subcategory)}
+                                >{subcategory.name || 'null'}</CTableDataCell>
+                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory?.marketplaceId?.name || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.sellType || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>${subcategory.price || 'null'}</CTableDataCell>
-                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.discount || 'null'}%</CTableDataCell>
+                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.discount || '0'}%</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>
                                     <img src={subcategory.image} alt={subcategory.name} width="100" />
                                 </CTableDataCell>
@@ -353,7 +383,7 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="name" label="Name" value={formData.name} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormSelect id="category" label="Category" value={formData.marketplaceId} onChange={handleChange} required>
+                            <CFormSelect id="marketplaceId" label="MarketplaceId" value={formData.marketplaceId} onChange={handleChange} required>
                                 <option value="">Select Category</option>
                                 {categories.map(category => (
                                     <option key={category._id} value={category._id}>{category.name}</option>
@@ -373,6 +403,9 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="brand" label="Brand" value={formData.brand} onChange={handleChange} required />
                         </CCol>
                         <CCol md={12}>
+                            <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleChange} required />
+                        </CCol>
+                        <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
                         </CCol>
                         <CCol md={12}>
@@ -384,6 +417,53 @@ const SubcategoryManagement = () => {
                         </CCol>
                     </CForm>
                 </CModalBody>
+            </CModal>
+
+            {/* Subcategory Details Modal */}
+            <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+                <CModalHeader>Product Details</CModalHeader>
+                <CModalBody>
+                    {selectedSubcategory ? (
+                        <>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <img
+                                    src={`${selectedSubcategory.image}`}
+                                    style={{
+                                        maxWidth: '100%',
+                                        maxHeight: '300px',
+                                        objectFit: 'cover',
+                                        borderRadius: '10px',
+                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                                        marginBottom: '15px',
+                                    }}
+                                />
+                            </div>
+
+                            <p><strong>Name</strong> {selectedSubcategory.name}</p>
+                            <p><strong>Category:</strong> {selectedSubcategory.category || "null"}</p>
+                            <p><strong>Sell Type:</strong> {selectedSubcategory.sellType || "null"}</p>
+                            <p><strong>Price:</strong> ${selectedSubcategory.price}</p>
+                            <p><strong>Description:</strong> {selectedSubcategory.description}</p>
+                            <p><strong>Stock Quantity:</strong> {selectedSubcategory.stockQuantity || '0'}</p>
+                            <p><strong>Brand:</strong> ₹{selectedSubcategory.brand}</p>
+                            {/* <p><strong>Items:</strong></p>
+                                        <ul>
+                                            {selectedOrder.items.map((item, index) => (
+                                                <li key={index}>
+                                                    {item.name} - {item.quantity} x ${item.price}
+                                                </li>
+                                            ))}
+                                        </ul> */}
+                        </>
+                    ) : (
+                        <p>No subcategory selected.</p>
+                    )}
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={() => setModalVisible(false)}>
+                        Close
+                    </CButton>
+                </CModalFooter>
             </CModal>
         </>
     );

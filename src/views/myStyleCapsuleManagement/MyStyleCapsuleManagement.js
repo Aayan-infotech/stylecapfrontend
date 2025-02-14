@@ -15,7 +15,6 @@ const StyleCapsuleManagement = () => {
     const [editClothsVisible, setEditClothsVisible] = useState(false);
     const [formData, setFormData] = useState([]);
     const [selectedFile, setSelectedFile] = useState();
-    const category = 'clothes'
 
     useEffect(() => {
         fetchData();
@@ -25,7 +24,7 @@ const StyleCapsuleManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/user`, {
+            const response = await axios.get(`http://localhost:3555/api/user`, {
                 headers: {
                     // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -41,7 +40,7 @@ const StyleCapsuleManagement = () => {
     // const fetchData = async () => {
     //     try {
     //         const token = localStorage.getItem('token');
-    //         const response = await axios.get(`http://44.196.64.110:3555/api/user`, {
+    //         const response = await axios.get(`http://localhost:3555/api/user`, {
     //             headers: {
     //                 'Content-Type': 'application/json',
     //                 'Authorization': `Bearer ${token}`,
@@ -56,7 +55,7 @@ const StyleCapsuleManagement = () => {
     const handleView = async (userId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/myStyleCapsule/getStyle?userId=${userId}`, {
+            const response = await axios.get(`http://localhost:3555/api/myStyleCapsule/getStyle?userId=${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -72,7 +71,7 @@ const StyleCapsuleManagement = () => {
     const fetchStyleData = async (date) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://44.196.64.110:3555/api/myStyleCapsule/styleByDate/${date}`, {
+            const response = await axios.get(`http://localhost:3555/api/myStyleCapsule/styleByDate/${date}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
@@ -125,7 +124,7 @@ const StyleCapsuleManagement = () => {
                 formDataToSend.append('picture', selectedFile);
             }
 
-            await axios.put(`http://44.196.64.110:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+            await axios.put(`http://localhost:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
@@ -138,6 +137,11 @@ const StyleCapsuleManagement = () => {
             console.error('Failed to update shoe data', error);
         }
     }
+
+    const handleViewSubcategory = (subcategory) => {
+        setSelectedOrder(subcategory);
+        setModalVisible(true);
+    };
 
 
 
@@ -177,7 +181,7 @@ const StyleCapsuleManagement = () => {
                     <CModalTitle>Style Details of User</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    {userClothsData ? (
+                    {userClothsData && userClothsData.length > 0 ? (
                         <CTable responsive>
                             <CTableHead color='primary'>
                                 <CTableRow>
@@ -209,7 +213,7 @@ const StyleCapsuleManagement = () => {
                             </CTableBody>
                         </CTable>
                     ) : (
-                        <p>Loading...</p>
+                        <p>No styles present yet.</p>
                     )}
                 </CModalBody>
                 <CModalFooter>
@@ -249,7 +253,7 @@ const StyleCapsuleManagement = () => {
                                                     item.picture.map((picture, innerIndex) => (
                                                         <CCol xs="12" md="6" className="text-center" key={`${outerIndex}-${innerIndex}`}>
                                                             <img
-                                                                src={`http://44.196.64.110:3555/uploads/${picture}`}
+                                                                src={`http://localhost:3555/uploads/${picture}`}
                                                                 alt={`Cloth ${outerIndex + 1}-${innerIndex + 1}`}
                                                                 style={{
                                                                     maxWidth: '100%',
