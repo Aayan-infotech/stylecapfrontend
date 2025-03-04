@@ -46,7 +46,7 @@ const UserManagement = () => {
             if (!token) {
                 throw new Error('No token found. Please log in.');
             }
-            const response = await axios.get(`http://localhost:3555/api/user/`, {
+            const response = await axios.get(`http://54.236.98.193:3555/api/user/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -68,7 +68,7 @@ const UserManagement = () => {
 
     const handleView = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3555/api/user/get/${id}`)
+            const response = await axios.get(`http://54.236.98.193:3555/api/user/get/${id}`)
             setSingleUSer(response.data.data);
             setVisibleModel(true);
         } catch (error) {
@@ -80,7 +80,7 @@ const UserManagement = () => {
         try {
             const token = localStorage.getItem('token');
 
-            await axios.put(`http://localhost:3555/api/user/update-user/${userId}`, editedUser, {
+            await axios.put(`http://54.236.98.193:3555/api/user/update-user/${userId}`, editedUser, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -103,7 +103,7 @@ const UserManagement = () => {
         if (confirmDelete) {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:3555/api/user/delete/${id}`, {
+                await axios.delete(`http://54.236.98.193:3555/api/user/delete/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -122,7 +122,7 @@ const UserManagement = () => {
             const token = localStorage.getItem('token');
 
             const response = await axios.put(
-                `http://localhost:3555/api/user/update-status/${id}`,
+                `http://54.236.98.193:3555/api/user/update-status/${id}`,
                 {},
                 {
                     headers: {

@@ -42,7 +42,7 @@ const QuestionnaireManagement = () => {
     const fetchQuestions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get("http://localhost:3555/api/user/all_quest", {
+            const response = await axios.get("http://54.236.98.193:3555/api/user/all_quest", {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -79,13 +79,13 @@ const QuestionnaireManagement = () => {
     const handleSubmit = async () => {
         try {
             if (editId) {
-                await axios.put(`http://localhost:3555/api/user/update-questionnaire/${editId}`, formData, {
+                await axios.put(`http://54.236.98.193:3555/api/user/update-questionnaire/${editId}`, formData, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
                 });
             } else {
-                await axios.post("http://localhost:3555/api/user/create-questionnaire", formData,{
+                await axios.post("http://54.236.98.193:3555/api/user/create-questionnaire", formData,{
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
@@ -110,7 +110,7 @@ const QuestionnaireManagement = () => {
     // Delete Question
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:3555/api/user/delete-questionnaire/${id}`, {
+            await axios.delete(`http://54.236.98.193:3555/api/user/delete-questionnaire/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
