@@ -15,6 +15,7 @@ import {
   faBrush,
   faStore,
   faPuzzlePiece,
+  faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -128,6 +129,12 @@ const _nav = [
     name: 'Order Management',
     to: '/orderManagement',
     icon: <FontAwesomeIcon icon={faUser} style={{ color: 'green' }} className="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Questionnaire',
+    to: '/questionnaire-management',
+    icon: <FontAwesomeIcon icon={faQuestionCircle} style={{color: 'red'}} className="nav-icon" />,
   },
   {
     component: CNavItem,

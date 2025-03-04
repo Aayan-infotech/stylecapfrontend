@@ -34,7 +34,7 @@ const MyStyleCapsuleEntity = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://44.196.64.110:3555/api/entity/get`);
+            const response = await axios.get(`http://localhost:3555/api/entity/get`);
             const { result } = response.data;
             setProducts(result);
         } catch (error) {
@@ -49,7 +49,7 @@ const MyStyleCapsuleEntity = () => {
             formData.append('type', newEntity.type);
             formData.append('image', newEntity.image); // Attach the image file
 
-            await axios.post(`http://44.196.64.110:3555/api/entity/create`, formData, {
+            await axios.post(`http://localhost:3555/api/entity/create`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Required for file uploads
                 },
@@ -68,7 +68,7 @@ const MyStyleCapsuleEntity = () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this product?');
         if (confirmDelete) {
             try {
-                await axios.delete(`http://44.196.64.110:3555/api/entity/delete/${id}`);
+                await axios.delete(`http://localhost:3555/api/entity/delete/${id}`);
                 fetchData();
             } catch (error) {
                 console.error('Error deleting product:', error);

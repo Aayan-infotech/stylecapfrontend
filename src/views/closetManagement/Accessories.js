@@ -23,7 +23,7 @@ const accessories = () => {
   // const fetchData = async () => {
   //   try {
   //     const token = localStorage.getItem('token');
-  //     const response = await axios.get(`http://44.196.64.110:3555/api/cloths/get-by-category/accessories`, {
+  //     const response = await axios.get(`http://localhost:3555/api/cloths/get-by-category/accessories`, {
   //       headers: {
   //         'Authorization': `Bearer ${token}`
   //       },
@@ -37,7 +37,7 @@ const accessories = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
+      const response = await axios.get(`http://localhost:3555/api/user/`, {
         headers: {
           // 'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -52,7 +52,7 @@ const accessories = () => {
 
   const handleView = async (category, userId) => {
     try {
-      const response = await axios.get(`http://44.196.64.110:3555/api/cloths/all-cloths/${category}/${userId}`)
+      const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
       setUserAccessoriesData(response.data.cloths);
       setVisibleModel(true);
     } catch (error) {
@@ -63,7 +63,7 @@ const accessories = () => {
   const fetchaccessoriesData = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://44.196.64.110:3555/api/cloths/getClothById/${id}`, {
+      const response = await axios.get(`http://localhost:3555/api/cloths/getClothById/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -115,7 +115,7 @@ const accessories = () => {
         formDataToSend.append('picture', selectedFile);
       }
 
-      await axios.put(`http://44.196.64.110:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+      await axios.put(`http://localhost:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads

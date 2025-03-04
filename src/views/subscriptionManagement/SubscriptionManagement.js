@@ -49,7 +49,7 @@ const SubscriptionManagement = () => {
           if (!token) {
               throw new Error('No token found. Please log in.');
           }
-          const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
+          const response = await axios.get(`http://localhost:3555/api/user/`, {
               headers: {
                   'Authorization': `Bearer ${token}`
               }
@@ -65,7 +65,7 @@ const SubscriptionManagement = () => {
   const changeSubscription = async(id, option) => {
     try{
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://44.196.64.110:3555/api/subscription/update-subscription/${id}`,{option},
+      const response = await axios.put(`http://localhost:3555/api/subscription/update-subscription/${id}`,{option},
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -86,7 +86,7 @@ const SubscriptionManagement = () => {
 
   const subscriptionAnalytics = async() => {
     try{
-      const response = await axios.get(`http://44.196.64.110:3555/api/subscription/`);
+      const response = await axios.get(`http://localhost:3555/api/subscription/`);
       setAnalytics(response.data);
     }catch(error){
       console.error(error);

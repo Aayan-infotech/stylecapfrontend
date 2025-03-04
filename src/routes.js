@@ -19,6 +19,7 @@ const GarmentCareReviewManagement = React.lazy( () => import('./views/reviewMana
 const MyStyleCapsuleEntity = React.lazy( () => import('./views/myStyleCapsule/MyStyleCapsuleEntity'))
 const ContactUs = React.lazy( () => import('./views/contactUsManagement/ContactUsManagement'))
 const OrderManagement = React.lazy( () => import('./views/orderManagement/OrderManagement'))
+const Questionnaire = React.lazy( () => import('./views/questionnaire/QuestionnaireManagement'));
 
 // const Check = React.lazy(()=> import('./views/closetManagement/Check'))
 // const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
@@ -90,6 +91,7 @@ const routes = [
   { path: '/myStyleCapsuleEntity', name: 'MyStyleCapsuleEntity', element: MyStyleCapsuleEntity },
   { path: '/contactUsManagement', name: 'ContactUs', element: ContactUs },
   { path: '/orderManagement', name: 'OrderManagement', element: OrderManagement },
+  { path: '/questionnaire-management', name: 'Questionnaire', element: Questionnaire },
   // { path: '/outfitterManagement', name: 'OutfitterManagement', element: OutfitterManagement },
   // { path: '/oversight', name: 'Oversight', element: Oversight },
   // { path: '/analytics&Reporting', name: 'Analytics&Reporting', element: AnalyticsReporting },

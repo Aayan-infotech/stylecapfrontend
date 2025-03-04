@@ -25,7 +25,7 @@ const ReviewManagement = () => {
     const fetchData = async () => {
         try {
             setLoading(true); // Set loading to true before fetching
-            const response = await axios.get(`http://44.196.64.110:3555/api/review/get`);
+            const response = await axios.get(`http://localhost:3555/api/review/get`);
             setReview(response.data.data);
         } catch (error) {
             console.error('Error fetching reviews:', error);
@@ -38,7 +38,7 @@ const ReviewManagement = () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this product?');
         if (confirmDelete) {
             try {
-                await axios.delete(`http://44.196.64.110:3555/api/review/delete/${id}`);
+                await axios.delete(`http://localhost:3555/api/review/delete/${id}`);
                 fetchData();
             } catch (error) {
                 console.error('Error deleting review:', error);

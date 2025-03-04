@@ -46,7 +46,7 @@ const UserManagement = () => {
             if (!token) {
                 throw new Error('No token found. Please log in.');
             }
-            const response = await axios.get(`http://44.196.64.110:3555/api/user/`, {
+            const response = await axios.get(`http://localhost:3555/api/user/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -68,7 +68,7 @@ const UserManagement = () => {
 
     const handleView = async (id) => {
         try {
-            const response = await axios.get(`http://44.196.64.110:3555/api/user/get/${id}`)
+            const response = await axios.get(`http://localhost:3555/api/user/get/${id}`)
             setSingleUSer(response.data.data);
             setVisibleModel(true);
         } catch (error) {
@@ -80,7 +80,7 @@ const UserManagement = () => {
         try {
             const token = localStorage.getItem('token');
 
-            await axios.put(`http://44.196.64.110:3555/api/user/update-user/${userId}`, editedUser, {
+            await axios.put(`http://localhost:3555/api/user/update-user/${userId}`, editedUser, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -103,7 +103,7 @@ const UserManagement = () => {
         if (confirmDelete) {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://44.196.64.110:3555/api/user/delete/${id}`, {
+                await axios.delete(`http://localhost:3555/api/user/delete/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -122,7 +122,7 @@ const UserManagement = () => {
             const token = localStorage.getItem('token');
 
             const response = await axios.put(
-                `http://44.196.64.110:3555/api/user/update-status/${id}`,
+                `http://localhost:3555/api/user/update-status/${id}`,
                 {},
                 {
                     headers: {
@@ -144,13 +144,17 @@ const UserManagement = () => {
 
     return (
         <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h5>User Management</h5>
+                {/* <CButton color="primary" onClick={() => setModalVisible(true)}>Add Question</CButton> */}
+            </div>
             <CTable responsive>
                 <CTableHead>
                     <CTableRow color='primary'>
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ }}>Name</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ }}>Email</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ }}>Age</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{}}>Name</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{}}>Email</CTableHeaderCell>
+                        <CTableHeaderCell scope="col" style={{}}>Age</CTableHeaderCell>
                         {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell> */}
                         <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
                     </CTableRow>
@@ -160,9 +164,9 @@ const UserManagement = () => {
                         userData.map((user, index) => (
                             <CTableRow key={user.id}>
                                 <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
-                                <CTableDataCell style={{ }}>{user.firstName}</CTableDataCell>
-                                <CTableDataCell style={{ }}>{user.email}</CTableDataCell>
-                                <CTableDataCell style={{ }}>{user.age}</CTableDataCell>
+                                <CTableDataCell style={{}}>{user.firstName}</CTableDataCell>
+                                <CTableDataCell style={{}}>{user.email}</CTableDataCell>
+                                <CTableDataCell style={{}}>{user.age}</CTableDataCell>
                                 {/* <CTableDataCell>
                                     <div className="form-check form-switch" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                         <input

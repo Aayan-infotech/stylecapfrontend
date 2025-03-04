@@ -25,7 +25,7 @@ const CategoryTab = () => {
   const [isEdit, setIsEdit] = useState(false); // Flag to check Add or Edit
   const [error, setError] = useState('');
 
-  const API_BASE_URL = 'http://44.196.64.110:3555/api/category'; // Update with your backend URL
+  const API_BASE_URL = 'http://localhost:3555/api/category'; // Update with your backend URL
 
   // Fetch categories
   const fetchCategories = async () => {
