@@ -338,14 +338,16 @@
 import React, { useEffect, useState } from "react";
 import { CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CFormInput } from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faPlus, faEye } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 const ClosetCategoryManagement = () => {
   const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [visibleModel, setVisibleModel] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [categoryName, setCategoryName] = useState("");
+  const [closetSubcategories, setClosetSubcategories] = useState([]);
 
   // ✅ Fetch Categories
   const fetchCategories = async () => {
@@ -367,9 +369,9 @@ const ClosetCategoryManagement = () => {
   const handleSave = async () => {
     try {
       if (editingCategory) {
-        await axios.put(`http://localhost:5000/api/categories/${editingCategory._id}`, { name: categoryName });
+        await axios.put(`http://localhost:3555/api/categories/${editingCategory._id}`, { name: categoryName });
       } else {
-        await axios.post("http://localhost:5000/api/categories", { name: categoryName });
+        await axios.post("http://localhost:3555/api/categories", { name: categoryName });
       }
       fetchCategories();
       setModalVisible(false);
@@ -384,23 +386,42 @@ const ClosetCategoryManagement = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`);
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:3555/api/closet/delete-closet/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       fetchCategories();
     } catch (error) {
       console.error("Error deleting category:", error);
     }
   };
 
+  const handleView = async (categoryId) => {
+    try {
+      const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
+      const result = response.data.data
+      console.log(result, "result")
+
+      setClosetSubcategories(result);
+      setVisibleModel(true);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                      <h5 style={{ margin: 0 }}>Closet Category Management</h5>
-                      <CButton
-                          color="primary" onClick={() => setModalVisible(true)}
-                      >
-                          <FontAwesomeIcon icon={faPlus} /> Add Category
-                      </CButton>
-                  </div>
+        <h5 style={{ margin: 0 }}>Closet Category Management</h5>
+        <CButton
+          color="primary"
+          onClick={() => setModalVisible(true)}
+        >
+          <FontAwesomeIcon icon={faPlus} /> Add Category
+        </CButton>
+      </div>
       {/* <h2></h2>
       <CButton color="primary" onClick={() => setModalVisible(true)}>
         <FontAwesomeIcon icon={faPlus} /> Add Category
@@ -427,11 +448,63 @@ const ClosetCategoryManagement = () => {
                 <CButton color="danger" size="sm" onClick={() => handleDelete(category._id)} className="ms-2">
                   <FontAwesomeIcon icon={faTrash} />
                 </CButton>
+                <CButton color="info" size="sm" onClick={() => handleView(category._id)} className="ms-2">
+                  <FontAwesomeIcon icon={faEye} />
+                </CButton>
+                {/* <CTableDataCell style={{ textAlign: 'center' }}>
+                  <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
+                    title="View" onClick={() => handleView(category._id)}>
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
+                </CTableDataCell> */}
               </CTableDataCell>
             </CTableRow>
           ))}
         </CTableBody>
       </CTable>
+
+      <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
+        <CModalHeader onClose={() => setVisibleModel(false)}>
+          <CModalTitle>Subcategory Details of Category</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {closetSubcategories && closetSubcategories.length > 0 ? (
+            <CTable striped hover responsive className="mt-3">
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell>Category Name</CTableHeaderCell>
+                  <CTableHeaderCell>Subcategory Name</CTableHeaderCell>
+                  <CTableHeaderCell>Actions</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+
+              <CTableBody>
+                {closetSubcategories.map((category) => (
+                  category.subcategory.map((sub, index) => (
+                    <CTableRow key={`${category._id}-${index}`}>
+                      <CTableDataCell>{category.name}</CTableDataCell>
+                      <CTableDataCell>{sub.name}</CTableDataCell>
+                      <CTableDataCell>
+                        {/* You can add buttons or actions here */}
+                        <CButton color="primary" size="sm">View</CButton>
+                      </CTableDataCell>
+                      
+                    </CTableRow>
+                  ))
+                ))}
+              </CTableBody>
+            </CTable>
+          ) : (
+            <p>No clothes added yet!</p>
+          )}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisibleModel(false)}>
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
       {/* Modal for Adding/Editing Category */}
       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>

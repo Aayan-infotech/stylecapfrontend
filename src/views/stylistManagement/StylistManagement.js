@@ -415,9 +415,9 @@ const StylistManagement = () => {
                                 {/* <CTableDataCell style={{ textAlign: 'center' }}>{stylist.email}</CTableDataCell> */}
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     {stylist.approved ? (
-                                        <span className="text-success">Approved</span>
+                                        <span className="text-success">Unblocked</span>
                                     ) : (
-                                        <span className="text-danger">Not Approved</span>
+                                        <span className="text-danger">Blocked</span>
                                     )}
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{stylist.phone}</CTableDataCell>
@@ -504,13 +504,15 @@ const StylistManagement = () => {
                             <CFormInput type="text" id="specialization" label="Specialization" value={formData.specialization} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="experience" label="Experience (Years)" value={formData.experience} onChange={handleChange} required />
+                            <CFormInput type="number" id="experience" label="Experience (Years)" value={formData.experience} onChange={handleChange} onWheel={(e) => e.target.blur()}
+                                min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="description" label="Description" value={formData.description} onChange={handleChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="text" id="price" label="Price" value={formData.price} onChange={handleChange} required />
+                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                                min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />

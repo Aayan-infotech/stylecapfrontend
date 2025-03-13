@@ -28,6 +28,7 @@ import {
     CTableHead,
     CTableHeaderCell,
     CTableRow,
+    CSpinner,
 } from '@coreui/react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -47,6 +48,7 @@ const MarketPlaceManagement = () => {
     const [addSelectedFile, setAddSelectedFile] = useState(null);
     const [addProductVisible, setAddProductVisible] = useState(false);
     const [responseMessage, setResponseMessage] = useState(null);
+    const [btnLoader, setBtnLoader] = useState(false);
     const [addFormData, setAddFormData] = useState({
         name: '',
         section: ''
@@ -54,7 +56,7 @@ const MarketPlaceManagement = () => {
 
     useEffect(() => {
         fetchData();
-    },[]);
+    }, []);
 
     const fetchData = async () => {
         try {
@@ -98,10 +100,7 @@ const MarketPlaceManagement = () => {
         try {
             const token = localStorage.getItem('token');
             const formDataToSend = new FormData();
-
-            // Append form data
             formDataToSend.append('name', formData.name);
-            // Append file if selected
             if (selectedFile) {
                 formDataToSend.append('image', selectedFile);
             }
@@ -110,6 +109,7 @@ const MarketPlaceManagement = () => {
 
             setEditProductVisible(false);
             fetchData();
+            window.location.reload();
         } catch (error) {
             console.error('Failed to update data', error);
         }
@@ -129,7 +129,7 @@ const MarketPlaceManagement = () => {
 
     const handleAddSubmit = async (e) => {
         e.preventDefault();
-
+        setBtnLoader(true);
         const form = new FormData();
         form.append('section', addFormData.section);
         form.append('name', addFormData.name);
@@ -139,9 +139,14 @@ const MarketPlaceManagement = () => {
             const response = await axios.post('http://54.236.98.193:3555/api/marketplaces/create', form);
 
             setResponseMessage(response.data.message);
+            // onClick={() => setAddProductVisible(false)}
+            setAddProductVisible(false)
             fetchData();
+            window.location.reload();
         } catch (error) {
             setResponseMessage(error.response.data.message || 'An error occurred');
+        } finally {
+            setBtnLoader(false);
         }
     };
 
@@ -264,9 +269,22 @@ const MarketPlaceManagement = () => {
                                 />
                             </CCol>
                         </CRow>
-                        <CButton onClick={() => setAddProductVisible(false)} type="submit" color="primary" style={{ marginTop: '10px' }}>
-                            Add Product
-                        </CButton>
+
+                        {btnLoader ? (
+                            <span>
+                                <CButton color="primary" style={{ marginTop: '10px' }} disabled>
+                                    <CSpinner as="span" className="me-2" size="sm" aria-hidden="true" />
+                                    <span role="status">Loading...</span>
+                                </CButton>
+                            </span>
+                        ) : (
+                            <CButton type="submit" color="primary" style={{ marginTop: '10px' }}>
+                                Add Product
+                            </CButton>
+                            //  "Add Product"
+
+                        )}
+                        {/* Add Product */}
                     </CForm>
                 </CModalBody>
             </CModal>

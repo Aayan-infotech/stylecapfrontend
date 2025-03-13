@@ -150,6 +150,9 @@ const SubcategoryManagement = () => {
 
 
     const handleEdit = (subcategory) => {
+        console.log(subcategory, "subcategory");
+        console.log(subcategory.discount, "subcategory.discount")
+        
         setSelectedSubcategory(subcategory);
         setFormData({
             name: subcategory.name || '',
@@ -181,6 +184,8 @@ const SubcategoryManagement = () => {
                 quantityStock: formData.quantityStock,
                 image: imageUrl,
             };
+            console.log(formData, "formData")
+            console.log(updatedSubcategory, "updatedSubcategory")
             const token = localStorage.getItem('token');
             await axios.put(`http://54.236.98.193:3555/api/marketplacesubcat/update-subcategory/${_id}`,
                 updatedSubcategory,
@@ -348,10 +353,12 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="sellType" name='sellType' label="Sell Type" value={formData.sellType} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} required />
+                            <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} onWheel={(e) => e.target.blur()} 
+                                min={0} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="discount" name='discount' label="Discount" value={formData.discount} onChange={handleInputChange} required />
+                            <CFormInput type="number" id="discount" name='discount' label="Discount" value={formData.discount} onChange={handleInputChange} onWheel={(e) => e.target.blur()} 
+                                min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="brand" name='brand' label="Brand" value={formData.brand} onChange={handleInputChange} required />
@@ -394,16 +401,19 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="sellType" label="Sell Type" value={formData.sellType} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} required />
+                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                                min={0} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="discount" label="Discount" value={formData.discount} onChange={handleChange} required />
+                            <CFormInput type="number" id="discount" label="Discount" value={formData?.discount} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                                min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="brand" label="Brand" value={formData.brand} onChange={handleChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleChange} required />
+                            <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                                min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
