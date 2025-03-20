@@ -1,4 +1,4 @@
-# Step 1: Use Node.js to build the React app
+# Step 1: Use Node.js to build the
 FROM node:18 AS builder
 
 # Set the working directory
