@@ -29,7 +29,7 @@ const OrderManagement = () => {
     const fetchOrders = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get("http://54.236.98.193:3555/api/order/all-orders",
+            const response = await axios.get("http://3.223.253.106:3555/api/order/all-orders",
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -49,7 +49,7 @@ const OrderManagement = () => {
 
     const handleUpdateStatus = async (orderId, newStatus) => {
         try {
-            await axios.post(`http://54.236.98.193:3555/api/order/update-status/${orderId}`, { status: newStatus });
+            await axios.post(`http://3.223.253.106:3555/api/order/update-status/${orderId}`, { status: newStatus });
             fetchOrders();
         } catch (error) {
             console.error("Error updating order status:", error);
@@ -59,7 +59,7 @@ const OrderManagement = () => {
 
     const handleCancelOrder = async (orderId) => {
         try {
-            await axios.put(`http://54.236.98.193:3555/api/orders/${orderId}`, { orderStatus: "Cancelled" });
+            await axios.put(`http://3.223.253.106:3555/api/orders/${orderId}`, { orderStatus: "Cancelled" });
             fetchOrders();
         } catch (error) {
             console.error("Error cancelling order:", error);

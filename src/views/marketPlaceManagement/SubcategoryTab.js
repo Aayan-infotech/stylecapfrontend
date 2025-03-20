@@ -56,7 +56,7 @@ const SubcategoryManagement = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://54.236.98.193:3555/api/marketplaces/');
+            const response = await axios.get('http://3.223.253.106:3555/api/marketplaces/');
             setCategories(response.data.data);
             // console.log(response.data.data)
         } catch (error) {
@@ -67,7 +67,7 @@ const SubcategoryManagement = () => {
 
     const fetchSubcategories = async () => {
         try {
-            const response = await axios.get('http://54.236.98.193:3555/api/marketPlaceSubcat/get');
+            const response = await axios.get('http://3.223.253.106:3555/api/marketPlaceSubcat/get');
             setSubcategories(response.data.data);
         } catch (error) {
             setError('Error fetching subcategories');
@@ -89,7 +89,7 @@ const SubcategoryManagement = () => {
     //             brand: formData.brand,
     //             image: imageUrl,
     //         };
-    //         await axios.post(`http://54.236.98.193:3555/api/marketPlaceSubcat/add`, newSubcategory);
+    //         await axios.post(`http://3.223.253.106:3555/api/marketPlaceSubcat/add`, newSubcategory);
     //         setVisible(false);
     //         resetFormData();
     //         fetchSubcategories(); // Re-fetch subcategories
@@ -115,7 +115,7 @@ const SubcategoryManagement = () => {
 
         try {
             const response = await axios.post(
-                "http://54.236.98.193:3555/api/marketPlaceSubcat/add",
+                "http://3.223.253.106:3555/api/marketPlaceSubcat/add",
                 form,
                 {
                     headers: {
@@ -187,7 +187,7 @@ const SubcategoryManagement = () => {
             console.log(formData, "formData")
             console.log(updatedSubcategory, "updatedSubcategory")
             const token = localStorage.getItem('token');
-            await axios.put(`http://54.236.98.193:3555/api/marketplacesubcat/update-subcategory/${_id}`,
+            await axios.put(`http://3.223.253.106:3555/api/marketplacesubcat/update-subcategory/${_id}`,
                 updatedSubcategory,
                 {
                     headers: {
@@ -206,7 +206,7 @@ const SubcategoryManagement = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://54.236.98.193:3555/api/marketPlaceSubcat/delete/${id}`);
+            await axios.delete(`http://3.223.253.106:3555/api/marketPlaceSubcat/delete/${id}`);
             setSubcategories(subcategories.filter(subcategory => subcategory._id !== id));
         } catch (error) {
             setError('Error deleting subcategory');

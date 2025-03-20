@@ -40,7 +40,7 @@ const ReviewManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://54.236.98.193:3555/api/review/get`,
+            const response = await axios.get(`http://3.223.253.106:3555/api/review/get`,
                 // {
                 //     headers:{
                 //         'Authorization': `Bearer ${token}`
@@ -58,7 +58,7 @@ const ReviewManagement = () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this product?');
         if (confirmDelete) {
             try {
-                await axios.delete(`http://54.236.98.193:3555/api/review/delete/${id}`);
+                await axios.delete(`http://3.223.253.106:3555/api/review/delete/${id}`);
                 fetchData();
             } catch (error) {
                 console.error('Error deleting review:', error);

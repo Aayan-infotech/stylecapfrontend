@@ -82,7 +82,7 @@ const StylistManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://54.236.98.193:3555/api/stylist/get-all-stylist-admin`,
+            const response = await axios.get(`http://3.223.253.106:3555/api/stylist/get-all-stylist-admin`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -140,7 +140,7 @@ const StylistManagement = () => {
                 image: imageUrl,
                 workHistory: formData.workHistory, // Include work history
             };
-            await axios.post('http://54.236.98.193:3555/api/stylist/add-stylist', newStylist);
+            await axios.post('http://3.223.253.106:3555/api/stylist/add-stylist', newStylist);
             setVisible(false);
             resetFormData();
             fetchData(); // Re-fetch after adding a stylist
@@ -203,7 +203,7 @@ const StylistManagement = () => {
 
     const handleApprove = async (stylistId) => {
         try {
-            const response = await axios.post(`http://54.236.98.193:3555/api/stylist/approve/${stylistId}`)
+            const response = await axios.post(`http://3.223.253.106:3555/api/stylist/approve/${stylistId}`)
             // alert(response.data.message); // Display success message
             setStylist((prevStylists) =>
                 prevStylists.map((stylist) =>
@@ -280,7 +280,7 @@ const StylistManagement = () => {
         setError(null);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://54.236.98.193:3555/api/stylist/stylist-profile/${stylistId}`,
+            const response = await axios.get(`http://3.223.253.106:3555/api/stylist/stylist-profile/${stylistId}`,
                 {
 
                     headers: {
@@ -305,7 +305,7 @@ const StylistManagement = () => {
         const token = localStorage.getItem('token')
         try {
             if (confirmDelete) {
-                await axios.delete(`http://54.236.98.193:3555/api/stylist/delete-stylist/${stylistId}`,
+                await axios.delete(`http://3.223.253.106:3555/api/stylist/delete-stylist/${stylistId}`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
