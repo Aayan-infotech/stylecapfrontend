@@ -65,13 +65,13 @@ const Login = () => {
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md={6}>
+          <CCol md={5}>
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={handleSubmit}>
                     <h1 className="text-center">Login</h1>
-                    <p className="text-body-secondary text-center">Sign In to your account</p>
+                    <p className="text-body-secondary text-center">Welcome to Style Capsule Admin Panel!</p>
 
                     {error && <p className="text-danger text-center">{error}</p>}
 
