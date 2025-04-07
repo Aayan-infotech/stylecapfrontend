@@ -167,7 +167,7 @@ const StylistManagement = () => {
                 image: imageUrl,
                 workHistory: formData.workHistory, // Include work history
             };
-            await axios.put(`http://54.236.98.193:3129/api/stylist/update/${selectedStylist._id}`, updatedStylist);
+            await axios.put(`http://3.223.253.106:3555/api/stylist/update/${selectedStylist._id}`, updatedStylist);
             setEditVisible(false);
             resetFormData();
             fetchData(); // Re-fetch after updating

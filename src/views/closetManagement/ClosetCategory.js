@@ -336,23 +336,43 @@
 
 
 import React, { useEffect, useState } from "react";
-import { CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CFormInput } from "@coreui/react";
+import { CTable, CFormSelect, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CFormInput } from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash, faPlus, faEye } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 const ClosetCategoryManagement = () => {
+  const [subcategories, setSubcategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [visibleModel, setVisibleModel] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [categoryName, setCategoryName] = useState("");
+  const [icon, setIcon] = useState("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState([]);
+  const [typeSubcategories, setTypeSubcategories] = useState([])
   const [closetSubcategories, setClosetSubcategories] = useState([]);
+
+  const fetchSubcategories = async (categoryId = "") => {
+    try {
+      // const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
+      const response = await axios.get("http://3.223.253.106:3555/api/closet/closet-subcategory/get");
+      if (response.data.success) {
+        const result = response.data.data
+        console.log(result, "result")
+        setSubcategories(result);
+        console.log(result[0], "response.data.data.subcategory");
+
+      }
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+    }
+  };
 
   // ✅ Fetch Categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3555/api/closet/get-closet");
+      const response = await axios.get("http://3.223.253.106:3555/api/closet/get-closet");
       if (response.data.success) {
         setCategories(response.data.data);
       }
@@ -363,22 +383,95 @@ const ClosetCategoryManagement = () => {
 
   useEffect(() => {
     fetchCategories();
+    fetchSubcategories();
   }, []);
 
   // ✅ Handle Add / Edit Category
+  // const handleSave = async () => {
+  //   if (!categoryName) {
+  //     alert("Please enter a category name.");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("name", categoryName);
+
+  //   if (icon) {
+  //     formData.append("icon", icon); // ✅ Append file only if selected
+  //   }
+
+  //   try {
+  //     const response = await fetch(
+  //       editingCategory ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}` : "http://3.223.253.106:3555/api/closet/category",
+  //       {
+  //         method: editingCategory ? "PATCH" : "POST",
+  //         body: formData,
+  //       }
+  //     );
+
+  //     const result = await response.json();
+  //     if (result.success) {
+  //       alert("Category saved successfully!");
+  //       setModalVisible(false);
+  //     } else {
+  //       alert(result.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving category:", error);
+  //   }
+  // };
+
   const handleSave = async () => {
+    if (!categoryName || !selectedSubcategory) {
+      alert("Closet name aur subcategory select karo!");
+      return;
+    }
+
+    // Prepare the subcategory data in the expected nested format
+    const subcategoryData = selectedSubcategory.map((sub) => ({
+      name: sub.name,
+      typeSubcategory: sub?.typeSubcategory?.map((type) => ({
+        name: type
+      }))
+    }));
+
+    // FormData to send to the backend
+    const formData = new FormData();
+    formData.append("name", categoryName);
+
+    // Send the subcategory data as a JSON string
+    formData.append("subcategory", JSON.stringify(subcategoryData));
+
+    if (icon) {
+      formData.append("imageUrl", icon);
+    }
+
+
     try {
-      if (editingCategory) {
-        await axios.put(`http://localhost:3555/api/categories/${editingCategory._id}`, { name: categoryName });
+      const token = localStorage.getItem("token")
+      const response = await fetch(
+        editingCategory
+          ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}`
+          : "http://3.223.253.106:3555/api/closet/create",
+        {
+          method: editingCategory ? "PATCH" : "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`, // 🔥 Passing the token in Authorization header
+          },
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        alert("Closet category saved successfully!");
+        setModalVisible(false);
+        fetchCategories();
       } else {
-        await axios.post("http://localhost:3555/api/categories", { name: categoryName });
+        alert(result.message);
       }
-      fetchCategories();
-      setModalVisible(false);
-      setEditingCategory(null);
-      setCategoryName("");
     } catch (error) {
-      console.error("Error saving category:", error);
+      console.error("Error saving closet category:", error);
     }
   };
 
@@ -387,7 +480,7 @@ const ClosetCategoryManagement = () => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3555/api/closet/delete-closet/${id}`, {
+      await axios.delete(`http://3.223.253.106:3555/api/closet/delete-closet/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -400,7 +493,7 @@ const ClosetCategoryManagement = () => {
 
   const handleView = async (categoryId) => {
     try {
-      const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
+      const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
       const result = response.data.data
       console.log(result, "result")
 
@@ -433,6 +526,7 @@ const ClosetCategoryManagement = () => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Name</CTableHeaderCell>
+            <CTableHeaderCell>Icon</CTableHeaderCell>
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -441,6 +535,10 @@ const ClosetCategoryManagement = () => {
             <CTableRow key={category._id}>
               <CTableDataCell>{index + 1}</CTableDataCell>
               <CTableDataCell>{category.name}</CTableDataCell>
+              <CTableDataCell >
+                <img src={category.icon} alt="Category Icon" width="50" height="50" style={{ borderRadius: '5px', backgroundColor: "grey", padding: "10px" }} />
+              </CTableDataCell>
+
               <CTableDataCell>
                 <CButton color="warning" size="sm" onClick={() => { setEditingCategory(category); setCategoryName(category.name); setModalVisible(true); }}>
                   <FontAwesomeIcon icon={faEdit} />
@@ -448,9 +546,9 @@ const ClosetCategoryManagement = () => {
                 <CButton color="danger" size="sm" onClick={() => handleDelete(category._id)} className="ms-2">
                   <FontAwesomeIcon icon={faTrash} />
                 </CButton>
-                <CButton color="info" size="sm" onClick={() => handleView(category._id)} className="ms-2">
+                {/* <CButton color="info" size="sm" onClick={() => handleView(category._id)} className="ms-2">
                   <FontAwesomeIcon icon={faEye} />
-                </CButton>
+                </CButton> */}
                 {/* <CTableDataCell style={{ textAlign: 'center' }}>
                   <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
                     title="View" onClick={() => handleView(category._id)}>
@@ -463,7 +561,7 @@ const ClosetCategoryManagement = () => {
         </CTableBody>
       </CTable>
 
-      <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
+      {/* <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
         <CModalHeader onClose={() => setVisibleModel(false)}>
           <CModalTitle>Subcategory Details of Category</CModalTitle>
         </CModalHeader>
@@ -485,10 +583,9 @@ const ClosetCategoryManagement = () => {
                       <CTableDataCell>{category.name}</CTableDataCell>
                       <CTableDataCell>{sub.name}</CTableDataCell>
                       <CTableDataCell>
-                        {/* You can add buttons or actions here */}
                         <CButton color="primary" size="sm">View</CButton>
                       </CTableDataCell>
-                      
+
                     </CTableRow>
                   ))
                 ))}
@@ -504,21 +601,116 @@ const ClosetCategoryManagement = () => {
             Close
           </CButton>
         </CModalFooter>
-      </CModal>
+      </CModal> */}
 
-      {/* Modal for Adding/Editing Category */}
       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
         <CModalHeader>
-          <CModalTitle>{editingCategory ? "Edit Category" : "Add Category"}</CModalTitle>
+          <CModalTitle>{editingCategory ? "Edit Closet" : "Add Closet"}</CModalTitle>
         </CModalHeader>
+
         <CModalBody>
-          <CFormInput type="text" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="Enter category name" />
+          {/* Closet Name */}
+          <CFormInput
+            type="text"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+            placeholder="Enter closet name"
+          />
         </CModalBody>
+
+        <CModalBody>
+          {/* Closet Icon */}
+          <CFormInput type="file" onChange={(e) => setIcon(e.target.files[0])} />
+        </CModalBody>
+
+        <CModalBody>
+          {/* Subcategory and Type Subcategory */}
+          <h5>Subcategories</h5>
+          {selectedSubcategory.map((sub, index) => (
+            <div key={index} style={{ marginBottom: "15px" }}>
+              <CFormInput
+                type="text"
+                value={sub.name}
+                onChange={(e) => {
+                  const updatedSubcategories = [...selectedSubcategory];
+                  updatedSubcategories[index].name = e.target.value;
+                  setSelectedSubcategory(updatedSubcategories);
+                }}
+                placeholder="Enter Subcategory Name"
+              />
+
+              <h6>Type Subcategories</h6>
+              {sub.typeSubcategory.map((type, typeIndex) => (
+                <div key={typeIndex} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                  <CFormInput
+                    type="text"
+                    value={type}
+                    onChange={(e) => {
+                      const updatedSubcategories = [...selectedSubcategory];
+                      updatedSubcategories[index].typeSubcategory[typeIndex] = e.target.value;
+                      setSelectedSubcategory(updatedSubcategories);
+                    }}
+                    placeholder="Enter Type Subcategory Name"
+                  />
+                  {/* Remove Type Subcategory Button */}
+                  <CButton
+                    color="danger"
+                    onClick={() => {
+                      const updatedSubcategories = [...selectedSubcategory];
+                      updatedSubcategories[index].typeSubcategory = updatedSubcategories[index].typeSubcategory.filter((_, idx) => idx !== typeIndex);
+                      setSelectedSubcategory(updatedSubcategories);
+                    }}
+                  >
+                    Remove Type
+                  </CButton>
+                </div>
+              ))}
+
+              {/* Add More Type Subcategory Button */}
+              <CButton
+                color="success"
+                onClick={() => {
+                  const updatedSubcategories = [...selectedSubcategory];
+                  updatedSubcategories[index].typeSubcategory.push(""); // Add new type subcategory
+                  setSelectedSubcategory(updatedSubcategories);
+                }}
+              >
+                + Add Type
+              </CButton>
+
+              {/* Remove Subcategory Button */}
+              <CButton
+                color="danger"
+                onClick={() => {
+                  const updatedSubcategories = selectedSubcategory.filter((_, idx) => idx !== index);
+                  setSelectedSubcategory(updatedSubcategories);
+                }}
+              >
+                Remove Subcategory
+              </CButton>
+            </div>
+          ))}
+
+          {/* Add More Subcategory Button */}
+          <CButton
+            color="success"
+            onClick={() => setSelectedSubcategory([...selectedSubcategory, { name: "", typeSubcategory: [""] }])}
+          >
+            + Add Subcategory
+          </CButton>
+        </CModalBody>
+
         <CModalFooter>
-          <CButton color="secondary" onClick={() => setModalVisible(false)}>Cancel</CButton>
-          <CButton color="primary" onClick={handleSave}>{editingCategory ? "Update" : "Save"}</CButton>
+          <CButton color="secondary" onClick={() => setModalVisible(false)}>
+            Cancel
+          </CButton>
+          <CButton color="primary" onClick={handleSave}>
+            {editingCategory ? "Update" : "Save"}
+          </CButton>
         </CModalFooter>
       </CModal>
+
+
     </div>
   );
 };

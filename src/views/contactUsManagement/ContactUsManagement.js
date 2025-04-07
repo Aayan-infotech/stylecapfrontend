@@ -243,3 +243,145 @@ const ContactUsManagement = () => {
 };
 
 export default ContactUsManagement;
+
+// import React, { useEffect, useState } from "react";
+// import {
+//     CTable,
+//     CTableBody,
+//     CTableDataCell,
+//     CTableHead,
+//     CTableHeaderCell,
+//     CTableRow,
+//     CCard,
+//     CCardBody,
+//     CCardHeader,
+//     CSpinner,
+//     CButton,
+//     CModal,
+//     CModalHeader,
+//     CModalBody,
+//     CModalFooter
+// } from "@coreui/react";
+// import axios from "axios";
+// import { requestForToken, onMessageListener } from "../../firebase/firebaseNotification"; // Import Firebase functions
+
+// const ContactUsManagement = () => {
+//     const [contactData, setContactData] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [modalVisible, setModalVisible] = useState(false);
+//     const [selectedContact, setSelectedContact] = useState(null);
+
+//     useEffect(() => {
+//         fetchContactUsData();
+//         requestForToken(); // Request notification permission
+
+//         // Listen for incoming notifications
+//         onMessageListener()
+//             .then((payload) => {
+//                 alert(`New Notification: ${payload.notification.title} - ${payload.notification.body}`);
+//                 fetchContactUsData(); // Refresh data when a new notification is received
+//             })
+//             .catch((err) => console.log("Failed to receive message: ", err));
+//     }, []);
+
+//     const fetchContactUsData = async () => {
+//         try {
+//             const response = await axios.get("http://3.223.253.106:3555/api/contact/get-all-query");
+//             setContactData(response.data.data);
+//             setLoading(false);
+//         } catch (error) {
+//             console.error("Error fetching contact data:", error);
+//             setLoading(false);
+//         }
+//     };
+
+//     const handleSendReply = async (contact) => {
+//         try {
+//             const response = await axios.post("http://3.223.253.106:3555/api/contact/reply-query", {
+//                 queryId: contact._id,
+//                 replyMessage: contact.replyMessage,
+//             });
+
+//             alert("Reply sent successfully!");
+
+//             // Send a push notification to the user
+//             await sendNotification(contact.email, "New Reply", `You have received a new reply to your query: ${contact.replyMessage}`);
+
+//             fetchContactUsData();
+//             setModalVisible(false);
+//         } catch (error) {
+//             console.error("Error sending reply:", error);
+//             alert("Failed to send reply.");
+//         }
+//     };
+
+//     const sendNotification = async (email, title, message) => {
+//         try {
+//             await axios.post("http://3.223.253.106:3555/api/notifications/send", {
+//                 email,
+//                 title,
+//                 message,
+//             });
+//         } catch (error) {
+//             console.error("Error sending notification:", error);
+//         }
+//     };
+
+//     return (
+//         <CCard>
+//             <CCardHeader>
+//                 <h4>Contact Us Information</h4>
+//             </CCardHeader>
+//             <CCardBody>
+//                 {loading ? <CSpinner /> : (
+//                     <CTable responsive striped hover>
+//                         <CTableHead>
+//                             <CTableRow>
+//                                 <CTableHeaderCell>#</CTableHeaderCell>
+//                                 <CTableHeaderCell>Name</CTableHeaderCell>
+//                                 <CTableHeaderCell>Email</CTableHeaderCell>
+//                                 <CTableHeaderCell>Message</CTableHeaderCell>
+//                                 <CTableHeaderCell>Actions</CTableHeaderCell>
+//                             </CTableRow>
+//                         </CTableHead>
+//                         <CTableBody>
+//                             {contactData.map((contact, index) => (
+//                                 <CTableRow key={contact._id}>
+//                                     <CTableDataCell>{index + 1}</CTableDataCell>
+//                                     <CTableDataCell>{contact.name}</CTableDataCell>
+//                                     <CTableDataCell>{contact.email}</CTableDataCell>
+//                                     <CTableDataCell>{contact.message}</CTableDataCell>
+//                                     <CTableDataCell>
+//                                         <CButton color="primary" size="sm" onClick={() => setSelectedContact(contact)}>Reply</CButton>
+//                                     </CTableDataCell>
+//                                 </CTableRow>
+//                             ))}
+//                         </CTableBody>
+//                     </CTable>
+//                 )}
+//             </CCardBody>
+
+//             {selectedContact && (
+//                 <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+//                     <CModalHeader>Reply to {selectedContact.name}</CModalHeader>
+//                     <CModalBody>
+//                         <textarea
+//                             className="form-control"
+//                             rows="3"
+//                             placeholder="Enter your reply..."
+//                             value={selectedContact.replyMessage || ""}
+//                             onChange={(e) => setSelectedContact({ ...selectedContact, replyMessage: e.target.value })}
+//                         />
+//                     </CModalBody>
+//                     <CModalFooter>
+//                         <CButton color="primary" onClick={() => handleSendReply(selectedContact)}>Send Reply</CButton>
+//                         <CButton color="secondary" onClick={() => setModalVisible(false)}>Close</CButton>
+//                     </CModalFooter>
+//                 </CModal>
+//             )}
+//         </CCard>
+//     );
+// };
+
+// export default ContactUsManagement;
+

@@ -253,7 +253,7 @@ const StyleCapsuleManagement = () => {
                                                     item.picture.map((picture, innerIndex) => (
                                                         <CCol xs="12" md="6" className="text-center" key={`${outerIndex}-${innerIndex}`}>
                                                             <img
-                                                                src={`http://3.223.253.106:3555/uploads/${picture}`}
+                                                                src={`${picture}`}
                                                                 alt={`Cloth ${outerIndex + 1}-${innerIndex + 1}`}
                                                                 style={{
                                                                     maxWidth: '100%',

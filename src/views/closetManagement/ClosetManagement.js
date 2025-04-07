@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CTabs,
   CNav,
@@ -10,17 +10,30 @@ import {
 } from '@coreui/react';
 import ClosetCategoryTab from './ClosetCategory';
 import ClosetSubcategoryTab from './ClosetSubcategory';
-import ClosetTypeSubcategoryTab from './Accessories';
+import ClosetTypeSubcategoryTab from './closetTypeSubcategory';
 // import CategoryTab from './CategoryTab';
 // import SubcategoryTab from './SubcategoryTab'
 
+
+
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleTabChange = (idx) => {
+    console.log(idx, "idx")
+    setActiveTab(idx);
+    setRefreshKey((prevKey) => prevKey + 1); // Update key to force re-render
+  };
+
+  useEffect(() => {
+    console.log(refreshKey, "idx");
+  });
 
   return (
     <>
       {/* <h2>Admin Panel</h2> */}
-      <CTabs activeTab={activeTab} onActiveTabChange={(idx) => setActiveTab(idx)}>
+      <CTabs key={refreshKey} activeTab={activeTab} onActiveTabChange={handleTabChange}>
         <CNav variant="tabs">
           <CNavItem>
             <CNavLink onClick={() => setActiveTab(0)} active={activeTab === 0}>
@@ -32,11 +45,11 @@ const AdminPanel = () => {
               Closet Subcategory
             </CNavLink>
           </CNavItem>
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink onClick={() => setActiveTab(2)} active={activeTab === 2}>
               Closet Type in subcategory
             </CNavLink>
-          </CNavItem>
+          </CNavItem> */}
         </CNav>
         
         <CTabContent>
