@@ -104,6 +104,12 @@ const _nav = [
     icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
   },
   {
+    component: CNavItem,
+    name: 'Garment Care',
+    to: '/garment-management',
+    icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
+  },
+  {
     component: CNavGroup,
     name: 'Review Management',
     icon: <FontAwesomeIcon icon={faStar}  style={{ color: 'yellow' }} className="nav-icon" />,
