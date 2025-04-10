@@ -367,9 +367,9 @@ const ClosetCategoryManagement = () => {
   const handleSave = async () => {
     try {
       if (editingCategory) {
-        await axios.put(`http://localhost:5000/api/categories/${editingCategory._id}`, { name: categoryName });
+        await axios.put(`http://3.223.253.106:5000/api/categories/${editingCategory._id}`, { name: categoryName });
       } else {
-        await axios.post("http://localhost:5000/api/categories", { name: categoryName });
+        await axios.post("http://3.223.253.106:5000/api/categories", { name: categoryName });
       }
       fetchCategories();
       setModalVisible(false);
