@@ -349,9 +349,11 @@ const ClosetCategoryManagement = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [categoryName, setCategoryName] = useState("");
   const [icon, setIcon] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const [selectedSubcategory, setSelectedSubcategory] = useState([]);
   const [typeSubcategories, setTypeSubcategories] = useState([])
   const [closetSubcategories, setClosetSubcategories] = useState([]);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
 
   const fetchSubcategories = async (categoryId = "") => {
     try {
@@ -359,9 +361,9 @@ const ClosetCategoryManagement = () => {
       const response = await axios.get("http://3.223.253.106:3555/api/closet/closet-subcategory/get");
       if (response.data.success) {
         const result = response.data.data
-        console.log(result, "result")
+        // console.log(result, "result")
         setSubcategories(result);
-        console.log(result[0], "response.data.data.subcategory");
+        // console.log(result[0], "response.data.data.subcategory");
 
       }
     } catch (error) {
@@ -423,9 +425,11 @@ const ClosetCategoryManagement = () => {
 
   const handleSave = async () => {
     if (!categoryName || !selectedSubcategory) {
-      alert("Closet name aur subcategory select karo!");
+      alert("Select closet name and subcategory!");
       return;
     }
+
+    setIsSaving(true);
 
     // Prepare the subcategory data in the expected nested format
     const subcategoryData = selectedSubcategory.map((sub) => ({
@@ -454,7 +458,7 @@ const ClosetCategoryManagement = () => {
           ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}`
           : "http://3.223.253.106:3555/api/closet/create",
         {
-          method: editingCategory ? "PATCH" : "POST",
+          method: editingCategory ? "PUT" : "POST",
           body: formData,
           headers: {
             Authorization: `Bearer ${token}`, // 🔥 Passing the token in Authorization header
@@ -464,14 +468,21 @@ const ClosetCategoryManagement = () => {
 
       const result = await response.json();
       if (result.success) {
+        fetchCategories();
         alert("Closet category saved successfully!");
         setModalVisible(false);
-        fetchCategories();
+
+        setCategoryName("");
+        setSelectedSubcategory([]);
+        setIcon(null);
       } else {
         alert(result.message);
       }
     } catch (error) {
       console.error("Error saving closet category:", error);
+    }
+    finally {
+      setIsSaving(false); // Re-enable after save attempt
     }
   };
 
@@ -491,18 +502,39 @@ const ClosetCategoryManagement = () => {
     }
   };
 
+  // const handleView = async (categoryId) => {
+  //   try {
+  //     const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
+  //     const result = response.data.data
+  //     console.log(result.data, "result")
+  //     console.log(result, "result")
+
+
+  //     setClosetSubcategories(result.data);
+  //     setViewModalVisible(true);
+  //     setVisibleModel(true);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // }
+
   const handleView = async (categoryId) => {
     try {
-      const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
-      const result = response.data.data
+      const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
+      const result = response.data.data?.[0]; // because you're getting an array
       console.log(result, "result")
 
-      setClosetSubcategories(result);
-      setVisibleModel(true);
+      if (result) {
+        setCategoryName(result.name); // "Winter Collection"
+        setSelectedSubcategory(result.subcategory); // [{ name: "wasd" }]
+        setVisibleModel(true);
+        setViewModalVisible(true);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }
+  };
+
 
   return (
     <div>
@@ -510,7 +542,7 @@ const ClosetCategoryManagement = () => {
         <h5 style={{ margin: 0 }}>Closet Category Management</h5>
         <CButton
           color="primary"
-          onClick={() => setModalVisible(true)}
+          onClick={() => { setEditingCategory(null); setModalVisible(true) }}
         >
           <FontAwesomeIcon icon={faPlus} /> Add Category
         </CButton>
@@ -704,13 +736,66 @@ const ClosetCategoryManagement = () => {
           <CButton color="secondary" onClick={() => setModalVisible(false)}>
             Cancel
           </CButton>
-          <CButton color="primary" onClick={handleSave}>
-            {editingCategory ? "Update" : "Save"}
+          <CButton color="primary" onClick={handleSave} disabled={isSaving}>
+            {isSaving ? "Saving..." : editingCategory ? "Update" : "Save"}
           </CButton>
         </CModalFooter>
       </CModal>
 
+{/* closet not working the array is not traversed prorperly */}
+      <CModal visible={viewModalVisible} onClose={() => setViewModalVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>View Closet</CModalTitle>
+        </CModalHeader>
 
+        <CModalBody>
+          {/* Closet Name */}
+          <h5>Closet Name</h5>
+          <p>{categoryName || "N/A"}</p>
+        </CModalBody>
+
+        <CModalBody>
+          {/* Closet Icon */}
+          <h5>Closet Icon</h5>
+          {icon ? (
+            <img
+              src={typeof icon === "string" ? icon : URL.createObjectURL(icon)}
+              alt="Closet Icon"
+              style={{ width: "100px", height: "100px", objectFit: "cover" }}
+            />
+          ) : (
+            <p>No icon uploaded</p>
+          )}
+        </CModalBody>
+
+        <CModalBody>
+          <h5>Subcategories</h5>
+          {selectedSubcategory?.length > 0 ? (
+            selectedSubcategory.map((sub, index) => (
+              <div key={index} style={{ marginBottom: "20px" }}>
+                <strong>{index + 1}. {sub.name}</strong>
+                {sub.typeSubcategory?.length > 0 ? (
+                  <ul style={{ marginTop: "5px" }}>
+                    {sub.typeSubcategory.map((type, typeIndex) => (
+                      <li key={typeIndex}>{type}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No type subcategories</p>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No subcategories found</p>
+          )}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setViewModalVisible(false)}>
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };

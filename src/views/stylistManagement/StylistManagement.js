@@ -61,6 +61,7 @@ const StylistManagement = () => {
         password: '',
         phone: '',
         specialization: '',
+        location: '',
         experience: '',
         description: '',
         price: '',
@@ -134,6 +135,7 @@ const StylistManagement = () => {
                 password: formData.password,
                 phone: formData.phone,
                 specialization: formData.specialization,
+                location: formData.location,
                 experience: formData.experience,
                 description: formData.description,
                 price: formData.price,
@@ -161,6 +163,7 @@ const StylistManagement = () => {
                 password: formData.password,
                 phone: formData.phone,
                 specialization: formData.specialization,
+                location: formData.location,
                 experience: formData.experience,
                 description: formData.description,
                 price: formData.price,
@@ -184,6 +187,7 @@ const StylistManagement = () => {
             password: '',
             phone: '',
             specialization: '',
+            location: '',
             experience: '',
             description: '',
             price: '',
@@ -504,6 +508,9 @@ const StylistManagement = () => {
                             <CFormInput type="text" id="specialization" label="Specialization" value={formData.specialization} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
+                            <CFormInput type="text" id="location" label="Location" value={formData.location} onChange={handleChange} required />
+                        </CCol>
+                        <CCol md={6}>
                             <CFormInput type="number" id="experience" label="Experience (Years)" value={formData.experience} onChange={handleChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
@@ -625,6 +632,16 @@ const StylistManagement = () => {
                                 id="specialization"
                                 label="Specialization"
                                 value={formData.specialization}
+                                onChange={handleChange}
+                                required
+                            />
+                        </CCol>
+                        <CCol md={6}>
+                            <CFormInput
+                                type="text"
+                                id="location"
+                                label="Location"
+                                value={formData.location}
                                 onChange={handleChange}
                                 required
                             />

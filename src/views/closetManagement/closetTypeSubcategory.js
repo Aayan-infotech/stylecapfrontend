@@ -384,7 +384,7 @@ const ClosetCategoryManagement = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`);
+      await axios.delete(`http://3.223.253.106:5000/api/categories/${id}`);
       fetchCategories();
     } catch (error) {
       console.error("Error deleting category:", error);

@@ -40,11 +40,11 @@ const AdminPanel = () => {
               Closet Category 
             </CNavLink>
           </CNavItem>
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink onClick={() => setActiveTab(1)} active={activeTab === 1}>
               Closet Subcategory
             </CNavLink>
-          </CNavItem>
+          </CNavItem> */}
           {/* <CNavItem>
             <CNavLink onClick={() => setActiveTab(2)} active={activeTab === 2}>
               Closet Type in subcategory
@@ -56,12 +56,12 @@ const AdminPanel = () => {
           <CTabPane visible={activeTab === 0}>
             <ClosetCategoryTab />
           </CTabPane>
-          <CTabPane visible={activeTab === 1}>
+          {/* <CTabPane visible={activeTab === 1}>
             <ClosetSubcategoryTab />
           </CTabPane>
           <CTabPane visible={activeTab === 2}>
             <ClosetTypeSubcategoryTab />
-          </CTabPane>
+          </CTabPane> */}
         </CTabContent>
       </CTabs>
     </>
