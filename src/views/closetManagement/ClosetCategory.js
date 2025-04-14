@@ -23,7 +23,7 @@
 //   // const fetchData = async () => {
 //   //   try {
 //   //     const token = localStorage.getItem('token');
-//   //     const response = await axios.get(`http://3.223.253.106:3555/api/cloths/get-by-category/accessories`, {
+//   //     const response = await axios.get(`http://localhost:3555/api/cloths/get-by-category/accessories`, {
 //   //       headers: {
 //   //         'Authorization': `Bearer ${token}`
 //   //       },
@@ -37,7 +37,7 @@
 //   const fetchData = async () => {
 //     try {
 //       const token = localStorage.getItem('token');
-//       const response = await axios.get(`http://3.223.253.106:3555/api/user/`, {
+//       const response = await axios.get(`http://localhost:3555/api/user/`, {
 //         headers: {
 //           // 'Content-Type': 'application/json',
 //           'Authorization': `Bearer ${token}`,
@@ -52,7 +52,7 @@
 
 //   const handleView = async (category, userId) => {
 //     try {
-//       const response = await axios.get(`http://3.223.253.106:3555/api/cloths/all-cloths/${category}/${userId}`)
+//       const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
 //       setUserAccessoriesData(response.data.cloths);
 //       setVisibleModel(true);
 //     } catch (error) {
@@ -63,7 +63,7 @@
 //   const fetchaccessoriesData = async (id) => {
 //     try {
 //       const token = localStorage.getItem('token');
-//       const response = await axios.get(`http://3.223.253.106:3555/api/cloths/getClothById/${id}`, {
+//       const response = await axios.get(`http://localhost:3555/api/cloths/getClothById/${id}`, {
 //         headers: {
 //           'Authorization': `Bearer ${token}`
 //         }
@@ -115,7 +115,7 @@
 //         formDataToSend.append('picture', selectedFile);
 //       }
 
-//       await axios.put(`http://3.223.253.106:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+//       await axios.put(`http://localhost:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
 //         headers: {
 //           'Authorization': `Bearer ${token}`,
 //           'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
@@ -354,11 +354,12 @@ const ClosetCategoryManagement = () => {
   const [typeSubcategories, setTypeSubcategories] = useState([])
   const [closetSubcategories, setClosetSubcategories] = useState([]);
   const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [closetData, setClosetData] = useState("");
 
   const fetchSubcategories = async (categoryId = "") => {
     try {
-      // const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
-      const response = await axios.get("http://3.223.253.106:3555/api/closet/closet-subcategory/get");
+      // const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
+      const response = await axios.get("http://localhost:3555/api/closet/closet-subcategory/get");
       if (response.data.success) {
         const result = response.data.data
         // console.log(result, "result")
@@ -374,7 +375,7 @@ const ClosetCategoryManagement = () => {
   // ✅ Fetch Categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://3.223.253.106:3555/api/closet/get-closet");
+      const response = await axios.get("http://localhost:3555/api/closet/get-closet");
       if (response.data.success) {
         setCategories(response.data.data);
       }
@@ -404,7 +405,7 @@ const ClosetCategoryManagement = () => {
 
   //   try {
   //     const response = await fetch(
-  //       editingCategory ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}` : "http://3.223.253.106:3555/api/closet/category",
+  //       editingCategory ? `http://localhost:3555/api/closet/category-update/${editingCategory._id}` : "http://localhost:3555/api/closet/category",
   //       {
   //         method: editingCategory ? "PATCH" : "POST",
   //         body: formData,
@@ -455,8 +456,8 @@ const ClosetCategoryManagement = () => {
       const token = localStorage.getItem("token")
       const response = await fetch(
         editingCategory
-          ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}`
-          : "http://3.223.253.106:3555/api/closet/create",
+          ? `http://localhost:3555/api/closet/category-update/${editingCategory._id}`
+          : "http://localhost:3555/api/closet/create",
         {
           method: editingCategory ? "PUT" : "POST",
           body: formData,
@@ -491,7 +492,7 @@ const ClosetCategoryManagement = () => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://3.223.253.106:3555/api/closet/delete-closet/${id}`, {
+      await axios.delete(`http://localhost:3555/api/closet/delete-closet/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -504,7 +505,7 @@ const ClosetCategoryManagement = () => {
 
   // const handleView = async (categoryId) => {
   //   try {
-  //     const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
+  //     const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
   //     const result = response.data.data
   //     console.log(result.data, "result")
   //     console.log(result, "result")
@@ -520,13 +521,14 @@ const ClosetCategoryManagement = () => {
 
   const handleView = async (categoryId) => {
     try {
-      const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
-      const result = response.data.data?.[0]; // because you're getting an array
-      console.log(result, "result")
+      const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
+      const result = response.data.allSubcategories?.[0]; // because you're getting an array
+      console.log(result, "result");
+
+      console.log(result.subcategory, "abc")
 
       if (result) {
-        setCategoryName(result.name); // "Winter Collection"
-        setSelectedSubcategory(result.subcategory); // [{ name: "wasd" }]
+        setClosetData(result);
         setVisibleModel(true);
         setViewModalVisible(true);
       }
@@ -578,9 +580,9 @@ const ClosetCategoryManagement = () => {
                 <CButton color="danger" size="sm" onClick={() => handleDelete(category._id)} className="ms-2">
                   <FontAwesomeIcon icon={faTrash} />
                 </CButton>
-                {/* <CButton color="info" size="sm" onClick={() => handleView(category._id)} className="ms-2">
+                <CButton color="info" size="sm" onClick={() => handleView(category._id)} className="ms-2">
                   <FontAwesomeIcon icon={faEye} />
-                </CButton> */}
+                </CButton>
                 {/* <CTableDataCell style={{ textAlign: 'center' }}>
                   <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
                     title="View" onClick={() => handleView(category._id)}>
@@ -742,8 +744,8 @@ const ClosetCategoryManagement = () => {
         </CModalFooter>
       </CModal>
 
-{/* closet not working the array is not traversed prorperly */}
-      <CModal visible={viewModalVisible} onClose={() => setViewModalVisible(false)}>
+      {/* closet not working the array is not traversed prorperly */}
+      <CModal size = "lg" visible={viewModalVisible} onClose={() => setViewModalVisible(false)}>
         <CModalHeader>
           <CModalTitle>View Closet</CModalTitle>
         </CModalHeader>
@@ -751,7 +753,7 @@ const ClosetCategoryManagement = () => {
         <CModalBody>
           {/* Closet Name */}
           <h5>Closet Name</h5>
-          <p>{categoryName || "N/A"}</p>
+          <p>{closetData.name || "N/A"}</p>
         </CModalBody>
 
         <CModalBody>
@@ -759,7 +761,7 @@ const ClosetCategoryManagement = () => {
           <h5>Closet Icon</h5>
           {icon ? (
             <img
-              src={typeof icon === "string" ? icon : URL.createObjectURL(icon)}
+              src={typeof closetData.icon === "string" ? closetData.icon : URL.createObjectURL(closetData.icon)}
               alt="Closet Icon"
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
             />
@@ -770,25 +772,40 @@ const ClosetCategoryManagement = () => {
 
         <CModalBody>
           <h5>Subcategories</h5>
-          {selectedSubcategory?.length > 0 ? (
-            selectedSubcategory.map((sub, index) => (
-              <div key={index} style={{ marginBottom: "20px" }}>
-                <strong>{index + 1}. {sub.name}</strong>
-                {sub.typeSubcategory?.length > 0 ? (
-                  <ul style={{ marginTop: "5px" }}>
-                    {sub.typeSubcategory.map((type, typeIndex) => (
-                      <li key={typeIndex}>{type}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No type subcategories</p>
-                )}
-              </div>
-            ))
+          {closetData.subcategory?.length > 0 ? (
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>#</th>
+                  <th style={thStyle}>Subcategory Name</th>
+                  <th style={thStyle}>Type Subcategories</th>
+                </tr>
+              </thead>
+              <tbody>
+                {closetData.subcategory.map((sub, index) => (
+                  <tr key={index}>
+                    <td style={tdStyle}>{index + 1}</td>
+                    <td style={tdStyle}>{sub.name}</td>
+                    <td style={tdStyle}>
+                      {sub.typeSubcategory?.length > 0 ? (
+                        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                          {sub.typeSubcategory.map((type, idx) => (
+                            <li key={idx}>{type.name}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <em>No types</em>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <p>No subcategories found</p>
           )}
         </CModalBody>
+
 
         <CModalFooter>
           <CButton color="secondary" onClick={() => setViewModalVisible(false)}>
@@ -801,3 +818,15 @@ const ClosetCategoryManagement = () => {
 };
 
 export default ClosetCategoryManagement;
+
+const thStyle = {
+  border: "1px solid #ccc",
+  padding: "8px",
+  backgroundColor: "#f8f9fa",
+  textAlign: "left"
+};
+
+const tdStyle = {
+  border: "1px solid #ccc",
+  padding: "8px"
+};
