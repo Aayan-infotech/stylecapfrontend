@@ -25,9 +25,10 @@ import {
     CForm,
     CFormInput,
     CFormTextarea,
-    CTooltip
+    CTooltip,
+    CBadge
 } from '@coreui/react';
-import { FaLock, FaLockOpen, FaTrash } from "react-icons/fa";
+import { FaLock, FaLockOpen, FaTrash, FaKey } from "react-icons/fa";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { height } from '@fortawesome/free-solid-svg-icons/fa0';
@@ -36,6 +37,9 @@ import axios from 'axios';
 import ChatBox from '../../chatBox/chatBox'
 import { database } from "../../firebase/firebaseConfig"; // Firebase config
 import { ref, push, onValue } from "firebase/database";
+import { toast } from 'react-toastify';
+// import { Badge } from '@mui/material';
+
 
 const StylistManagement = () => {
 
@@ -54,6 +58,10 @@ const StylistManagement = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [chatPath, setChatPath] = useState();
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    // const [selectedStylist, setSelectedStylist] = useState(null);
+    const [newPassword, setNewPassword] = useState('');
+
     const chatRef = ref(database, chatPath); // Firebase path for this stylist or a default chat
     const [formData, setFormData] = useState({
         name: '',
@@ -83,7 +91,7 @@ const StylistManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://3.223.253.106:3555/api/stylist/get-all-stylist-admin`,
+            const response = await axios.get(`http://localhost:3555/api/stylist/get-all-stylist-admin`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -96,6 +104,12 @@ const StylistManagement = () => {
             console.error(error);
         }
     }
+
+    const openPasswordModal = (stylist) => {
+        setSelectedStylist(stylist);
+        setShowPasswordModal(true);
+    };
+
 
     // Add a new empty work history field
     const addWorkHistory = () => {
@@ -177,6 +191,28 @@ const StylistManagement = () => {
         } catch (error) {
             setError('Error updating stylist');
             console.error('Error updating stylist:', error);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(
+                `http://localhost:3555/api/stylist/update-stylist?id=${selectedStylist._id}`,
+                { password: newPassword },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            toast.success("Password updated");
+            setShowPasswordModal(false);
+            setNewPassword('');
+            fetchData();
+        } catch (err) {
+            toast.error("Failed to update password");
         }
     };
 
@@ -475,6 +511,20 @@ const StylistManagement = () => {
                                             onClick={() => handleDelete(stylist._id)}>
                                             <FaTrash color="red" size={16} />
                                         </CButton>
+                                        <CButton
+                                            className="p-0 position-relative"
+                                            onClick={() => openPasswordModal(stylist)}
+                                            title="Change Password"
+                                        >
+                                            <FaKey color="blue" size={16} />
+                                            {stylist?.passwordChangeRequested && (
+                                                <span
+                                                    className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                                                    style={{ width: '8px', height: '8px' }}
+                                                ></span>
+                                            )}
+                                        </CButton>
+
                                         <ChatBox
                                             stylist={stylist._id} />
                                     </div>
@@ -518,7 +568,7 @@ const StylistManagement = () => {
                             <CFormInput type="text" id="description" label="Description" value={formData.description} onChange={handleChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
@@ -764,6 +814,25 @@ const StylistManagement = () => {
                     <CButton color="secondary" onClick={() => setIsModalOpen(false)}>Close</CButton>
                 </CModalFooter>
             </CModal>
+
+            <CModal visible={showPasswordModal} onClose={() => setShowPasswordModal(false)}>
+                <CModalHeader>
+                    <CModalTitle>Change Password</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    <CFormInput
+                        type="password"
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={() => setShowPasswordModal(false)}>Cancel</CButton>
+                    <CButton color="primary" onClick={handlePasswordChange}>Save</CButton>
+                </CModalFooter>
+            </CModal>
+
 
         </div>
     )

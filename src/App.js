@@ -3,6 +3,9 @@ import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import ProtectedRoute from './protectedRoutes'
 import { useTokenValidation } from './utils/tokenValidation'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
@@ -36,7 +39,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-    {/* <HashRouter> */}
+      {/* <HashRouter> */}
       <Suspense
         fallback={
           <div className="pt-3 text-center">
@@ -55,8 +58,9 @@ const App = () => {
           </Route>
         </Routes>
       </Suspense>
-    {/* </HashRouter> */}
-     </BrowserRouter> 
+      {/* </HashRouter> */}
+      <ToastContainer position="top-right" autoClose={3000} />
+    </BrowserRouter>
   )
 }
 
