@@ -91,7 +91,7 @@ const StylistManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3555/api/stylist/get-all-stylist-admin`,
+            const response = await axios.get(`http://3.223.253.106:3555/api/stylist/get-all-stylist-admin`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -198,7 +198,7 @@ const StylistManagement = () => {
         try {
             const token = localStorage.getItem('token');
             await axios.put(
-                `http://localhost:3555/api/stylist/update-stylist?id=${selectedStylist._id}`,
+                `http://3.223.253.106:3555/api/stylist/update-stylist?id=${selectedStylist._id}`,
                 { password: newPassword },
                 {
                     headers: {
