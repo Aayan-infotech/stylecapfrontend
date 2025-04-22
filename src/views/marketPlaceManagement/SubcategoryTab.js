@@ -287,7 +287,7 @@ const SubcategoryManagement = () => {
                             <CTableHeaderCell scope="col">#</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Name</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Category</CTableHeaderCell>
-                            <CTableHeaderCell scope="col">Sell Type</CTableHeaderCell>
+                            {/* <CTableHeaderCell scope="col">Sell Type</CTableHeaderCell> */}
                             <CTableHeaderCell scope="col">Price</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Discount</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Image</CTableHeaderCell>
