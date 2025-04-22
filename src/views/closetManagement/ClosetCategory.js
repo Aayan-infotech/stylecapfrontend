@@ -23,7 +23,7 @@
 //   // const fetchData = async () => {
 //   //   try {
 //   //     const token = localStorage.getItem('token');
-//   //     const response = await axios.get(`http://3.223.253.106:3555/api/cloths/get-by-category/accessories`, {
+//   //     const response = await axios.get(`http://localhost:3555/api/cloths/get-by-category/accessories`, {
 //   //       headers: {
 //   //         'Authorization': `Bearer ${token}`
 //   //       },
@@ -37,7 +37,7 @@
 //   const fetchData = async () => {
 //     try {
 //       const token = localStorage.getItem('token');
-//       const response = await axios.get(`http://3.223.253.106:3555/api/user/`, {
+//       const response = await axios.get(`http://localhost:3555/api/user/`, {
 //         headers: {
 //           // 'Content-Type': 'application/json',
 //           'Authorization': `Bearer ${token}`,
@@ -52,7 +52,7 @@
 
 //   const handleView = async (category, userId) => {
 //     try {
-//       const response = await axios.get(`http://3.223.253.106:3555/api/cloths/all-cloths/${category}/${userId}`)
+//       const response = await axios.get(`http://localhost:3555/api/cloths/all-cloths/${category}/${userId}`)
 //       setUserAccessoriesData(response.data.cloths);
 //       setVisibleModel(true);
 //     } catch (error) {
@@ -63,7 +63,7 @@
 //   const fetchaccessoriesData = async (id) => {
 //     try {
 //       const token = localStorage.getItem('token');
-//       const response = await axios.get(`http://3.223.253.106:3555/api/cloths/getClothById/${id}`, {
+//       const response = await axios.get(`http://localhost:3555/api/cloths/getClothById/${id}`, {
 //         headers: {
 //           'Authorization': `Bearer ${token}`
 //         }
@@ -115,7 +115,7 @@
 //         formDataToSend.append('picture', selectedFile);
 //       }
 
-//       await axios.put(`http://3.223.253.106:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+//       await axios.put(`http://localhost:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
 //         headers: {
 //           'Authorization': `Bearer ${token}`,
 //           'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
@@ -358,8 +358,8 @@ const ClosetCategoryManagement = () => {
 
   const fetchSubcategories = async (categoryId = "") => {
     try {
-      // const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
-      const response = await axios.get("http://3.223.253.106:3555/api/closet/closet-subcategory/get");
+      // const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
+      const response = await axios.get("http://localhost:3555/api/closet/closet-subcategory/get");
       if (response.data.success) {
         const result = response.data.data
         // console.log(result, "result")
@@ -375,7 +375,7 @@ const ClosetCategoryManagement = () => {
   // ✅ Fetch Categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://3.223.253.106:3555/api/closet/get-closet");
+      const response = await axios.get("http://localhost:3555/api/closet/get-closet");
       if (response.data.success) {
         setCategories(response.data.data);
       }
@@ -405,7 +405,7 @@ const ClosetCategoryManagement = () => {
 
   //   try {
   //     const response = await fetch(
-  //       editingCategory ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}` : "http://3.223.253.106:3555/api/closet/category",
+  //       editingCategory ? `http://localhost:3555/api/closet/category-update/${editingCategory._id}` : "http://localhost:3555/api/closet/category",
   //       {
   //         method: editingCategory ? "PATCH" : "POST",
   //         body: formData,
@@ -456,8 +456,8 @@ const ClosetCategoryManagement = () => {
       const token = localStorage.getItem("token")
       const response = await fetch(
         editingCategory
-          ? `http://3.223.253.106:3555/api/closet/category-update/${editingCategory._id}`
-          : "http://3.223.253.106:3555/api/closet/create",
+          ? `http://localhost:3555/api/closet/category-update/${editingCategory._id}`
+          : "http://localhost:3555/api/closet/create",
         {
           method: editingCategory ? "PUT" : "POST",
           body: formData,
@@ -492,7 +492,7 @@ const ClosetCategoryManagement = () => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://3.223.253.106:3555/api/closet/delete-closet/${id}`, {
+      await axios.delete(`http://localhost:3555/api/closet/delete-closet/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -505,7 +505,7 @@ const ClosetCategoryManagement = () => {
 
   // const handleView = async (categoryId) => {
   //   try {
-  //     const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
+  //     const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`)
   //     const result = response.data.data
   //     console.log(result.data, "result")
   //     console.log(result, "result")
@@ -521,7 +521,7 @@ const ClosetCategoryManagement = () => {
 
   const handleView = async (categoryId) => {
     try {
-      const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
+      const response = await axios.get(`http://localhost:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
       const result = response.data.allSubcategories?.[0]; // because you're getting an array
       console.log(result, "result");
 
@@ -756,8 +756,7 @@ const ClosetCategoryManagement = () => {
           <p>{closetData.name || "N/A"}</p>
         </CModalBody>
 
-        <CModalBody>
-          {/* Closet Icon */}
+        {/* <CModalBody>
           <h5>Closet Icon</h5>
           {icon ? (
             <img
@@ -768,7 +767,7 @@ const ClosetCategoryManagement = () => {
           ) : (
             <p>No icon uploaded</p>
           )}
-        </CModalBody>
+        </CModalBody> */}
 
         <CModalBody>
           <h5>Subcategories</h5>
