@@ -654,7 +654,7 @@ const ClosetCategoryManagement = () => {
 
         <CModalBody>
           {/* Closet Icon */}
-          <CFormInput type="file" onChange={(e) => setIcon(e.target.files[0])} />
+          <CFormInput type="file" onChange={(e) => setIcon(e.target.files[0])} required/>
         </CModalBody>
 
         <CModalBody>
@@ -670,7 +670,7 @@ const ClosetCategoryManagement = () => {
                   updatedSubcategories[index].name = e.target.value;
                   setSelectedSubcategory(updatedSubcategories);
                 }}
-                placeholder="Enter Subcategory Name"
+                placeholder="Enter Subcategory Name" required
               />
 
               <h6>Type Subcategories</h6>
