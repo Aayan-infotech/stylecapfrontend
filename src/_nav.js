@@ -130,12 +130,12 @@ const _nav = [
       },
     ],
   },
-  {
-    component: CNavItem,
-    name: 'MyStyleCapsule Entity',
-    to: '/myStyleCapsuleEntity',
-    icon: <FontAwesomeIcon icon={faPuzzlePiece} style={{ color: 'brown' }} className="nav-icon" />,
-  },
+  // {
+  //   component: CNavItem,
+  //   name: 'MyStyleCapsule Entity',
+  //   to: '/myStyleCapsuleEntity',
+  //   icon: <FontAwesomeIcon icon={faPuzzlePiece} style={{ color: 'brown' }} className="nav-icon" />,
+  // },
   {
     component: CNavItem,
     name: 'Order Management',

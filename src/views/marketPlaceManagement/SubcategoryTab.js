@@ -316,7 +316,7 @@ const SubcategoryManagement = () => {
                                     onClick={() => handleViewSubcategory(subcategory)}
                                 >{subcategory.name || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory?.marketplaceId?.name || 'null'}</CTableDataCell>
-                                <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.sellType || 'null'}</CTableDataCell>
+                                {/* <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.sellType || 'null'}</CTableDataCell> */}
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>${subcategory.price || 'null'}</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>{subcategory.discount || '0'}%</CTableDataCell>
                                 <CTableDataCell style={{ fontSize: '0.870rem' }}>
@@ -349,9 +349,9 @@ const SubcategoryManagement = () => {
                                 ))}
                             </CFormSelect>
                         </CCol>
-                        <CCol md={6}>
+                        {/* <CCol md={6}>
                             <CFormInput type="text" id="sellType" name='sellType' label="Sell Type" value={formData.sellType} onChange={handleInputChange} required />
-                        </CCol>
+                        </CCol> */}
                         <CCol md={6}>
                             <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} onWheel={(e) => e.target.blur()} 
                                 min={0} required />
@@ -397,9 +397,9 @@ const SubcategoryManagement = () => {
                                 ))}
                             </CFormSelect>
                         </CCol>
-                        <CCol md={6}>
+                        {/* <CCol md={6}>
                             <CFormInput type="text" id="sellType" label="Sell Type" value={formData.sellType} onChange={handleChange} required />
-                        </CCol>
+                        </CCol> */}
                         <CCol md={6}>
                             <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()} 
                                 min={0} required />
@@ -451,7 +451,7 @@ const SubcategoryManagement = () => {
 
                             <p><strong>Name</strong> {selectedSubcategory.name}</p>
                             <p><strong>Category:</strong> {selectedSubcategory.category || "null"}</p>
-                            <p><strong>Sell Type:</strong> {selectedSubcategory.sellType || "null"}</p>
+                            {/* <p><strong>Sell Type:</strong> {selectedSubcategory.sellType || "null"}</p> */}
                             <p><strong>Price:</strong> ${selectedSubcategory.price}</p>
                             <p><strong>Description:</strong> {selectedSubcategory.description}</p>
                             <p><strong>Stock Quantity:</strong> {selectedSubcategory.stockQuantity || '0'}</p>
