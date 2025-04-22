@@ -37,7 +37,7 @@ const SubcategoryManagement = () => {
     const [formData, setFormData] = useState({
         name: '',
         marketplaceId: '',
-        sellType: '',
+        // sellType: '',
         description: '',
         price: '',
         discount: '',
@@ -104,7 +104,7 @@ const SubcategoryManagement = () => {
 
         const form = new FormData();
         form.append("name", formData.name);
-        form.append("sellType", formData.sellType);
+        // form.append("sellType", formData.sellType);
         form.append("description", formData.description);
         form.append("price", formData.price);
         form.append("brand", formData.brand);
@@ -134,7 +134,7 @@ const SubcategoryManagement = () => {
             // Optionally, reset form and fetch data after successful submission
             setFormData({
                 name: "",
-                sellType: "",
+                // sellType: "",
                 description: "",
                 price: "",
                 brand: "",
@@ -157,7 +157,7 @@ const SubcategoryManagement = () => {
         setFormData({
             name: subcategory.name || '',
             marketplaceId: subcategory.marketplaceId || '',
-            sellType: subcategory.sellType || '',
+            // sellType: subcategory.sellType || '',
             description: subcategory.description || '',
             price: subcategory.price || '',
             discount: subcategory.discount || '',
@@ -176,7 +176,7 @@ const SubcategoryManagement = () => {
             const updatedSubcategory = {
                 name: formData.name,
                 marketplaceId: formData.marketplaceId,
-                sellType: formData.sellType,
+                // sellType: formData.sellType,
                 description: formData.description,
                 price: formData.price,
                 discount: formData.discount,
@@ -237,7 +237,7 @@ const SubcategoryManagement = () => {
         setFormData({
             name: '',
             marketplaceId: '',
-            sellType: '',
+            // sellType: '',
             description: '',
             price: '',
             discount: '',
