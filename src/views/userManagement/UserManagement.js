@@ -69,6 +69,7 @@ const UserManagement = () => {
     const handleView = async (id) => {
         try {
             const response = await axios.get(`http://3.223.253.106:3555/api/user/get/${id}`)
+
             setSingleUSer(response.data.data);
             setVisibleModel(true);
         } catch (error) {
@@ -189,7 +190,7 @@ const UserManagement = () => {
                                     </button>
 
                                     <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
-                                        title="Edit" onClick={() => { setUserId(user._id), setVisibleEditModel(true); }}>
+                                        title="Edit" onClick={() => { setUserId(user._id), setEditedUser(user),  setVisibleEditModel(true); }}>
                                         <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />
                                     </button>
 

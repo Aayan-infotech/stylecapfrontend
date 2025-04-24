@@ -262,6 +262,7 @@ const SubcategoryManagement = () => {
     };
 
     const handleViewSubcategory = async (subcategory) => {
+        console.log(subcategory)
         setSelectedSubcategory(subcategory);
         setModalVisible(true);
     }
