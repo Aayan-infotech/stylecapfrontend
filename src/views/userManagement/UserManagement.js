@@ -190,7 +190,7 @@ const UserManagement = () => {
                                     </button>
 
                                     <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
-                                        title="Edit" onClick={() => { setUserId(user._id), setEditedUser(user),  setVisibleEditModel(true); }}>
+                                        title="Edit" onClick={() => { setUserId(user._id), setEditedUser(user), setVisibleEditModel(true); }}>
                                         <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />
                                     </button>
 
@@ -237,25 +237,28 @@ const UserManagement = () => {
                             {/* Right Column */}
                             <div style={{ flex: '1 1 45%', minWidth: '250px' }}>
                                 <p><strong>Body Size:</strong> {singleUser.bodySize}</p>
-                                <p><strong>Chest:</strong> {singleUser.chest}</p>
+                                <p><strong>Chest:</strong> {singleUser.chest ? `${singleUser.chest} cm` : " "}</p>
                                 <p><strong>Eye Color:</strong> {singleUser.eyeColor}</p>
                                 <p><strong>Gender:</strong> {singleUser.gender}</p>
                                 <p><strong>Hair Color:</strong> {singleUser.hairColor}</p>
-                                <p><strong>Height:</strong> {singleUser.height} cm</p>
-                                <p><strong>High Hips:</strong> {singleUser.highHips} cm</p>
+                                <p><strong>Height:</strong> {singleUser.height ? `${singleUser.height} cm` : " "} </p>
+                                <p><strong>High Hips:</strong> {singleUser.highHips ? `${singleUser.highHips} cm` : " "} </p>
                             </div>
 
                             {/* Additional Details */}
                             <div style={{ flex: '1 1 45%', minWidth: '250px' }}>
-                                <p><strong>Hips:</strong> {singleUser.hips} cm</p>
+                                <p><strong>Hips:</strong> {singleUser.hips ? `${singleUser.hips} cm` : " "} </p>
                                 <p><strong>Marital Status:</strong> {singleUser.maritalStatus}</p>
                                 <p><strong>Mobile Number:</strong> {singleUser.mobileNumber}</p>
                                 <p><strong>Shoes:</strong> {singleUser.shoes}</p>
-                                <p><strong>Shoulders:</strong> {singleUser.shoulders} cm</p>
+                                <p><strong>Shoulders:</strong> {singleUser.shoulders ? `${singleUser.shoulders} cm` : " "} </p>
                             </div>
                             <div style={{ flex: '1 1 45%', minWidth: '250px' }}>
-                                <p><strong>Waist:</strong> {singleUser.waist} cm</p>
-                                <p><strong>Weight:</strong> {singleUser.weight} kg</p>
+                                <p>
+                                    <strong>Waist:</strong> {singleUser.waist ? `${singleUser.waist} cm` : " "}
+                                </p>
+
+                                <p><strong>Weight:</strong> {singleUser.weight ? `${singleUser.weight} kg` : " "}</p>
                             </div>
                         </div>
                     ) : (
