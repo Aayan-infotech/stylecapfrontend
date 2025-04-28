@@ -16,7 +16,8 @@ import {
     CForm,
     CFormInput,
     CListGroup,
-    CListGroupItem
+    CListGroupItem,
+    CFormLabel
 } from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -26,12 +27,26 @@ const QuestionnaireManagement = () => {
     const [questionnaires, setQuestionnaires] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [viewModalVisible, setViewModalVisible] = useState(false);
-    const [formData, setFormData] = useState({ question: "", options: [""] });
+    const [formData, setFormData] = useState({ question: "", options: [""], images: [] });
     const [editId, setEditId] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState('');
     const [loading, setLoading] = useState('');
     const [error, setError] = useState('');
+    const [images, setImages] = useState([]);
     const token = localStorage.getItem('token');
+    const [previews, setPreviews] = useState([]);
+
+    useEffect(() => {
+        if (images.length > 0) {
+            const objectUrls = images.map((file) => URL.createObjectURL(file));
+            setPreviews(objectUrls);
+
+            return () => {
+                objectUrls.forEach(url => URL.revokeObjectURL(url));
+            };
+        }
+    }, [images]);
+
 
 
     // Fetch questions from backend
@@ -42,7 +57,7 @@ const QuestionnaireManagement = () => {
     const fetchQuestions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get("http://3.223.253.106:3555/api/user/all_quest", {
+            const response = await axios.get("http://localhost:3555/api/user/all_quest", {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -76,29 +91,96 @@ const QuestionnaireManagement = () => {
     };
 
     // Handle form submission
+    // const handleSubmit = async () => {
+    //     try {
+    //         console.log(formData, "formData");
+    //         if (editId) {
+    //             await axios.put(`http://localhost:3555/api/user/update-questionnaire/${editId}`, formData, {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${token}`,
+    //                 }
+    //             });
+    //         } else {
+    //             await axios.post("http://localhost:3555/api/user/create-questionnaire", formData, {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${token}`,
+    //                 }
+    //             });
+    //         }
+    //         setModalVisible(false);
+    //         fetchQuestions();
+    //         setFormData({ question: "", options: [""], images: [] });
+    //         setEditId(null);
+    //     } catch (error) {
+    //         console.error("Error submitting questionnaire", error);
+    //     }
+    // };
+
+    // const handleSubmit = async () => {
+    //     try {
+    //         console.log(formData, "formData")
+    //         const config = {
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`,
+    //                 'Content-Type': 'multipart/form-data',
+    //             }
+    //         };
+
+    //         if (editId) {
+    //             await axios.put(`http://localhost:3555/api/user/update-questionnaire/${editId}`, formData, config);
+    //         } else {
+    //             await axios.post("http://localhost:3555/api/user/create-questionnaire", formData, config);
+    //         }
+
+    //         setModalVisible(false);
+    //         fetchQuestions();
+    //         setFormData({ question: "", options: [""], images: [] });
+    //         setEditId(null);
+    //     } catch (error) {
+    //         console.error("Error submitting form:", error.response?.data || error);
+    //     }
+    // };
+
+
     const handleSubmit = async () => {
         try {
-            if (editId) {
-                await axios.put(`http://3.223.253.106:3555/api/user/update-questionnaire/${editId}`, formData, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    }
-                });
-            } else {
-                await axios.post("http://3.223.253.106:3555/api/user/create-questionnaire", formData,{
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    }
-                });
+          const form = new FormData();
+
+          console.log(formData, "formData");
+
+          form.append("question", formData.question);
+          formData.options.forEach((opt, index) => {
+            form.append(`options[${index}]`, opt);
+          });
+
+          if (formData.images && formData.images.length > 0) {
+            formData.images.forEach((img, i) => {
+              form.append("images", img); // name must match backend field (usually "images")
+            });
+          }
+
+          const config = {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
             }
-            setModalVisible(false);
-            fetchQuestions();
-            setFormData({ question: "", options: [""] });
-            setEditId(null);
+          };
+
+          if (editId) {
+            await axios.put(`http://localhost:3555/api/user/update-questionnaire/${editId}`, form, config);
+          } else {
+            await axios.post("http://localhost:3555/api/user/create-questionnaire", form, config);
+          }
+
+          setModalVisible(false);
+          fetchQuestions();
+          setFormData({ question: "", options: [""], images: [] });
+          setEditId(null);
         } catch (error) {
-            console.error("Error submitting questionnaire", error);
+          console.error("Error submitting questionnaire", error);
         }
-    };
+      };
+
 
     // Edit Question
     const handleEdit = (questionnaire) => {
@@ -107,10 +189,75 @@ const QuestionnaireManagement = () => {
         setModalVisible(true);
     };
 
+    // const handleMultipleImageUpload = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     const maxFiles = 5;
+
+    //     if (files.length > maxFiles) {
+    //         alert(`You can only upload up to ${maxFiles} images.`);
+    //         return;
+    //     }
+
+    //     const validImages = files.filter(file => file.type.startsWith("image/"));
+
+    //     if (validImages.length !== files.length) {
+    //         alert("Some files are not valid images.");
+    //         return;
+    //     }
+
+    //     // setImages(validImages);
+    //     setFormData(prev => ({
+    //         ...prev,
+    //         images: validImages
+    //     }));
+    //     console.log(validImages.secure_url, "setImages");
+    // };
+
+
     // Delete Question
+
+    const handleMultipleImageUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        const maxImages = 5;
+
+        if (files.length > maxImages) {
+            alert(`You can only upload up to ${maxImages} images.`);
+            return;
+        }
+
+        const uploadedUrls = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const formData = new FormData();
+            formData.append('file', files[i]);
+            formData.append('upload_preset', 'commerce_data'); 
+            formData.append('cloud_name', 'dpgnawkaj'); 
+            try {
+                const res = await fetch('https://api.cloudinary.com/v1_1/dpgnawkaj/image/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await res.json();
+                uploadedUrls.push(data.secure_url);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        }
+
+        // Store URLs in state (or wherever you need)
+        // setImages(uploadedUrls);
+        setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, ...uploadedUrls]
+        }));
+
+    };
+
+
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://3.223.253.106:3555/api/user/delete-questionnaire/${id}`, {
+            await axios.delete(`http://localhost:3555/api/user/delete-questionnaire/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -133,10 +280,10 @@ const QuestionnaireManagement = () => {
 
     return (
         <div>
-            
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-            <h4>Questionnaire Management</h4>
-            <CButton color="primary" onClick={() => setModalVisible(true)}>Add Question</CButton>
+                <h4>Questionnaire Management</h4>
+                <CButton color="primary" onClick={() => setModalVisible(true)}>Add Question</CButton>
             </div>
             <CTable striped hover className="mt-3">
                 <CTableHead>
@@ -169,8 +316,8 @@ const QuestionnaireManagement = () => {
                 </CListGroup>
               </CTableDataCell> */}
                             <CTableDataCell>
-                                <CButton style={{color: "white"}} color="info" size="sm" className="me-2" onClick={() => handleEdit(question)}> <FontAwesomeIcon icon={faPen} />Edit</CButton>
-                                <CButton style={{color: "white"}} color="danger" size="sm" onClick={() => handleDelete(question._id)}> <FontAwesomeIcon icon={faTrash} />Delete</CButton>
+                                <CButton style={{ color: "white" }} color="info" size="sm" className="me-2" onClick={() => handleEdit(question)}> <FontAwesomeIcon icon={faPen} />Edit</CButton>
+                                <CButton style={{ color: "white" }} color="danger" size="sm" onClick={() => handleDelete(question._id)}> <FontAwesomeIcon icon={faTrash} />Delete</CButton>
                             </CTableDataCell>
                         </CTableRow>
                     ))}
@@ -191,6 +338,19 @@ const QuestionnaireManagement = () => {
                             onChange={handleChange}
                             required
                         />
+                        <CFormLabel className="mt-3">Upload Images (Max 5)</CFormLabel>
+                        <CFormInput
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleMultipleImageUpload}
+                        />
+                        <div className="image-previews mt-2">
+                            {previews.map((src, index) => (
+                                <img key={index} src={src} alt={`preview-${index}`} width={100} style={{ marginRight: '10px' }} />
+                            ))}
+                        </div>
+
                         <h6 className="mt-3">Options</h6>
                         {formData.options.map((opt, index) => (
                             <div key={index} className="d-flex align-items-center mb-2">
