@@ -16,7 +16,7 @@ const ClosetSubcategoryManagement = () => {
     // ✅ Fetch Subcategories (With Optional Filter)
     const fetchSubcategories = async (categoryId = "") => {
         try {
-            const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
+            const response = await axios.get(`http://18.209.91.97:3555/api/closet/closet-subcategory/get${categoryId ? `?category=${categoryId}` : ""}`);
             if (response.data.success) {
                 const result = response.data.data
                 setSubcategories(result);
@@ -34,7 +34,7 @@ const ClosetSubcategoryManagement = () => {
     //         return;
     //     }
     //     try {
-    //         const response = await axios.get(`http://3.223.253.106:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
+    //         const response = await axios.get(`http://18.209.91.97:3555/api/closet/closet-subcategory/get?categoryId=${categoryId}`);
     //         setSubcategories(response.data.data);
     //     } catch (error) {
     //         console.error("Error fetching subcategories:", error);
@@ -44,7 +44,7 @@ const ClosetSubcategoryManagement = () => {
     // ✅ Fetch Categories for Dropdown
     const fetchCategories = async () => {
         try {
-            const response = await axios.get("http://3.223.253.106:3555/api/closet/get-closet");
+            const response = await axios.get("http://18.209.91.97:3555/api/closet/get-closet");
             if (response.data.success) {
                 setCategories(response.data.data);
             }
@@ -62,12 +62,12 @@ const ClosetSubcategoryManagement = () => {
     const handleSave = async () => {
         try {
             if (editingSubcategory) {
-                await axios.put(`http://3.223.253.106:3555/api/subcategories/${editingSubcategory._id}`, {
+                await axios.put(`http://18.209.91.97:3555/api/subcategories/${editingSubcategory._id}`, {
                     name: subcategoryName,
                     category: selectedCategory
                 });
             } else {
-                await axios.post("http://3.223.253.106:3555/api/subcategories", {
+                await axios.post("http://18.209.91.97:3555/api/subcategories", {
                     name: subcategoryName,
                     category: selectedCategory
                 });
@@ -86,7 +86,7 @@ const ClosetSubcategoryManagement = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this subcategory?")) return;
         try {
-            await axios.delete(`http://3.223.253.106:3555/api/subcategories/${id}`);
+            await axios.delete(`http://18.209.91.97:3555/api/subcategories/${id}`);
             fetchSubcategories(filterCategory); // Refresh data based on current filter
         } catch (error) {
             console.error("Error deleting subcategory:", error);

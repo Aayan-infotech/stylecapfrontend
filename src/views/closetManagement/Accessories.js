@@ -23,7 +23,7 @@
 //   // const fetchData = async () => {
 //   //   try {
 //   //     const token = localStorage.getItem('token');
-//   //     const response = await axios.get(`http://3.223.253.106:3555/api/cloths/get-by-category/accessories`, {
+//   //     const response = await axios.get(`http://18.209.91.97:3555/api/cloths/get-by-category/accessories`, {
 //   //       headers: {
 //   //         'Authorization': `Bearer ${token}`
 //   //       },
@@ -37,7 +37,7 @@
 //   const fetchData = async () => {
 //     try {
 //       const token = localStorage.getItem('token');
-//       const response = await axios.get(`http://3.223.253.106:3555/api/user/`, {
+//       const response = await axios.get(`http://18.209.91.97:3555/api/user/`, {
 //         headers: {
 //           // 'Content-Type': 'application/json',
 //           'Authorization': `Bearer ${token}`,
@@ -52,7 +52,7 @@
 
 //   const handleView = async (category, userId) => {
 //     try {
-//       const response = await axios.get(`http://3.223.253.106:3555/api/cloths/all-cloths/${category}/${userId}`)
+//       const response = await axios.get(`http://18.209.91.97:3555/api/cloths/all-cloths/${category}/${userId}`)
 //       setUserAccessoriesData(response.data.cloths);
 //       setVisibleModel(true);
 //     } catch (error) {
@@ -63,7 +63,7 @@
 //   const fetchaccessoriesData = async (id) => {
 //     try {
 //       const token = localStorage.getItem('token');
-//       const response = await axios.get(`http://3.223.253.106:3555/api/cloths/getClothById/${id}`, {
+//       const response = await axios.get(`http://18.209.91.97:3555/api/cloths/getClothById/${id}`, {
 //         headers: {
 //           'Authorization': `Bearer ${token}`
 //         }
@@ -115,7 +115,7 @@
 //         formDataToSend.append('picture', selectedFile);
 //       }
 
-//       await axios.put(`http://3.223.253.106:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+//       await axios.put(`http://18.209.91.97:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
 //         headers: {
 //           'Authorization': `Bearer ${token}`,
 //           'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
@@ -350,7 +350,7 @@ const ClosetCategoryManagement = () => {
   // ✅ Fetch Categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://3.223.253.106:3555/api/closet/get-closet");
+      const response = await axios.get("http://18.209.91.97:3555/api/closet/get-closet");
       if (response.data.success) {
         setCategories(response.data.data);
       }
@@ -367,9 +367,9 @@ const ClosetCategoryManagement = () => {
   const handleSave = async () => {
     try {
       if (editingCategory) {
-        await axios.put(`http://3.223.253.106:5000/api/categories/${editingCategory._id}`, { name: categoryName });
+        await axios.put(`http://18.209.91.97:5000/api/categories/${editingCategory._id}`, { name: categoryName });
       } else {
-        await axios.post("http://3.223.253.106:5000/api/categories", { name: categoryName });
+        await axios.post("http://18.209.91.97:5000/api/categories", { name: categoryName });
       }
       fetchCategories();
       setModalVisible(false);
@@ -384,7 +384,7 @@ const ClosetCategoryManagement = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
-      await axios.delete(`http://3.223.253.106:5000/api/categories/${id}`);
+      await axios.delete(`http://18.209.91.97:5000/api/categories/${id}`);
       fetchCategories();
     } catch (error) {
       console.error("Error deleting category:", error);

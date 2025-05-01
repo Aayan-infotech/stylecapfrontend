@@ -33,7 +33,7 @@ const GarmentCarePanel = () => {
     const fetchGarmentCare = async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get('http://3.223.253.106:3555/api/garment/garment-care',
+            const res = await axios.get('http://18.209.91.97:3555/api/garment/garment-care',
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -65,7 +65,7 @@ const GarmentCarePanel = () => {
                 endTime: new Date(`${today}T${form.endTime}`),
             }
 
-            await axios.post('http://3.223.253.106:3555/api/garment', payload)
+            await axios.post('http://18.209.91.97:3555/api/garment', payload)
             setVisible(false)
             setForm({
                 name: '',
@@ -93,7 +93,7 @@ const GarmentCarePanel = () => {
         if (!confirmDelete) return;
 
         try {
-            const response = await axios.delete(`http://3.223.253.106:3555/api/garment/delete/${id}`);
+            const response = await axios.delete(`http://18.209.91.97:3555/api/garment/delete/${id}`);
             fetchGarmentCare();
         }
         catch (error) {
@@ -132,7 +132,7 @@ const GarmentCarePanel = () => {
                 endTime: form.endTime,
             }
 
-            await axios.put(`http://3.223.253.106:3555/api/garment/update/${editId}`, payload)
+            await axios.put(`http://18.209.91.97:3555/api/garment/update/${editId}`, payload)
             alert("Garment care provider updated successfully.")
             setVisible(false)
             setIsEditMode(false)

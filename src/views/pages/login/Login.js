@@ -18,7 +18,7 @@ import {
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 
-const API_URL = 'http://3.223.253.106:3555/api/admin/loginAdmin';
+const API_URL = 'http://18.209.91.97:3555/api/admin/loginAdmin';
 
 const Login = () => {
   const [email, setEmail] = useState('');

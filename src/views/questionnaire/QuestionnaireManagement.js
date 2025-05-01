@@ -57,7 +57,7 @@ const QuestionnaireManagement = () => {
     const fetchQuestions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get("http://3.223.253.106:3555/api/user/all_quest", {
+            const response = await axios.get("http://18.209.91.97:3555/api/user/all_quest", {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -95,13 +95,13 @@ const QuestionnaireManagement = () => {
     //     try {
     //         console.log(formData, "formData");
     //         if (editId) {
-    //             await axios.put(`http://3.223.253.106:3555/api/user/update-questionnaire/${editId}`, formData, {
+    //             await axios.put(`http://18.209.91.97:3555/api/user/update-questionnaire/${editId}`, formData, {
     //                 headers: {
     //                     'Authorization': `Bearer ${token}`,
     //                 }
     //             });
     //         } else {
-    //             await axios.post("http://3.223.253.106:3555/api/user/create-questionnaire", formData, {
+    //             await axios.post("http://18.209.91.97:3555/api/user/create-questionnaire", formData, {
     //                 headers: {
     //                     'Authorization': `Bearer ${token}`,
     //                 }
@@ -127,9 +127,9 @@ const QuestionnaireManagement = () => {
     //         };
 
     //         if (editId) {
-    //             await axios.put(`http://3.223.253.106:3555/api/user/update-questionnaire/${editId}`, formData, config);
+    //             await axios.put(`http://18.209.91.97:3555/api/user/update-questionnaire/${editId}`, formData, config);
     //         } else {
-    //             await axios.post("http://3.223.253.106:3555/api/user/create-questionnaire", formData, config);
+    //             await axios.post("http://18.209.91.97:3555/api/user/create-questionnaire", formData, config);
     //         }
 
     //         setModalVisible(false);
@@ -167,9 +167,9 @@ const QuestionnaireManagement = () => {
           };
 
           if (editId) {
-            await axios.put(`http://3.223.253.106:3555/api/user/update-questionnaire/${editId}`, form, config);
+            await axios.put(`http://18.209.91.97:3555/api/user/update-questionnaire/${editId}`, form, config);
           } else {
-            await axios.post("http://3.223.253.106:3555/api/user/create-questionnaire", form, config);
+            await axios.post("http://18.209.91.97:3555/api/user/create-questionnaire", form, config);
           }
 
           setModalVisible(false);
@@ -257,7 +257,7 @@ const QuestionnaireManagement = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://3.223.253.106:3555/api/user/delete-questionnaire/${id}`, {
+            await axios.delete(`http://18.209.91.97:3555/api/user/delete-questionnaire/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -384,6 +384,7 @@ const QuestionnaireManagement = () => {
                             <div>
                                 <p><strong>Question:</strong> {selectedQuestion.question}</p>
                                 <p><strong>Options:</strong></p>
+                                {/* <p><imag src={selectedQuestion.images[0]}/></p> */}
                                 <ol>
                                     {selectedQuestion.options.map((option, index) => (
                                         <li key={index}>{option}</li>

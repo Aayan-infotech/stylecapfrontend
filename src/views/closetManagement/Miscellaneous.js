@@ -23,7 +23,7 @@ const miscellaneous = () => {
   // const fetchData = async () => {
   //   try {
   //     const token = localStorage.getItem('token');
-  //     const response = await axios.get(`http://3.223.253.106:3555/api/cloths/get-by-category/miscellaneous`, {
+  //     const response = await axios.get(`http://18.209.91.97:3555/api/cloths/get-by-category/miscellaneous`, {
   //       headers: {
   //         'Authorization': `Bearer ${token}`
   //       },
@@ -37,7 +37,7 @@ const miscellaneous = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://3.223.253.106:3555/api/user/`, {
+      const response = await axios.get(`http://18.209.91.97:3555/api/user/`, {
         headers: {
           // 'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -52,7 +52,7 @@ const miscellaneous = () => {
 
   const handleView = async (category, userId) => {
     try {
-      const response = await axios.get(`http://3.223.253.106:3555/api/cloths/all-cloths/${category}/${userId}`)
+      const response = await axios.get(`http://18.209.91.97:3555/api/cloths/all-cloths/${category}/${userId}`)
       setUserMiscellaneousData(response.data.cloths);
       console.log(response.data.cloths)
       setVisibleModal(true);
@@ -65,7 +65,7 @@ const miscellaneous = () => {
   const fetchaccessoriesData = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://3.223.253.106:3555/api/cloths/getClothById/${id}`, {
+      const response = await axios.get(`http://18.209.91.97:3555/api/cloths/getClothById/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -117,7 +117,7 @@ const miscellaneous = () => {
         formDataToSend.append('picture', selectedFile);
       }
 
-      await axios.put(`http://3.223.253.106:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+      await axios.put(`http://18.209.91.97:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads

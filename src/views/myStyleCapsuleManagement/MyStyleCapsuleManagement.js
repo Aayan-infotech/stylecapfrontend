@@ -24,7 +24,7 @@ const StyleCapsuleManagement = () => {
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://3.223.253.106:3555/api/user`, {
+            const response = await axios.get(`http://18.209.91.97:3555/api/user`, {
                 headers: {
                     // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -40,7 +40,7 @@ const StyleCapsuleManagement = () => {
     // const fetchData = async () => {
     //     try {
     //         const token = localStorage.getItem('token');
-    //         const response = await axios.get(`http://3.223.253.106:3555/api/user`, {
+    //         const response = await axios.get(`http://18.209.91.97:3555/api/user`, {
     //             headers: {
     //                 'Content-Type': 'application/json',
     //                 'Authorization': `Bearer ${token}`,
@@ -55,7 +55,7 @@ const StyleCapsuleManagement = () => {
     const handleView = async (userId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://3.223.253.106:3555/api/myStyleCapsule/getStyle?userId=${userId}`, {
+            const response = await axios.get(`http://18.209.91.97:3555/api/myStyleCapsule/getStyle?userId=${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -71,7 +71,7 @@ const StyleCapsuleManagement = () => {
     const fetchStyleData = async (date) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://3.223.253.106:3555/api/myStyleCapsule/styleByDate/${date}`, {
+            const response = await axios.get(`http://18.209.91.97:3555/api/myStyleCapsule/styleByDate/${date}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
@@ -124,7 +124,7 @@ const StyleCapsuleManagement = () => {
                 formDataToSend.append('picture', selectedFile);
             }
 
-            await axios.put(`http://3.223.253.106:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
+            await axios.put(`http://18.209.91.97:3555/api/cloths/update-cloths/${id}`, formDataToSend, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',  // Use multipart/form-data for file uploads
