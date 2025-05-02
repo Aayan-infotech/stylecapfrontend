@@ -574,9 +574,9 @@ const ClosetCategoryManagement = () => {
               </CTableDataCell>
 
               <CTableDataCell>
-                <CButton color="warning" size="sm" onClick={() => { setEditingCategory(category); setCategoryName(category.name); setModalVisible(true); }}>
+                {/* <CButton color="warning" size="sm" onClick={() => { setEditingCategory(category); setCategoryName(category.name); setModalVisible(true); }}>
                   <FontAwesomeIcon icon={faEdit} />
-                </CButton>
+                </CButton> */}
                 <CButton color="danger" size="sm" onClick={() => handleDelete(category._id)} className="ms-2">
                   <FontAwesomeIcon icon={faTrash} />
                 </CButton>
