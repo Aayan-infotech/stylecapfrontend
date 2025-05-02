@@ -243,7 +243,7 @@ const StylistManagement = () => {
 
     const handleApprove = async (stylistId) => {
         try {
-            const response = await axios.post(`http://18.209.91.97:3555/api/stylist/approve/${stylistId}`)
+            const response = await axios.post(`http://localhost:3555/api/stylist/approve/${stylistId}`)
             // alert(response.data.message); // Display success message
             setStylist((prevStylists) =>
                 prevStylists.map((stylist) =>

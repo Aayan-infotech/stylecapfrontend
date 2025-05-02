@@ -16,6 +16,7 @@ import {
   faStore,
   faPuzzlePiece,
   faQuestionCircle,
+  faGift,
 } from '@fortawesome/free-solid-svg-icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -103,32 +104,44 @@ const _nav = [
     to: '/marketPlace',
     icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
   },
+  // {
+  //   component: CNavItem,
+  //   name: 'Garment Care',
+  //   to: '/garment-management',
+  //   icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
+  // },
   {
     component: CNavItem,
-    name: 'Garment Care',
-    to: '/garment-management',
-    icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
+    name: 'Stylist Review',
+    to: '/reviewManagement/stylist',
+    icon: <FontAwesomeIcon icon={faQuestionCircle} style={{color: 'red'}} className="nav-icon" />,
   },
+  // {
+  //   component: CNavGroup,
+  //   name: 'Review Management',
+  //   icon: <FontAwesomeIcon icon={faStar}  style={{ color: 'yellow' }} className="nav-icon" />,
+  //   items: [
+  //     {
+  //       component: CNavItem,
+  //       name: 'Stylist',
+  //       to: '/reviewManagement/stylist',
+  //       style: { marginLeft: '20px' },
+  //       icon: <FontAwesomeIcon icon={faStar} style={{ color: 'orange' }} className="nav-icon" />,
+  //     },
+  //     // {
+  //     //   component: CNavItem,
+  //     //   name: 'Garment Care',
+  //     //   to: '/reviewManagement/garmentCare',
+  //     //   style: { marginLeft: '20px' },
+  //     //   icon: <FontAwesomeIcon icon={faStar} style={{ color: 'skyblue' }} className="nav-icon" />,
+  //     // },
+  //   ],
+  // },
   {
-    component: CNavGroup,
-    name: 'Review Management',
-    icon: <FontAwesomeIcon icon={faStar}  style={{ color: 'yellow' }} className="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Stylist',
-        to: '/reviewManagement/stylist',
-        style: { marginLeft: '20px' },
-        icon: <FontAwesomeIcon icon={faStar} style={{ color: 'orange' }} className="nav-icon" />,
-      },
-      {
-        component: CNavItem,
-        name: 'Garment Care',
-        to: '/reviewManagement/garmentCare',
-        style: { marginLeft: '20px' },
-        icon: <FontAwesomeIcon icon={faStar} style={{ color: 'skyblue' }} className="nav-icon" />,
-      },
-    ],
+    component: CNavItem,
+    name: 'Gift Cards',
+    to: '/giftcard-management',
+    icon: <FontAwesomeIcon icon={faGift} style={{color: 'red'}} className="nav-icon" />,
   },
   // {
   //   component: CNavItem,
