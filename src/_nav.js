@@ -17,6 +17,7 @@ import {
   faPuzzlePiece,
   faQuestionCircle,
   faGift,
+  faHandshake,
 } from '@fortawesome/free-solid-svg-icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -110,6 +111,12 @@ const _nav = [
   //   to: '/garment-management',
   //   icon: <FontAwesomeIcon icon={faStore} style={{ color: 'purple' }} className="nav-icon" />,
   // },
+  {
+    component: CNavItem,
+    name: 'Help & Support',
+    to: '/help&Support',
+    icon: <FontAwesomeIcon icon={faHandshake} style={{color: 'red'}} className="nav-icon" />,
+  },
   {
     component: CNavItem,
     name: 'Stylist Review',
