@@ -23,7 +23,7 @@ const Questionnaire = React.lazy( () => import('./views/questionnaire/Questionna
 const ClosetManagement = React.lazy( () => import('./views/closetManagement/ClosetManagement'));
 const GarmentCareManagement = React.lazy( () => import('./views/garmentCareManagement/GarmentCareManagement'));
 const GiftCardManagement = React.lazy( () => import('./views/giftCardManagement/GiftCardManagement'));
-const helpAndSupportManagement = React.lazy( () => import('./views/help&Support/HelpAndSupport'));
+const helpAndSupportManagement = React.lazy( () => import('./views/helpAndSupport/HelpAndSupport'));
 
 // const Check = React.lazy(()=> import('./views/closetManagement/Check'))
 // const AnalyticsReporting = React.lazy(() => import('./views/analytics&Reporting/Analytics&Reporting'))
