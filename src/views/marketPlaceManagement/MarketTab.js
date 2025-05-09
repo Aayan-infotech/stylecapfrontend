@@ -151,12 +151,14 @@ const MarketPlaceManagement = () => {
     };
 
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm(`Are you sure you want to delete product`);
+        const confirmDelete = window.confirm(`Market place data once deleted, will be deleted from the system and will not be retrieved. Are you sure to continue ?`);
 
         if (confirmDelete) {
             try {
                 await axios.delete(`http://18.209.91.97:3555/api/marketplaces/delete/${id}`);
                 fetchData();
+                window.location.reload();
+
             } catch (error) {
                 console.error('Error Deleting user:', error);
             }
@@ -233,7 +235,7 @@ const MarketPlaceManagement = () => {
                     <CForm onSubmit={handleAddSubmit}>
                         <CRow>
                             <CCol md="6">
-                                <CFormLabel htmlFor="section">section Of Market Place</CFormLabel>
+                                <CFormLabel htmlFor="section">Section Of Market Place</CFormLabel>
                                 <CFormSelect
                                     id="section"
                                     name="section"

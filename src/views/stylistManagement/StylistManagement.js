@@ -525,8 +525,8 @@ const StylistManagement = () => {
                                             )}
                                         </CButton>
 
-                                        <ChatBox
-                                            stylist={stylist._id} />
+                                        {/* <ChatBox
+                                            stylist={stylist._id} /> */}
                                     </div>
                                 </CTableDataCell>
 
