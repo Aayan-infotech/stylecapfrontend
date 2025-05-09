@@ -100,7 +100,7 @@ const UserManagement = () => {
     };
 
     const handleDelete = async (id, userName) => {
-        const confirmDelete = window.confirm(`Are you sure you want to delete user: ${userName}?`);
+        const confirmDelete = window.confirm(`User ${userName} once deleted, his/her all data will be deleted from the system. Are you sure to continue ?`);
         if (confirmDelete) {
             try {
                 const token = localStorage.getItem('token');

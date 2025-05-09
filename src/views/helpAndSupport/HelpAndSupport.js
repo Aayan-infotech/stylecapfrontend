@@ -23,8 +23,10 @@ import moment from 'moment';
 const AdminConcernsScreen = () => {
     const [concerns, setConcerns] = useState([]);
     const [selectedConcern, setSelectedConcern] = useState(null);
+    const [selectedConcernView, setSelectedConcernView] = useState(null);
     const [replyMessage, setReplyMessage] = useState('');
     const [visible, setVisible] = useState(false);
+    const [visibleView, setVisibleView] = useState(false);
 
     useEffect(() => {
         fetchConcerns();
@@ -33,7 +35,7 @@ const AdminConcernsScreen = () => {
     const fetchConcerns = async () => {
         try {
             const token = localStorage.getItem('token')
-            const response = await axios.get('http://18.209.91.97:3555/api/help-concerns/admin/get',
+            const response = await axios.get('http://localhost:3555/api/help-concerns/admin/get',
                 {
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -59,7 +61,7 @@ const AdminConcernsScreen = () => {
     //     if (!replyMessage) return;
 
     //     try {
-    //         const response = await axios.post('http://18.209.91.97:3555/api/help-concerns/admin/reply-to-concern', {
+    //         const response = await axios.post('http://localhost:3555/api/help-concerns/admin/reply-to-concern', {
     //             concernId: selectedConcern,
     //             reply: replyMessage,
     //             adminId: 'Admin',  // Replace with your actual admin ID or session
@@ -83,11 +85,11 @@ const AdminConcernsScreen = () => {
         }
 
         try {
-            const response = await axios.post('http://18.209.91.97:3555/api/help-concerns/admin/reply-to-concern', {
+            const response = await axios.post('http://localhost:3555/api/help-concerns/admin/reply-to-concern', {
                 concernId: selectedConcern,
                 concernIndex,
                 reply: replyMessage,
-                replyBy: "Admin" // Or pass the adminId if available
+                replyBy: "Admin"
             });
 
             if (response.status === 200) {
@@ -105,6 +107,17 @@ const AdminConcernsScreen = () => {
         }
     };
 
+    // Function to handle the opening of the View Chat Modal
+    const handleViewChat = (concern) => {
+        setSelectedConcernView(concern);
+        setVisibleView(true);
+    };
+
+    // Function to handle closing of the modal
+    const handleCloseModal = () => {
+        setVisibleView(false);
+        setSelectedConcernView(null);
+    };
 
 
     return (
@@ -127,14 +140,29 @@ const AdminConcernsScreen = () => {
                     <CTableBody>
                         {concerns.map((concern) => (
                             <CTableRow key={concern._id}>
-                                <CTableDataCell>{concern.userId}</CTableDataCell>
-                                <CTableDataCell>{concern.concern}</CTableDataCell>
-                                <CTableDataCell>{concern.reply || 'No reply yet.'}</CTableDataCell>
-                                <CTableDataCell>{concern.replyBy || 'N/A'}</CTableDataCell>
+                                <CTableDataCell>{concern?.userId?.firstName || 'User'}({concern.concernSide})</CTableDataCell>
+                                {/* <CTableDataCell>{concern.concern}</CTableDataCell> */}
+                                <CTableDataCell>{concern.concern[concern.concern.length - 1]}</CTableDataCell>
+                                <CTableDataCell>
+                                    {concern.replies.length > 0
+                                        ? concern.replies[concern.replies.length - 1].reply
+                                        : 'No reply yet.'
+                                    }
+                                </CTableDataCell>
+
+                                <CTableDataCell>
+                                    {concern.replies.length > 0
+                                        ? concern.replies[concern.replies.length - 1].replyBy
+                                        : 'N/A'
+                                    }
+                                </CTableDataCell>
                                 <CTableDataCell>{moment(concern.createdAt).format('DD MMM YYYY, h:mm A')}</CTableDataCell>
                                 <CTableDataCell>
                                     <CButton color="info" size="sm" onClick={() => handleReply(concern._id)}>
                                         Reply
+                                    </CButton>
+                                    <CButton color="secondary" size="sm" onClick={() => handleViewChat(concern)}>
+                                        View
                                     </CButton>
                                 </CTableDataCell>
                             </CTableRow>
@@ -161,6 +189,33 @@ const AdminConcernsScreen = () => {
                     </CButton>
                     <CButton color="primary" onClick={() => submitReply(0)}>
                         Submit Reply
+                    </CButton>
+                </CModalFooter>
+            </CModal>
+
+            <CModal visible={visibleView} onClose={handleCloseModal} size="lg">
+                <CModalHeader>
+                    <CModalTitle>Chat History</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    <div className="space-y-3">
+                        {selectedConcernView?.concern?.map((msg, index) => (
+                            <div key={index} className="bg-gray-100 p-2 rounded-md">
+                                <p><strong>User Concern:</strong> {msg}</p>
+                            </div>
+                        ))}
+
+                        {selectedConcernView?.replies?.map((reply, index) => (
+                            <div key={index} className="bg-blue-100 p-2 rounded-md">
+                                <p><strong>Admin Reply:</strong> {reply.reply}</p>
+                                {/* <p className="text-sm text-gray-500">By: {reply.replyBy} | At: {new Date(reply.repliedAt).toLocaleString()}</p> */}
+                            </div>
+                        ))}
+                    </div>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={handleCloseModal}>
+                        Close
                     </CButton>
                 </CModalFooter>
             </CModal>
