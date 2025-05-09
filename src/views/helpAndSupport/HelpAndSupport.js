@@ -35,7 +35,7 @@ const AdminConcernsScreen = () => {
     const fetchConcerns = async () => {
         try {
             const token = localStorage.getItem('token')
-            const response = await axios.get('http://localhost:3555/api/help-concerns/admin/get',
+            const response = await axios.get('http://18.209.91.97:3555/api/help-concerns/admin/get',
                 {
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -61,7 +61,7 @@ const AdminConcernsScreen = () => {
     //     if (!replyMessage) return;
 
     //     try {
-    //         const response = await axios.post('http://localhost:3555/api/help-concerns/admin/reply-to-concern', {
+    //         const response = await axios.post('http://18.209.91.97:3555/api/help-concerns/admin/reply-to-concern', {
     //             concernId: selectedConcern,
     //             reply: replyMessage,
     //             adminId: 'Admin',  // Replace with your actual admin ID or session
@@ -85,7 +85,7 @@ const AdminConcernsScreen = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3555/api/help-concerns/admin/reply-to-concern', {
+            const response = await axios.post('http://18.209.91.97:3555/api/help-concerns/admin/reply-to-concern', {
                 concernId: selectedConcern,
                 concernIndex,
                 reply: replyMessage,
