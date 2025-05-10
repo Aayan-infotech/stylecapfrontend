@@ -101,7 +101,7 @@ const SubcategoryManagement = () => {
 
     const handleAddSubcategory = async (e) => {
         e.preventDefault();
-
+        await fetchCategories();
         const form = new FormData();
         form.append("name", formData.name);
         // form.append("sellType", formData.sellType);
@@ -152,7 +152,8 @@ const SubcategoryManagement = () => {
     const handleEdit = (subcategory) => {
         console.log(subcategory, "subcategory");
         console.log(subcategory.discount, "subcategory.discount")
-        
+        fetchCategories();
+
         setSelectedSubcategory(subcategory);
         setFormData({
             name: subcategory.name || '',
@@ -170,6 +171,8 @@ const SubcategoryManagement = () => {
 
     const handleEditSubcategory = async (event) => {
         event.preventDefault();
+        fetchCategories();
+
         const { _id } = selectedSubcategory;
         try {
             const imageUrl = formData.image instanceof File ? await uploadImageToCloudinary(formData.image) : formData.image;
@@ -354,11 +357,11 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="sellType" name='sellType' label="Sell Type" value={formData.sellType} onChange={handleInputChange} required />
                         </CCol> */}
                         <CCol md={6}>
-                            <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} onWheel={(e) => e.target.blur()} 
+                            <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="discount" name='discount' label="Discount" value={formData.discount} onChange={handleInputChange} onWheel={(e) => e.target.blur()} 
+                            <CFormInput type="number" id="discount" name='discount' label="Discount" value={formData.discount} onChange={handleInputChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
@@ -402,18 +405,18 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="sellType" label="Sell Type" value={formData.sellType} onChange={handleChange} required />
                         </CCol> */}
                         <CCol md={6}>
-                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="number" id="discount" label="Discount" value={formData?.discount} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                            <CFormInput type="number" id="discount" label="Discount" value={formData?.discount} onChange={handleChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="brand" label="Brand" value={formData.brand} onChange={handleChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleChange} onWheel={(e) => e.target.blur()} 
+                            <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>

@@ -195,6 +195,30 @@ const StylistManagement = () => {
     };
 
     const handlePasswordChange = async () => {
+        // Password validation
+        const errors = [];
+
+        if (newPassword.length < 8) {
+            errors.push("at least 8 characters");
+        }
+        if (!/[A-Z]/.test(newPassword)) {
+            errors.push("at least one uppercase letter");
+        }
+        if (!/[a-z]/.test(newPassword)) {
+            errors.push("at least one lowercase letter");
+        }
+        if (!/[0-9]/.test(newPassword)) {
+            errors.push("at least one number");
+        }
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) {
+            errors.push("at least one special character");
+        }
+
+        if (errors.length > 0) {
+            toast.error(`Password must contain: ${errors.join(", ")}`);
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             await axios.put(
@@ -207,7 +231,7 @@ const StylistManagement = () => {
                 }
             );
 
-            toast.success("Password updated");
+            toast.success("Password updated successfully");
             setShowPasswordModal(false);
             setNewPassword('');
             fetchData();
@@ -816,7 +840,7 @@ const StylistManagement = () => {
             </CModal>
 
             <CModal visible={showPasswordModal} onClose={() => setShowPasswordModal(false)}>
-                <CModalHeader>
+                <CModalHeader closeButton>
                     <CModalTitle>Change Password</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
@@ -826,10 +850,30 @@ const StylistManagement = () => {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                     />
+                    {newPassword && (
+                        <div className="mt-2">
+                            <small>Password must contain:</small>
+                            <ul className="list-unstyled">
+                                <li className={newPassword.length >= 8 ? "text-success" : "text-danger"}>
+                                    {newPassword.length >= 8 ? "✓" : "✗"} At least 8 characters
+                                </li>
+                                <li className={/[A-Z]/.test(newPassword) ? "text-success" : "text-danger"}>
+                                    {/[A-Z]/.test(newPassword) ? "✓" : "✗"} One uppercase letter
+                                </li>
+                                <li className={/[!@#$%^&*]/.test(newPassword) ? "text-success" : "text-danger"}>
+                                    {/[!@#$%^&*]/.test(newPassword) ? "✓" : "✗"} One special character
+                                </li>
+                            </ul>
+                        </div>
+                    )}
                 </CModalBody>
                 <CModalFooter>
-                    <CButton color="secondary" onClick={() => setShowPasswordModal(false)}>Cancel</CButton>
-                    <CButton color="primary" onClick={handlePasswordChange}>Save</CButton>
+                    <CButton color="secondary" onClick={() => setShowPasswordModal(false)}>
+                        Cancel
+                    </CButton>
+                    <CButton color="primary" onClick={handlePasswordChange}>
+                        Update Password
+                    </CButton>
                 </CModalFooter>
             </CModal>
 

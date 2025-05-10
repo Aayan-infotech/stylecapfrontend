@@ -26,6 +26,7 @@ import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 const UserManagement = () => {
 
     const [userData, setUserData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [singleUser, setSingleUSer] = useState();
     const [userId, setUserId] = useState();
     const [visibleModel, setVisibleModel] = useState(false);
@@ -41,6 +42,7 @@ const UserManagement = () => {
 
     const fetchData = async (page) => {
         try {
+            setLoading(true);
             const token = localStorage.getItem('token');
 
             if (!token) {
@@ -59,6 +61,8 @@ const UserManagement = () => {
             setTotalUsers(response.data.metadata.totalUsers)
         } catch (error) {
             console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false); // Set loading to false when done (success or error)
         }
     }
 
@@ -149,26 +153,34 @@ const UserManagement = () => {
                 <h5>User Management</h5>
                 {/* <CButton color="primary" onClick={() => setModalVisible(true)}>Add Question</CButton> */}
             </div>
-            <CTable responsive>
-                <CTableHead>
-                    <CTableRow color='primary'>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{}}>Name</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{}}>Email</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{}}>Age</CTableHeaderCell>
-                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell> */}
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
-                    </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                    {
-                        userData.map((user, index) => (
-                            <CTableRow key={user.id}>
-                                <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
-                                <CTableDataCell style={{}}>{user.firstName}</CTableDataCell>
-                                <CTableDataCell style={{}}>{user.email}</CTableDataCell>
-                                <CTableDataCell style={{}}>{user.age}</CTableDataCell>
-                                {/* <CTableDataCell>
+            {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            ) : userData.length > 0 ? (
+                <>
+                    <CTable responsive>
+                        <CTableHead>
+                            <CTableRow color='primary'>
+                                <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" style={{}}>Name</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" style={{}}>Email</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" style={{}}>Age</CTableHeaderCell>
+                                {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell> */}
+                                <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
+                            </CTableRow>
+                        </CTableHead>
+                        <CTableBody>
+                            {
+                                userData.map((user, index) => (
+                                    <CTableRow key={user.id}>
+                                        <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
+                                        <CTableDataCell style={{}}>{user.firstName}</CTableDataCell>
+                                        <CTableDataCell style={{}}>{user.email}</CTableDataCell>
+                                        <CTableDataCell style={{}}>{user.age}</CTableDataCell>
+                                        {/* <CTableDataCell>
                                     <div className="form-check form-switch" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                         <input
                                             className="form-check-input"
@@ -183,39 +195,56 @@ const UserManagement = () => {
                                         />
                                     </div>
                                 </CTableDataCell> */}
-                                <CTableDataCell style={{ textAlign: 'center' }}>
-                                    <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
-                                        title="View" onClick={() => handleView(user._id)}>
-                                        <FontAwesomeIcon icon={faEye} />
-                                    </button>
+                                        <CTableDataCell style={{ textAlign: 'center' }}>
+                                            <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
+                                                title="View" onClick={() => handleView(user._id)}>
+                                                <FontAwesomeIcon icon={faEye} />
+                                            </button>
 
-                                    <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
-                                        title="Edit" onClick={() => { setUserId(user._id), setEditedUser(user), setVisibleEditModel(true); }}>
-                                        <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />
-                                    </button>
+                                            {/* <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0', marginRight: '8px' }}
+                                                title="Edit" onClick={() => { setUserId(user._id), setEditedUser(user), setVisibleEditModel(true); }}>
+                                                <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />
+                                            </button> */}
 
-                                    <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0' }}
-                                        title="Delete" onClick={() => handleDelete(user._id, user.firstName)}>
-                                        <FontAwesomeIcon icon={faTrash} style={{ color: 'red' }} />
-                                    </button>
-                                </CTableDataCell>
-                            </CTableRow>
-                        ))
-                    }
-                </CTableBody>
-            </CTable>
-
-            <CPagination className="justify-content-center mt-4">
-                {Array.from({ length: Math.ceil(totalUsers / usersPerPage) }).map((_, index) => (
-                    <CPaginationItem
-                        key={index}
-                        active={index + 1 === currentPage}
-                        onClick={() => handlePageChange(index + 1)}
-                    >
-                        {index + 1}
-                    </CPaginationItem>
-                ))}
-            </CPagination>
+                                            <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', padding: '0' }}
+                                                title="Delete" onClick={() => handleDelete(user._id, user.firstName)}>
+                                                <FontAwesomeIcon icon={faTrash} style={{ color: 'red' }} />
+                                            </button>
+                                        </CTableDataCell>
+                                    </CTableRow>
+                                ))
+                            }
+                        </CTableBody>
+                    </CTable>
+                    {totalUsers > 0 && (
+                        <CPagination className="justify-content-center mt-4">
+                            {Array.from({ length: Math.ceil(totalUsers / usersPerPage) }).map((_, index) => (
+                                <CPaginationItem
+                                    key={index}
+                                    active={index + 1 === currentPage}
+                                    onClick={() => handlePageChange(index + 1)}
+                                >
+                                    {index + 1}
+                                </CPaginationItem>
+                            ))}
+                        </CPagination>
+                    )}
+                </>
+            ) : (
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '200px',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '4px'
+                }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <h5>No users found</h5>
+                        <p>There are no users to display at this time.</p>
+                    </div>
+                </div>
+            )}
 
             <CModal size='lg' visible={visibleModel} onClose={() => setVisibleModel(false)}>
                 <CModalHeader onClose={() => setVisibleModel(false)}>
@@ -295,7 +324,7 @@ const UserManagement = () => {
                                 <div style={{ marginBottom: '16px' }}>
                                     <label style={{ fontWeight: 'bold' }}>Age:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         name="age"
                                         value={editedUser.age || ''}
                                         onChange={handleChange}
@@ -305,7 +334,7 @@ const UserManagement = () => {
                                 <div style={{ marginBottom: '16px' }}>
                                     <label style={{ fontWeight: 'bold' }}>Height:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         name="height"
                                         value={editedUser.height || ''}
                                         onChange={handleChange}
@@ -315,7 +344,7 @@ const UserManagement = () => {
                                 <div style={{ marginBottom: '16px' }}>
                                     <label style={{ fontWeight: 'bold' }}>Weight:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         name="weight"
                                         value={editedUser.weight || ''}
                                         onChange={handleChange}
@@ -345,7 +374,7 @@ const UserManagement = () => {
                                 <div style={{ marginBottom: '16px' }}>
                                     <label style={{ fontWeight: 'bold' }}>Mobile Number:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         name="mobileNumber"
                                         value={editedUser.mobileNumber || ''}
                                         onChange={handleChange}

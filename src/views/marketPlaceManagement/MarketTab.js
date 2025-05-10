@@ -102,7 +102,7 @@ const MarketPlaceManagement = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('name', formData.name);
             if (selectedFile) {
-                formDataToSend.append('image', selectedFile);
+                formDataToSend.append('images', selectedFile);
             }
 
             await axios.put(`http://18.209.91.97:3555/api/marketplaces/update/${id}`, formDataToSend);
@@ -268,6 +268,7 @@ const MarketPlaceManagement = () => {
                                     id="image"
                                     name="Image"
                                     onChange={handleAddFileChange}
+                                    required
                                 />
                             </CCol>
                         </CRow>
