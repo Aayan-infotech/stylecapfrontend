@@ -169,7 +169,7 @@ const GiftCardList = () => {
                         onChange={handleChange}
                     />
 
-                    <CFormLabel className="mt-2">Product ID</CFormLabel>
+                    <CFormLabel className="mt-2">Promo Code</CFormLabel>
                     <CFormInput
                         name="productId"
                         value={formData.productId}

@@ -26,7 +26,8 @@ import {
     CFormInput,
     CFormTextarea,
     CTooltip,
-    CBadge
+    CBadge,
+    CSpinner
 } from '@coreui/react';
 import { FaLock, FaLockOpen, FaTrash, FaKey } from "react-icons/fa";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,11 +39,8 @@ import ChatBox from '../../chatBox/chatBox'
 import { database } from "../../firebase/firebaseConfig"; // Firebase config
 import { ref, push, onValue } from "firebase/database";
 import { toast } from 'react-toastify';
-// import { Badge } from '@mui/material';
-
 
 const StylistManagement = () => {
-
     const adminId = "ADMIN"
     const [stylist, setStylist] = useState([]);
     const [selectedStylist, setSelectedStylist] = useState();
@@ -52,17 +50,23 @@ const StylistManagement = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [stylistDetails, setStylistDetails] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [chatHistory, setChatHistory] = useState([]); // Stores fetched messages
-    const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
-    const [loading, setLoading] = useState(false);
+    const [chatHistory, setChatHistory] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState({
+        fetch: false,
+        add: false,
+        edit: false,
+        delete: false,
+        password: false,
+        chat: false
+    });
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [chatPath, setChatPath] = useState();
     const [showPasswordModal, setShowPasswordModal] = useState(false);
-    // const [selectedStylist, setSelectedStylist] = useState(null);
     const [newPassword, setNewPassword] = useState('');
+    const chatRef = ref(database, chatPath);
 
-    const chatRef = ref(database, chatPath); // Firebase path for this stylist or a default chat
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -74,9 +78,8 @@ const StylistManagement = () => {
         description: '',
         price: '',
         image: null,
-        workHistory: [{ title: '', subtitle: '', workLocation: '', previous_experience: '', duration: '' }] // Adding work history as an array of objects
+        workHistory: [{ title: '', subtitle: '', workLocation: '', previous_experience: '', duration: '' }]
     });
-
 
     useEffect(() => {
         fetchData();
@@ -90,6 +93,7 @@ const StylistManagement = () => {
 
     const fetchData = async () => {
         try {
+            setLoading(prev => ({ ...prev, fetch: true }));
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://18.209.91.97:3555/api/stylist/get-all-stylist-admin`,
                 {
@@ -99,9 +103,11 @@ const StylistManagement = () => {
                 }
             )
             setStylist(response.data.stylists);
-            // console.log(response.data.stylists);
         } catch (error) {
             console.error(error);
+            toast.error("Failed to fetch stylists");
+        } finally {
+            setLoading(prev => ({ ...prev, fetch: false }));
         }
     }
 
@@ -110,8 +116,6 @@ const StylistManagement = () => {
         setShowPasswordModal(true);
     };
 
-
-    // Add a new empty work history field
     const addWorkHistory = () => {
         setFormData((prevData) => ({
             ...prevData,
@@ -119,7 +123,6 @@ const StylistManagement = () => {
         }));
     };
 
-    // Remove a work history field by index
     const removeWorkHistory = (index) => {
         setFormData((prevData) => {
             const updatedHistory = prevData.workHistory.filter((_, i) => i !== index);
@@ -127,7 +130,6 @@ const StylistManagement = () => {
         });
     };
 
-    // Handle changes in work history inputs
     const handleWorkHistoryChange = (index, field, value) => {
         const updatedWorkHistory = [...formData.workHistory];
         updatedWorkHistory[index][field] = value;
@@ -140,8 +142,7 @@ const StylistManagement = () => {
     const handleAddStylist = async (event) => {
         event.preventDefault();
         try {
-            console.log("Image Data:", formData.image); // Debug image data before uploading
-
+            setLoading(prev => ({ ...prev, add: true }));
             const imageUrl = await uploadImageToCloudinary(formData.image);
             const newStylist = {
                 name: formData.name,
@@ -154,22 +155,26 @@ const StylistManagement = () => {
                 description: formData.description,
                 price: formData.price,
                 image: imageUrl,
-                workHistory: formData.workHistory, // Include work history
+                workHistory: formData.workHistory,
             };
             await axios.post('http://18.209.91.97:3555/api/stylist/add-stylist', newStylist);
             setVisible(false);
             resetFormData();
-            fetchData(); // Re-fetch after adding a stylist
+            fetchData();
+            toast.success("Stylist added successfully");
         } catch (error) {
             setError('Error adding stylist');
             console.error('Error adding stylist:', error);
+            toast.error("Failed to add stylist");
+        } finally {
+            setLoading(prev => ({ ...prev, add: false }));
         }
     };
-
 
     const handleEditStylist = async (event) => {
         event.preventDefault();
         try {
+            setLoading(prev => ({ ...prev, edit: true }));
             const imageUrl = formData.image ? await uploadImageToCloudinary(formData.image) : selectedStylist.image;
             const updatedStylist = {
                 name: formData.name,
@@ -182,37 +187,29 @@ const StylistManagement = () => {
                 description: formData.description,
                 price: formData.price,
                 image: imageUrl,
-                workHistory: formData.workHistory, // Include work history
+                workHistory: formData.workHistory,
             };
             await axios.put(`http://18.209.91.97:3555/api/stylist/update/${selectedStylist._id}`, updatedStylist);
             setEditVisible(false);
             resetFormData();
-            fetchData(); // Re-fetch after updating
+            fetchData();
+            toast.success("Stylist updated successfully");
         } catch (error) {
             setError('Error updating stylist');
             console.error('Error updating stylist:', error);
+            toast.error("Failed to update stylist");
+        } finally {
+            setLoading(prev => ({ ...prev, edit: false }));
         }
     };
 
     const handlePasswordChange = async () => {
-        // Password validation
         const errors = [];
-
-        if (newPassword.length < 8) {
-            errors.push("at least 8 characters");
-        }
-        if (!/[A-Z]/.test(newPassword)) {
-            errors.push("at least one uppercase letter");
-        }
-        if (!/[a-z]/.test(newPassword)) {
-            errors.push("at least one lowercase letter");
-        }
-        if (!/[0-9]/.test(newPassword)) {
-            errors.push("at least one number");
-        }
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) {
-            errors.push("at least one special character");
-        }
+        if (newPassword.length < 8) errors.push("at least 8 characters");
+        if (!/[A-Z]/.test(newPassword)) errors.push("at least one uppercase letter");
+        if (!/[a-z]/.test(newPassword)) errors.push("at least one lowercase letter");
+        if (!/[0-9]/.test(newPassword)) errors.push("at least one number");
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) errors.push("at least one special character");
 
         if (errors.length > 0) {
             toast.error(`Password must contain: ${errors.join(", ")}`);
@@ -220,23 +217,21 @@ const StylistManagement = () => {
         }
 
         try {
+            setLoading(prev => ({ ...prev, password: true }));
             const token = localStorage.getItem('token');
             await axios.put(
                 `http://18.209.91.97:3555/api/stylist/update-stylist?id=${selectedStylist._id}`,
                 { password: newPassword },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
-
             toast.success("Password updated successfully");
             setShowPasswordModal(false);
             setNewPassword('');
             fetchData();
         } catch (err) {
             toast.error("Failed to update password");
+        } finally {
+            setLoading(prev => ({ ...prev, password: false }));
         }
     };
 
@@ -258,33 +253,31 @@ const StylistManagement = () => {
 
     const handleCancel = () => {
         setEditVisible(false);
-        setSelectedStylist(null);  // Clear selected stylist data
-        resetFormData();  // Reset the form data to its initial state
+        setSelectedStylist(null);
+        resetFormData();
     };
-
-
-
 
     const handleApprove = async (stylistId) => {
         try {
+            setLoading(prev => ({ ...prev, edit: true }));
             const response = await axios.post(`http://18.209.91.97:3555/api/stylist/approve/${stylistId}`)
-            // alert(response.data.message); // Display success message
             setStylist((prevStylists) =>
                 prevStylists.map((stylist) =>
                     stylist._id === stylistId ? { ...stylist, approved: !stylist.approved } : stylist
                 )
             );
-        }
-        catch (error) {
+            toast.success(`Stylist ${response.data.stylist.approved ? "approved" : "disapproved"}`);
+        } catch (error) {
             console.error(error);
+            toast.error("Failed to update approval status");
+        } finally {
+            setLoading(prev => ({ ...prev, edit: false }));
         }
     }
 
     const handleChange = (event) => {
         const { id, value } = event.target;
-
         if (id === 'workHistory') {
-            // If editing workHistory, make sure it's an array of objects
             const updatedWorkHistory = [...formData.workHistory];
             updatedWorkHistory[event.target.dataset.index][event.target.name] = value;
             setFormData(prevState => ({
@@ -292,7 +285,6 @@ const StylistManagement = () => {
                 workHistory: updatedWorkHistory,
             }));
         } else {
-            // For other form fields, just update the value
             setFormData(prevState => ({
                 ...prevState,
                 [id]: value,
@@ -302,28 +294,20 @@ const StylistManagement = () => {
 
     const handleFileChange = (event) => {
         const { id, files } = event.target;
-
-        // Check if files are selected
         if (files && files.length > 0) {
-            // For file input fields (e.g., image upload)
-            const file = files[0];
-
-            console.log("Selected File:", file); // Debug the file data
-
-            // Update the formData with the selected file
             setFormData(prevState => ({
                 ...prevState,
-                [id]: file // For example, formData.image will be updated with the selected file
+                [id]: files[0]
             }));
         }
     };
 
     const uploadImageToCloudinary = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'blog_app');
-        formData.append('cloud_name', 'dqhh1rff5');
         try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'blog_app');
+            formData.append('cloud_name', 'dqhh1rff5');
             const response = await axios.post(`https://api.cloudinary.com/v1_1/dqhh1rff5/image/upload`, formData);
             return response.data.secure_url;
         } catch (error) {
@@ -340,71 +324,62 @@ const StylistManagement = () => {
     }
 
     const fetchStylistDetails = async (stylistId) => {
-        setLoading(true);
+        setLoading(prev => ({ ...prev, fetch: true }));
         setError(null);
         try {
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://18.209.91.97:3555/api/stylist/stylist-profile/${stylistId}`,
                 {
-
                     headers: {
-                        // 'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
                     },
                 }
             );
             setStylistDetails(response.data.stylist);
-        }
-        catch (error) {
-            setError(error.message)
-        }
-        finally {
-            setLoading(false);
+        } catch (error) {
+            setError(error.message);
+            toast.error("Failed to fetch stylist details");
+        } finally {
+            setLoading(prev => ({ ...prev, fetch: false }));
         }
     }
 
-    // delete stylist
     const handleDelete = async (stylistId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this stylist?');
-        const token = localStorage.getItem('token')
+        if (!confirmDelete) return;
+        
         try {
-            if (confirmDelete) {
-                await axios.delete(`http://18.209.91.97:3555/api/stylist/delete-stylist/${stylistId}`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }
-                );
-            }
+            setLoading(prev => ({ ...prev, delete: true }));
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://18.209.91.97:3555/api/stylist/delete-stylist/${stylistId}`,
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
             fetchData();
-        }
-        catch (error) {
+            toast.success("Stylist deleted successfully");
+        } catch (error) {
             console.error(error);
+            toast.error("Failed to delete stylist");
+        } finally {
+            setLoading(prev => ({ ...prev, delete: false }));
         }
     }
-
 
     const handleChat = (stylistId) => {
         if (!messages[stylistId]) {
-            setMessages((prev) => ({ ...prev, [stylistId]: "" })); // Initialize empty chat if not present
+            setMessages((prev) => ({ ...prev, [stylistId]: "" }));
         }
     };
 
     const sendMessage = (e, stylistId) => {
         if (e.key === "Enter" && messages[stylistId].trim() !== "") {
-            console.log("Sending message:", messages[stylistId]);
-
-            // Send to Firebase Realtime Database
             const chatRef = ref(database, `chats/${stylistId}`);
             push(chatRef, { message: messages[stylistId], timestamp: Date.now() });
-
-            // Clear input after sending
             setMessages((prev) => ({ ...prev, [stylistId]: "" }));
         }
     };
 
     const fetchChatHistory = (stylistId) => {
+        setLoading(prev => ({ ...prev, chat: true }));
         setSelectedStylist(stylistId);
         const chatRef = ref(database, `chats/${stylistId}`);
 
@@ -414,14 +389,13 @@ const StylistManagement = () => {
                 const chatArray = Object.values(data);
                 setChatHistory(chatArray);
             } else {
-                setChatHistory([]); // Empty if no messages
+                setChatHistory([]);
             }
+            setLoading(prev => ({ ...prev, chat: false }));
         });
 
         setIsModalOpen(true);
     };
-
-
 
     return (
         <div>
@@ -429,33 +403,36 @@ const StylistManagement = () => {
                 <h5 style={{ margin: 0 }}>Stylist Management</h5>
                 <CButton color="primary" onClick={() => setVisible(true)}>Add Stylist</CButton>
             </div>
-            <CTable responsive>
-                <CTableHead>
-                    <CTableRow color='primary'>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Photo</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Name</CTableHeaderCell>
-                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Email</CTableHeaderCell> */}
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Phone No.</CTableHeaderCell>
-                        {/* <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Communicate</CTableHeaderCell> */}
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Performance</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ paddingLeft: '1.5%' }}>Actions</CTableHeaderCell>
-                    </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                    {
-                        stylist.map((stylist, index) => (
+            
+            {loading.fetch ? (
+                <div className="d-flex justify-content-center my-5">
+                    <CSpinner color="primary" />
+                    <span className="ms-2">Loading stylists...</span>
+                </div>
+            ) : (
+                <CTable responsive>
+                    <CTableHead>
+                        <CTableRow color='primary'>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Photo</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Name</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Status</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Phone No.</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Performance</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ paddingLeft: '1.5%' }}>Actions</CTableHeaderCell>
+                        </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                        {stylist.map((stylist, index) => (
                             <CTableRow key={stylist._id}>
                                 <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     <img
-                                        src={stylist.profilePicture} // Ensure this is the correct path to the image
-                                        alt={'N/A'} // Provide an alt text for accessibility
-                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Adjust size and shape as needed
+                                        src={stylist.profilePicture}
+                                        alt={'N/A'}
+                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
                                     />
                                 </CTableDataCell>
-
                                 <CTableDataCell
                                     style={{
                                         textAlign: 'center',
@@ -475,8 +452,6 @@ const StylistManagement = () => {
                                 >
                                     {stylist.name}
                                 </CTableDataCell>
-
-                                {/* <CTableDataCell style={{ textAlign: 'center' }}>{stylist.email}</CTableDataCell> */}
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     {stylist.approved ? (
                                         <span className="text-success">Unblocked</span>
@@ -485,32 +460,6 @@ const StylistManagement = () => {
                                     )}
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{stylist.phone}</CTableDataCell>
-                                {/* <CTableDataCell style={{ textAlign: 'center' }}>
-                                    <input
-                                        type="text"
-                                        value={messages[stylist._id] || ""} // Use separate state for each stylist
-                                        onChange={(e) =>
-                                            setMessages((prev) => ({ ...prev, [stylist._id]: e.target.value }))
-                                        }
-                                        onKeyPress={(e) => sendMessage(e, stylist._id)} // Pass stylist ID to sendMessage
-                                        placeholder="Type a message..."
-                                        onClick={() => handleChat(stylist._id)} // Ensure chat initializes
-                                        style={{
-                                            width: '80%',
-                                            padding: '0.5rem',
-                                            borderRadius: '5px',
-                                            border: '1px solid #ccc',
-                                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                                        }}
-                                    />
-                                    <CButton
-                                        className="p-0"
-                                        onClick={() => fetchChatHistory(stylist._id)}
-                                    >
-                                        <Eye size={15} />
-                                    </CButton>
-                                </CTableDataCell> */}
-
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     {Array.from({ length: 5 }, (_, index) => (
                                         <span key={index} style={{ color: index < stylist.ratings ? 'gold' : 'lightgray', fontSize: '24px' }}>
@@ -519,21 +468,33 @@ const StylistManagement = () => {
                                     ))}
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
-
                                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                         <CTooltip content={stylist.approved ? "Disapprove" : "Approve"}>
                                             <CButton
                                                 className="p-0"
                                                 onClick={() => handleApprove(stylist._id)}
-                                                style={{ transition: "0.3s ease-in-out" }} // Smooth transition
+                                                style={{ transition: "0.3s ease-in-out" }}
+                                                disabled={loading.edit}
                                             >
-                                                {stylist.approved ? <Lock size={15} /> : <Unlock size={15} />}
+                                                {loading.edit ? (
+                                                    <CSpinner size="sm" />
+                                                ) : stylist.approved ? (
+                                                    <Lock size={15} />
+                                                ) : (
+                                                    <Unlock size={15} />
+                                                )}
                                             </CButton>
                                         </CTooltip>
                                         <CButton
                                             className="p-0"
-                                            onClick={() => handleDelete(stylist._id)}>
-                                            <FaTrash color="red" size={16} />
+                                            onClick={() => handleDelete(stylist._id)}
+                                            disabled={loading.delete}
+                                        >
+                                            {loading.delete ? (
+                                                <CSpinner size="sm" />
+                                            ) : (
+                                                <FaTrash color="red" size={16} />
+                                            )}
                                         </CButton>
                                         <CButton
                                             className="p-0 position-relative"
@@ -548,17 +509,13 @@ const StylistManagement = () => {
                                                 ></span>
                                             )}
                                         </CButton>
-
-                                        {/* <ChatBox
-                                            stylist={stylist._id} /> */}
                                     </div>
                                 </CTableDataCell>
-
                             </CTableRow>
-                        ))
-                    }
-                </CTableBody>
-            </CTable>
+                        ))}
+                    </CTableBody>
+                </CTable>
+            )}
 
             <CModal visible={visible} onClose={() => { setVisible(false); resetFormData(); }}>
                 <CModalHeader closeButton>
@@ -576,7 +533,7 @@ const StylistManagement = () => {
                             <CFormInput type="password" id="password" label="Password" value={formData.password} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
-                            <CFormInput type="tel" id="phone" label="Phone" value={formData.phone} onChange={handleChange} required />
+                            <CFormInput type="number" id="phone" label="Phone" value={formData.phone} onChange={handleChange} required />
                         </CCol>
                         <CCol md={6}>
                             <CFormInput type="text" id="specialization" label="Specialization" value={formData.specialization} onChange={handleChange} required />
@@ -592,14 +549,13 @@ const StylistManagement = () => {
                             <CFormInput type="text" id="description" label="Description" value={formData.description} onChange={handleChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="number" id="price" label="Price" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()}
+                            <CFormInput type="number" id="price" label="Price(in $)" value={formData.price} onChange={handleChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
                         </CCol>
 
-                        {/* Work History */}
                         <CCol md={12}>
                             <label>Work History</label>
                             {formData.workHistory.map((history, index) => (
@@ -646,13 +602,20 @@ const StylistManagement = () => {
                         </CCol>
 
                         <CCol xs="auto">
-                            <CButton type="submit" color="primary">Save</CButton>
-                            <CButton color="secondary" className="ms-1" onClick={() => { setVisible(false); resetFormData(); }}>Cancel</CButton>
+                            <CButton type="submit" color="primary" disabled={loading.add}>
+                                {loading.add ? (
+                                    <>
+                                        <CSpinner size="sm" /> Saving...
+                                    </>
+                                ) : "Save"}
+                            </CButton>
+                            <CButton color="secondary" className="ms-1" onClick={() => { setVisible(false); resetFormData(); }}>
+                                Cancel
+                            </CButton>
                         </CCol>
                     </CForm>
                 </CModalBody>
             </CModal>
-
 
             <CModal visible={editVisible} onClose={() => { setEditVisible(false); resetFormData(); }}>
                 <CModalHeader closeButton>
@@ -768,7 +731,13 @@ const StylistManagement = () => {
                             />
                         </CCol>
                         <CCol xs="auto">
-                            <CButton type="submit" color="primary">Update</CButton>
+                            <CButton type="submit" color="primary" disabled={loading.edit}>
+                                {loading.edit ? (
+                                    <>
+                                        <CSpinner size="sm" /> Updating...
+                                    </>
+                                ) : "Update"}
+                            </CButton>
                             <CButton
                                 color="secondary"
                                 className="ms-1"
@@ -781,15 +750,16 @@ const StylistManagement = () => {
                 </CModalBody>
             </CModal>
 
-            {/* Modal for stylist details */}
             {modalVisible && (
                 <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
                     <CModalHeader>
                         <CModalTitle>Stylist Details</CModalTitle>
                     </CModalHeader>
                     <CModalBody>
-                        {loading ? (
-                            <p>Loading...</p>
+                        {loading.fetch ? (
+                            <div className="d-flex justify-content-center">
+                                <CSpinner />
+                            </div>
                         ) : error ? (
                             <p>{error}</p>
                         ) : stylistDetails ? (
@@ -803,14 +773,13 @@ const StylistManagement = () => {
                                 <p><strong>Work History:</strong></p>
                                 <ul>
                                     {stylistDetails.workHistory.map((history, index) => (
-                                        <li>
+                                        <li key={index}>
                                             <strong>{history.title}</strong> -{history.subtitle} ({history.duration})
                                             <br />
                                             <span>{history.previous_experience}</span>
                                         </li>
                                     ))}
                                 </ul>
-
                             </div>
                         ) : (
                             <p>No details available</p>
@@ -824,7 +793,11 @@ const StylistManagement = () => {
                     <CModalTitle>Chat with Stylist</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    {chatHistory.length > 0 ? (
+                    {loading.chat ? (
+                        <div className="d-flex justify-content-center">
+                            <CSpinner />
+                        </div>
+                    ) : chatHistory.length > 0 ? (
                         chatHistory.map((msg, index) => (
                             <p key={index} style={{ padding: "5px", background: "#f5f5f5", borderRadius: "5px" }}>
                                 {msg.message}
@@ -871,13 +844,15 @@ const StylistManagement = () => {
                     <CButton color="secondary" onClick={() => setShowPasswordModal(false)}>
                         Cancel
                     </CButton>
-                    <CButton color="primary" onClick={handlePasswordChange}>
-                        Update Password
+                    <CButton color="primary" onClick={handlePasswordChange} disabled={loading.password}>
+                        {loading.password ? (
+                            <>
+                                <CSpinner size="sm" /> Updating...
+                            </>
+                        ) : "Update Password"}
                     </CButton>
                 </CModalFooter>
             </CModal>
-
-
         </div>
     )
 }

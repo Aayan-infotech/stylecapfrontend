@@ -33,10 +33,8 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { height } from '@fortawesome/free-solid-svg-icons/fa0';
 import axios from 'axios';
-import { color } from 'chart.js/helpers';
-
+import { toast } from 'react-toastify';
 
 const MarketPlaceManagement = () => {
     const [products, setProducts] = useState([]);
@@ -48,7 +46,13 @@ const MarketPlaceManagement = () => {
     const [addSelectedFile, setAddSelectedFile] = useState(null);
     const [addProductVisible, setAddProductVisible] = useState(false);
     const [responseMessage, setResponseMessage] = useState(null);
-    const [btnLoader, setBtnLoader] = useState(false);
+    const [loading, setLoading] = useState({
+        fetch: false,
+        add: false,
+        edit: false,
+        delete: false,
+        view: false
+    });
     const [addFormData, setAddFormData] = useState({
         name: '',
         section: ''
@@ -60,23 +64,29 @@ const MarketPlaceManagement = () => {
 
     const fetchData = async () => {
         try {
+            setLoading(prev => ({ ...prev, fetch: true }));
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://18.209.91.97:3555/api/marketplaces/`)
+            const response = await axios.get(`http://18.209.91.97:3555/api/marketplaces/`);
             setProducts(response.data.data);
-            //   console.log('111', response.data);
         } catch (error) {
             console.error(error);
+            toast.error('Failed to fetch products');
+        } finally {
+            setLoading(prev => ({ ...prev, fetch: false }));
         }
     }
 
     const getProduct = async (id) => {
         try {
+            setLoading(prev => ({ ...prev, view: true }));
             const response = await axios.get(`http://18.209.91.97:3555/api/marketplaces/getProduct/${id}`);
-            setOneProduct(response.data.data)
-            console.log(response.data);
+            setOneProduct(response.data.data);
             setProductVisible(true);
         } catch (error) {
             console.log(error);
+            toast.error('Failed to fetch product details');
+        } finally {
+            setLoading(prev => ({ ...prev, view: false }));
         }
     }
 
@@ -85,7 +95,7 @@ const MarketPlaceManagement = () => {
         setFormData({
             id: product._id,
             name: product.name,
-        })
+        });
     }
 
     const handleFormChange = async (e) => {
@@ -98,6 +108,7 @@ const MarketPlaceManagement = () => {
 
     const handleFormSubmit = async (id) => {
         try {
+            setLoading(prev => ({ ...prev, edit: true }));
             const token = localStorage.getItem('token');
             const formDataToSend = new FormData();
             formDataToSend.append('name', formData.name);
@@ -106,12 +117,14 @@ const MarketPlaceManagement = () => {
             }
 
             await axios.put(`http://18.209.91.97:3555/api/marketplaces/update/${id}`, formDataToSend);
-
+            toast.success('Product updated successfully');
             setEditProductVisible(false);
             fetchData();
-            window.location.reload();
         } catch (error) {
             console.error('Failed to update data', error);
+            toast.error('Failed to update product');
+        } finally {
+            setLoading(prev => ({ ...prev, edit: false }));
         }
     };
 
@@ -129,43 +142,42 @@ const MarketPlaceManagement = () => {
 
     const handleAddSubmit = async (e) => {
         e.preventDefault();
-        setBtnLoader(true);
-        const form = new FormData();
-        form.append('section', addFormData.section);
-        form.append('name', addFormData.name);
-        if (addSelectedFile) form.append('images', addSelectedFile);
-
         try {
-            const response = await axios.post('http://18.209.91.97:3555/api/marketplaces/create', form);
+            setLoading(prev => ({ ...prev, add: true }));
+            const form = new FormData();
+            form.append('section', addFormData.section);
+            form.append('name', addFormData.name);
+            if (addSelectedFile) form.append('images', addSelectedFile);
 
-            setResponseMessage(response.data.message);
-            // onClick={() => setAddProductVisible(false)}
-            setAddProductVisible(false)
+            const response = await axios.post('http://18.209.91.97:3555/api/marketplaces/create', form);
+            toast.success('Product added successfully');
+            setAddProductVisible(false);
             fetchData();
-            window.location.reload();
         } catch (error) {
-            setResponseMessage(error.response.data.message || 'An error occurred');
+            console.error(error);
+            toast.error(error.response?.data?.message || 'Failed to add product');
         } finally {
-            setBtnLoader(false);
+            setLoading(prev => ({ ...prev, add: false }));
         }
     };
 
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm(`Market place data once deleted, will be deleted from the system and will not be retrieved. Are you sure to continue ?`);
+        const confirmDelete = window.confirm(`Market place data once deleted, will be deleted from the system and will not be retrieved. Are you sure to continue?`);
 
         if (confirmDelete) {
             try {
+                setLoading(prev => ({ ...prev, delete: true }));
                 await axios.delete(`http://18.209.91.97:3555/api/marketplaces/delete/${id}`);
+                toast.success('Product deleted successfully');
                 fetchData();
-                window.location.reload();
-
             } catch (error) {
                 console.error('Error Deleting user:', error);
+                toast.error('Failed to delete product');
+            } finally {
+                setLoading(prev => ({ ...prev, delete: false }));
             }
         }
     };
-
-
 
     return (
         <div>
@@ -178,58 +190,64 @@ const MarketPlaceManagement = () => {
                     Add Product
                 </CButton>
             </div>
-            <CTable responsive>
-                <CTableHead>
-                    <CTableRow color='primary'>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Photo</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Name</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Section</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
-                    </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                    {
-                        products.map((product, index) => (
+
+            {loading.fetch ? (
+                <div className="d-flex justify-content-center my-5">
+                    <CSpinner color="primary" />
+                    <span className="ms-2">Loading products...</span>
+                </div>
+            ) : (
+                <CTable responsive>
+                    <CTableHead>
+                        <CTableRow color='primary'>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>#</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Photo</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Name</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Section</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" style={{ textAlign: 'center' }}>Actions</CTableHeaderCell>
+                        </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                        {products.map((product, index) => (
                             <CTableRow key={product._id}>
                                 <CTableHeaderCell scope="row" style={{ textAlign: 'center' }}>{index + 1}</CTableHeaderCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
                                     <img
-                                        src={product.images} // Ensure this is the correct path to the image
-                                        alt={'N/A'} // Provide an alt text for accessibility
-                                        style={{ width: '50px', height: '50px' }} // Adjust size and shape as needed
+                                        src={product.images}
+                                        alt={'N/A'}
+                                        style={{ width: '50px', height: '50px' }}
                                     />
                                 </CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{product.name}</CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>{product.section}</CTableDataCell>
                                 <CTableDataCell style={{ textAlign: 'center' }}>
-                                    <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                        <FontAwesomeIcon style={{ color: 'blue' }}
-                                            onClick={() => getProduct(product._id)}
-                                            icon={faEye} />
+                                    <CButton style={{ margin: '0 2px', padding: '4px' }} onClick={() => getProduct(product._id)}>
+                                        <FontAwesomeIcon style={{ color: 'blue' }} icon={faEye} />
                                     </CButton>
-                                    <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                        <FontAwesomeIcon style={{ color: 'green' }}
-                                            onClick={() => handleEditClick(product)}
-                                            icon={faEdit} />
+                                    <CButton style={{ margin: '0 2px', padding: '4px' }} onClick={() => handleEditClick(product)}>
+                                        <FontAwesomeIcon style={{ color: 'green' }} icon={faEdit} />
                                     </CButton>
-                                    <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                        <FontAwesomeIcon style={{ color: 'red' }}
-                                            onClick={() => handleDelete(product._id)}
-                                            icon={faTrash} />
+                                    <CButton 
+                                        style={{ margin: '0 2px', padding: '4px' }} 
+                                        onClick={() => handleDelete(product._id)}
+                                        disabled={loading.delete}
+                                    >
+                                        {loading.delete ? (
+                                            <CSpinner size="sm" />
+                                        ) : (
+                                            <FontAwesomeIcon style={{ color: 'red' }} icon={faTrash} />
+                                        )}
                                     </CButton>
                                 </CTableDataCell>
                             </CTableRow>
-                        ))
-                    }
-                </CTableBody>
-            </CTable>
+                        ))}
+                    </CTableBody>
+                </CTable>
+            )}
 
             <CModal visible={addProductVisible} onClose={() => { setAddProductVisible(false) }}>
                 <CModalHeader>
-                    <CModalTitle>
-                        Add Product
-                    </CModalTitle>
+                    <CModalTitle>Add Product</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
                     <CForm onSubmit={handleAddSubmit}>
@@ -273,21 +291,19 @@ const MarketPlaceManagement = () => {
                             </CCol>
                         </CRow>
 
-                        {btnLoader ? (
-                            <span>
-                                <CButton color="primary" style={{ marginTop: '10px' }} disabled>
-                                    <CSpinner as="span" className="me-2" size="sm" aria-hidden="true" />
-                                    <span role="status">Loading...</span>
-                                </CButton>
-                            </span>
-                        ) : (
-                            <CButton type="submit" color="primary" style={{ marginTop: '10px' }}>
-                                Add Product
-                            </CButton>
-                            //  "Add Product"
-
-                        )}
-                        {/* Add Product */}
+                        <CButton 
+                            type="submit" 
+                            color="primary" 
+                            style={{ marginTop: '10px' }}
+                            disabled={loading.add}
+                        >
+                            {loading.add ? (
+                                <>
+                                    <CSpinner as="span" size="sm" aria-hidden="true" className="me-2" />
+                                    Adding...
+                                </>
+                            ) : 'Add Product'}
+                        </CButton>
                     </CForm>
                 </CModalBody>
             </CModal>
@@ -299,7 +315,12 @@ const MarketPlaceManagement = () => {
                     </CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    {oneProduct && (
+                    {loading.view ? (
+                        <div className="d-flex justify-content-center my-5">
+                            <CSpinner color="primary" />
+                            <span className="ms-2">Loading product details...</span>
+                        </div>
+                    ) : oneProduct ? (
                         <CCard className="shadow-sm">
                             <CCardHeader className="bg-primary text-white">
                                 <h5 style={{ textAlign: 'center', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
@@ -335,15 +356,15 @@ const MarketPlaceManagement = () => {
                                 </CButton>
                             </CCardFooter>
                         </CCard>
+                    ) : (
+                        <p>No product details available</p>
                     )}
                 </CModalBody>
             </CModal>
 
             <CModal visible={editProductVisible} onClose={() => { setEditProductVisible(false) }}>
                 <CModalHeader>
-                    <CModalTitle>
-                        Edit product
-                    </CModalTitle>
+                    <CModalTitle>Edit product</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
                     <CForm>
@@ -352,7 +373,6 @@ const MarketPlaceManagement = () => {
                                 <CFormLabel htmlFor='name'>Name</CFormLabel>
                                 <CFormInput id='name' name='Name' type='text' value={formData.name} onChange={handleFormChange} />
                             </CCol>
-
                         </CRow>
                         <CRow>
                             <CCol md='6'>
@@ -365,8 +385,17 @@ const MarketPlaceManagement = () => {
                         <CButton color="secondary" onClick={() => setEditProductVisible(false)}>
                             Close
                         </CButton>
-                        <CButton color="primary" onClick={() => handleFormSubmit(formData.id)}>
-                            Save Changes
+                        <CButton 
+                            color="primary" 
+                            onClick={() => handleFormSubmit(formData.id)}
+                            disabled={loading.edit}
+                        >
+                            {loading.edit ? (
+                                <>
+                                    <CSpinner as="span" size="sm" aria-hidden="true" className="me-2" />
+                                    Saving...
+                                </>
+                            ) : 'Save Changes'}
                         </CButton>
                     </CModalFooter>
                 </CModalBody>

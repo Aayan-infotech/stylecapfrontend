@@ -17,7 +17,8 @@ import {
     CFormInput,
     CListGroup,
     CListGroupItem,
-    CFormLabel
+    CFormLabel,
+    CSpinner 
 } from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -76,6 +77,7 @@ const QuestionnaireManagement = () => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
             const form = new FormData();
             form.append("question", formData.question);
@@ -113,7 +115,7 @@ const QuestionnaireManagement = () => {
                 );
             } else {
                 await axios.post(
-                    "http://18.209.91.97:3555/api/user/create-questionnaire", 
+                    "http://localhost:3555/api/user/create-questionnaire", 
                     form, 
                     config
                 );
@@ -124,6 +126,8 @@ const QuestionnaireManagement = () => {
             fetchQuestions();
         } catch (error) {
             console.error("Error submitting questionnaire", error);
+        }finally {
+            setLoading(false);
         }
     };
 
@@ -145,46 +149,39 @@ const QuestionnaireManagement = () => {
         setModalVisible(true);
     };
 
-    const handleImageUpload = (e) => {
+        const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         const maxImages = 5;
-        
-        if (files.length > maxImages) {
-            alert(`You can only upload up to ${maxImages} images.`);
+        const totalImages = formData.images.length + imageFiles.length + files.length;
+        if (totalImages > maxImages) {
+            alert(`You can only upload up to ${maxImages} images in total.`);
             return;
         }
-        
-        setImageFiles(files);
-        
-        // Create previews for the new files
+        setImageFiles(prev => [...prev, ...files]);
         const newPreviews = files.map(file => URL.createObjectURL(file));
         setPreviews(prev => [...prev, ...newPreviews]);
     };
-
+    
+ 
     const removeImage = (index) => {
-        // If editing, we need to distinguish between existing URLs and new files
         const isUrl = typeof previews[index] === 'string' && previews[index].startsWith('http');
-        
+        const updatedPreviews = previews.filter((_, i) => i !== index);
         if (isUrl) {
-            // Remove from formData.images
             setFormData(prev => ({
                 ...prev,
                 images: prev.images.filter((_, i) => i !== index)
             }));
         } else {
-            // Remove from imageFiles
-            const fileIndex = index - (previews.length - imageFiles.length);
+            const fileIndex = index - formData.images.length;
             setImageFiles(prev => prev.filter((_, i) => i !== fileIndex));
         }
-        
-        // Remove from previews
-        setPreviews(prev => prev.filter((_, i) => i !== index));
-        
-        // Revoke the object URL if it's not a http URL
         if (!isUrl) {
             URL.revokeObjectURL(previews[index]);
         }
+        setPreviews(updatedPreviews);
     };
+    
+ 
 
     const handleDelete = async (id) => {
         try {
@@ -278,9 +275,9 @@ const QuestionnaireManagement = () => {
                                 multiple
                                 onChange={handleImageUpload}
                             />
-                            <div className="d-flex flex-wrap mt-2">
+                            <div className="d-flex flex-wrap mt-4">
                                 {previews.map((src, index) => (
-                                    <div key={index} className="position-relative me-2 mb-2">
+                                    <div key={index} className="position-relative me-4 mb-2">
                                         <img 
                                             src={src} 
                                             alt={`preview-${index}`} 
@@ -332,8 +329,15 @@ const QuestionnaireManagement = () => {
                     <CButton color="secondary" onClick={() => setModalVisible(false)}>
                         Cancel
                     </CButton>
-                    <CButton color="primary" onClick={handleSubmit}>
-                        {editId ? "Update" : "Save"}
+                    <CButton color="primary" onClick={handleSubmit} disabled={loading}>
+                        {loading ? (
+                            <>
+                                <CSpinner size="sm" className="me-2" />
+                                <span>Loading...</span>
+                            </>
+                        ) : (
+                            editId ? "Update" : "Save"
+                        )}
                     </CButton>
                 </CModalFooter>
             </CModal>
