@@ -109,13 +109,13 @@ const QuestionnaireManagement = () => {
 
             if (editId) {
                 await axios.put(
-                    `http://localhost:3555/api/user/update-questionnaire/${editId}`, 
+                    `http://18.209.91.97:3555/api/user/update-questionnaire/${editId}`, 
                     form, 
                     config
                 );
             } else {
                 await axios.post(
-                    "http://localhost:3555/api/user/create-questionnaire", 
+                    "http://18.209.91.97:3555/api/user/create-questionnaire", 
                     form, 
                     config
                 );
