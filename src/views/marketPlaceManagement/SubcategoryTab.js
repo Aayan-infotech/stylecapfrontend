@@ -20,7 +20,8 @@ import {
     CForm,
     CFormInput,
     CFormSelect,
-    CAlert
+    CAlert,
+    CSpinner
 } from '@coreui/react';
 
 // Import necessary Font Awesome components and icons
@@ -48,6 +49,7 @@ const SubcategoryManagement = () => {
     const [error, setError] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [responseMessage, setResponseMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchCategories();
@@ -101,6 +103,7 @@ const SubcategoryManagement = () => {
 
     const handleAddSubcategory = async (e) => {
         e.preventDefault();
+        setLoading(true);
         await fetchCategories();
         const form = new FormData();
         form.append("name", formData.name);
@@ -145,6 +148,8 @@ const SubcategoryManagement = () => {
             setSelectedFile(null);
         } catch (error) {
             setResponseMessage(error.response?.data?.message || "An error occurred");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -371,13 +376,20 @@ const SubcategoryManagement = () => {
                             <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} required />
+                            <CFormInput type="file" id="image" label="Upload Image" accept="image/*" onChange={handleFileChange} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="description" name='description' label="Description" value={formData.description} onChange={handleInputChange} required />
                         </CCol>
                         <CCol xs="auto">
-                            <CButton type="submit" color="primary">Save</CButton>
+                            <CButton type="submit" color="primary" disabled={loading}>{loading ? (
+                                <>
+                                    <CSpinner size="sm" className="me-2" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Save"
+                            )}</CButton>
                             <CButton color="secondary" className="ms-1" onClick={() => { setVisible(false); resetFormData(); }}>Cancel</CButton>
                         </CCol>
                     </CForm>
@@ -420,7 +432,7 @@ const SubcategoryManagement = () => {
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
+                            <CFormInput type="file" id="image" label="Upload Image" accept="image/*" onChange={handleFileChange} />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="description" label="Description" value={formData.description} onChange={handleChange} required />
