@@ -371,7 +371,7 @@ const SubcategoryManagement = () => {
                             <CFormInput type="number" id="quantityStock" name='quantityStock' label="Stock Quantity" value={formData.quantityStock} onChange={handleInputChange} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
+                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} required />
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="description" name='description' label="Description" value={formData.description} onChange={handleInputChange} required />

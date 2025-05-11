@@ -35,7 +35,7 @@ const ClosetCategoryManagement = () => {
     }
   };
 
- 
+
 
   // ✅ Fetch Categories
   const fetchCategories = async () => {
@@ -320,7 +320,7 @@ const ClosetCategoryManagement = () => {
                       setSelectedSubcategory(updatedSubcategories);
                     }}
                     placeholder="Enter Type Subcategory Name"
-                  />
+                    required />
                   {/* Remove Type Subcategory Button */}
                   <CButton
                     color="danger"

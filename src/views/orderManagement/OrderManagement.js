@@ -15,10 +15,12 @@ import {
     CForm,
     CFormInput,
     CTooltip,
-    CFormLabel
+    CFormLabel,
+    CSpinner
 } from "@coreui/react";
 import axios from "axios";
 import { Eye, PackageCheck, XCircle, CheckCircle } from "lucide-react";
+import { toast } from "react-toastify";
 
 const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
@@ -34,6 +36,7 @@ const OrderManagement = () => {
     }, []);
 
     const fetchOrders = async () => {
+        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             const response = await axios.get("http://18.209.91.97:3555/api/order/all-orders", {
@@ -42,6 +45,8 @@ const OrderManagement = () => {
             setOrders(response.data.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -56,13 +61,20 @@ const OrderManagement = () => {
     };
 
     const handleUpdateStatus = async () => {
+        if (!selectedStatus || !trackingAgentId) {
+            toast.warning("Please enter both Order Status and Tracking Agent ID", {
+                position: "top-center",
+                autoClose: 3000,
+            });
+            return; // Exit the function but keep the modal open
+        }
         try {
             setLoading(true);
             await axios.post(
                 `http://18.209.91.97:3555/api/order/update-status/${selectedOrder._id}`,
-                { 
+                {
                     status: selectedStatus,
-                    trackingAgentId: trackingAgentId 
+                    trackingAgentId: trackingAgentId
                 },
                 {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -92,38 +104,56 @@ const OrderManagement = () => {
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                    {orders.map((order) => (
-                        <CTableRow key={order._id}>
-                            <CTableDataCell>{order._id}</CTableDataCell>
-                            <CTableDataCell>{order.user?.firstName || "Guest"}</CTableDataCell>
-                            <CTableDataCell>{order.orderStatus}</CTableDataCell>
-                            <CTableDataCell>${order.totalPrice}</CTableDataCell>
-                            <CTableDataCell>
-                                <CButton color="info" size="sm" onClick={() => handleViewOrder(order)}>
-                                    <Eye size={15} />
-                                </CButton>
-                                
-                                {order.orderStatus === "delivered" ? (
-                                    <CButton className="ms-2" disabled>
-                                        <CTooltip content="Already Delivered">
-                                            <CheckCircle size={20} color="green" />
-                                        </CTooltip>
-                                    </CButton>
-                                ) : (
-                                    <CButton 
-                                        color="warning" 
-                                        size="sm" 
-                                        className="ms-2"
-                                        onClick={() => handleOpenStatusModal(order)}
-                                    >
-                                        <CTooltip content="Update Status">
-                                            <PackageCheck size={20} color="green" />
-                                        </CTooltip>
-                                    </CButton>
-                                )}
+                    {loading ? (
+                        // Loading state
+                        <CTableRow>
+                            <CTableDataCell colSpan="5" className="text-center py-4">
+                                <CSpinner size="sm" />
+                                <span className="ms-2">Loading orders...</span>
                             </CTableDataCell>
                         </CTableRow>
-                    ))}
+                    ) : orders.length > 0 ? (
+                        // Orders list
+                        orders.map((order) => (
+                            <CTableRow key={order._id}>
+                                <CTableDataCell>{order._id}</CTableDataCell>
+                                <CTableDataCell>{order.user?.firstName || "Guest"}</CTableDataCell>
+                                <CTableDataCell>{order.orderStatus}</CTableDataCell>
+                                <CTableDataCell>${order.totalPrice}</CTableDataCell>
+                                <CTableDataCell>
+                                    <CButton color="info" size="sm" onClick={() => handleViewOrder(order)}>
+                                        <Eye size={15} />
+                                    </CButton>
+
+                                    {order.orderStatus === "delivered" ? (
+                                        <CButton className="ms-2" disabled>
+                                            <CTooltip content="Already Delivered">
+                                                <CheckCircle size={20} color="green" />
+                                            </CTooltip>
+                                        </CButton>
+                                    ) : (
+                                        <CButton
+                                            color="warning"
+                                            size="sm"
+                                            className="ms-2"
+                                            onClick={() => handleOpenStatusModal(order)}
+                                        >
+                                            <CTooltip content="Update Status">
+                                                <PackageCheck size={20} color="green" />
+                                            </CTooltip>
+                                        </CButton>
+                                    )}
+                                </CTableDataCell>
+                            </CTableRow>
+                        ))
+                    ) : (
+                        // No orders found
+                        <CTableRow>
+                            <CTableDataCell colSpan="5" className="text-center py-4 text-muted">
+                                No orders found
+                            </CTableDataCell>
+                        </CTableRow>
+                    )}
                 </CTableBody>
             </CTable>
 
@@ -138,7 +168,18 @@ const OrderManagement = () => {
                             {selectedOrder.trackingAgentId && (
                                 <p><strong>Tracking Agent ID:</strong> {selectedOrder.trackingAgentId}</p>
                             )}
-                            {/* ... rest of your details */}
+                            <p><strong>Total Price:</strong> ${selectedOrder.totalPrice}</p>
+                            <p><strong>Payment Method:</strong> {selectedOrder.paymentDetails?.paymentMethod}</p>
+                            <p><strong>Last 4 Digits:</strong> {selectedOrder.paymentDetails?.transactionDetails?.payment_method?.card?.last4 || 'N/A'}</p>
+                            <p><strong>Total Price:</strong> ₹{selectedOrder.totalPrice}</p>
+                            <p><strong>Items:</strong></p>
+                            <ul>
+                                {selectedOrder.items.map((item, index) => (
+                                    <li key={index}>
+                                        {item.name} - {item.quantity} x ${item.price}
+                                    </li>
+                                ))}
+                            </ul>
                         </>
                     )}
                 </CModalBody>
@@ -158,7 +199,7 @@ const OrderManagement = () => {
                     <CForm>
                         <div className="mb-3">
                             <CFormLabel>Status</CFormLabel>
-                            <select 
+                            <select
                                 className="form-select"
                                 value={selectedStatus}
                                 onChange={(e) => setSelectedStatus(e.target.value)}
@@ -175,7 +216,7 @@ const OrderManagement = () => {
                                 value={trackingAgentId}
                                 onChange={(e) => setTrackingAgentId(e.target.value)}
                                 placeholder="Enter tracking agent ID"
-                            />
+                                required />
                         </div>
                     </CForm>
                 </CModalBody>
@@ -183,8 +224,8 @@ const OrderManagement = () => {
                     <CButton color="secondary" onClick={() => setStatusModalVisible(false)}>
                         Cancel
                     </CButton>
-                    <CButton 
-                        color="primary" 
+                    <CButton
+                        color="primary"
                         onClick={handleUpdateStatus}
                         disabled={loading}
                     >

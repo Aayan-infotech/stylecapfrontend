@@ -3,6 +3,7 @@ import { faEdit, faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 
 const StyleCapsuleManagement = () => {
 
@@ -80,6 +81,16 @@ const StyleCapsuleManagement = () => {
             setSingleClothsData(response.data.data);
             console.log("setSingleClothsData", response.data.data);
         } catch (error) {
+             if (error.response && error.response.status === 404) {
+                toast.warning('Clothes have been removed from the closet for this date', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }
             console.error('Failed to fetch style data', error);
         }
     };
@@ -204,9 +215,9 @@ const StyleCapsuleManagement = () => {
                                             <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchStyleData(cloths.date)}>
                                                 <FontAwesomeIcon icon={faEye} color='blue' />
                                             </button>
-                                            <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
+                                            {/* <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
                                                 <FontAwesomeIcon icon={faEdit} color='green' />
-                                            </button>
+                                            </button> */}
                                         </CTableDataCell>
                                     </CTableRow>
                                 ))}

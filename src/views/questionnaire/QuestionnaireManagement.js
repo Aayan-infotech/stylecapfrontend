@@ -184,6 +184,7 @@ const QuestionnaireManagement = () => {
  
 
     const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this questionnaire data?')) return;
         try {
             await axios.delete(`http://18.209.91.97:3555/api/user/delete-questionnaire/${id}`, {
                 headers: {

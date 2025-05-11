@@ -154,7 +154,7 @@ const UserManagement = () => {
                 {/* <CButton color="primary" onClick={() => setModalVisible(true)}>Add Question</CButton> */}
             </div>
             {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', height: '200px' }}>
                     <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>

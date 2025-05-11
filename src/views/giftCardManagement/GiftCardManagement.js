@@ -123,32 +123,45 @@ const GiftCardList = () => {
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
-                                {giftCards.map((card) => (
-                                    <CTableRow key={card._id}>
-                                        <CTableDataCell>{card.giftTitle}</CTableDataCell>
-                                        <CTableDataCell>{card.giftDescription}</CTableDataCell>
-                                        <CTableDataCell>{card.giftPromoCode}</CTableDataCell>
-                                        <CTableDataCell>${card.discountPrice}</CTableDataCell>
-                                        <CTableDataCell>{card.offerValidity}</CTableDataCell>
-                                        <CTableDataCell>
-                                            {new Date(card.createdAt).toLocaleString()}
-                                        </CTableDataCell>
-                                        <CTableDataCell>
-                                            <CButton style={{ margin: '0 2px', padding: '4px' }}>
-                                                <FontAwesomeIcon style={{ color: 'red' }}
-                                                    onClick={() => handleDeleteGiftCard(card._id)}
-                                                    icon={faTrash} />
-                                            </CButton>
+                                {giftCards?.length > 0 ? (
+                                    giftCards.map((card) => (
+                                        <CTableRow key={card._id}>
+                                            <CTableDataCell>{card.giftTitle}</CTableDataCell>
+                                            <CTableDataCell>{card.giftDescription}</CTableDataCell>
+                                            <CTableDataCell>{card.giftPromoCode}</CTableDataCell>
+                                            <CTableDataCell>${card.discountPrice}</CTableDataCell>
+                                            <CTableDataCell>{card.offerValidity}</CTableDataCell>
+                                            <CTableDataCell>
+                                                {new Date(card.createdAt).toLocaleString()}
+                                            </CTableDataCell>
+                                            <CTableDataCell>
+                                                <CButton style={{ margin: '0 2px', padding: '4px' }}>
+                                                    <FontAwesomeIcon
+                                                        style={{ color: 'red' }}
+                                                        onClick={() => handleDeleteGiftCard(card._id)}
+                                                        icon={faTrash}
+                                                    />
+                                                </CButton>
+                                            </CTableDataCell>
+                                        </CTableRow>
+                                    ))
+                                ) : (
+                                    <CTableRow>
+                                        <CTableDataCell
+                                            colSpan="7"
+                                            className="text-center py-4"
+                                            style={{ fontStyle: 'italic', color: '#6c757d' }}
+                                        >
+                                            No gift cards found
                                         </CTableDataCell>
                                     </CTableRow>
-                                ))}
+                                )}
                             </CTableBody>
                         </CTable>
                     )}
                 </CCardBody>
             </CCard>
 
-            {/* Add Gift Card Modal */}
             {/* Add Gift Card Modal */}
             <CModal visible={modalOpen} onClose={() => setModalOpen(false)}>
                 <CModalHeader>
@@ -160,28 +173,28 @@ const GiftCardList = () => {
                         name="giftTitle"
                         value={formData.giftTitle}
                         onChange={handleChange}
-                    />
+                        required />
 
                     <CFormLabel className="mt-2">Description</CFormLabel>
                     <CFormInput
                         name="giftDescription"
                         value={formData.giftDescription}
                         onChange={handleChange}
-                    />
+                        required />
 
                     <CFormLabel className="mt-2">Promo Code</CFormLabel>
                     <CFormInput
                         name="productId"
                         value={formData.productId}
                         onChange={handleChange}
-                    />
+                        required />
 
                     <CFormLabel className="mt-2">Discount Price</CFormLabel>
                     <CFormInput
                         name="discountPrice"
                         value={formData.discountPrice}
                         onChange={handleChange}
-                    />
+                        required />
 
                     <CFormLabel className="mt-2">Offer Validity (YYYY-MM-DD)</CFormLabel>
                     <CFormInput
@@ -189,7 +202,7 @@ const GiftCardList = () => {
                         type="date"
                         value={formData.offerValidity}
                         onChange={handleChange}
-                    />
+                        required />
                 </CModalBody>
                 <CModalFooter>
                     <CButton color="secondary" onClick={() => setModalOpen(false)}>

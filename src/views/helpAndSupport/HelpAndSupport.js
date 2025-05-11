@@ -15,7 +15,8 @@ import {
     CModalTitle,
     CModalBody,
     CModalFooter,
-    CFormTextarea
+    CFormTextarea,
+    CSpinner
 } from '@coreui/react';
 import axios from 'axios';
 import moment from 'moment';
@@ -28,12 +29,14 @@ const AdminConcernsScreen = () => {
     const [visible, setVisible] = useState(false);
     const [visibleView, setVisibleView] = useState(false);
     const [selectedConcernIndex, setSelectedConcernIndex] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchConcerns();
     }, []);
 
     const fetchConcerns = async () => {
+        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             const response = await axios.get('http://18.209.91.97:3555/api/help-concerns/admin/get', {
@@ -46,6 +49,8 @@ const AdminConcernsScreen = () => {
             }
         } catch (error) {
             console.error('Error fetching concerns:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -115,49 +120,67 @@ const AdminConcernsScreen = () => {
                         </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                        {concerns.map((concern) => {
-                            const latestConcern = concern.concern[concern.concern.length - 1];
-                            const latestReply = latestConcern.replies.length > 0 
-                                ? latestConcern.replies[latestConcern.replies.length - 1] 
-                                : null;
+                        {loading ? (
+                            // Loading state
+                            <CTableRow>
+                                <CTableDataCell colSpan="6" className="text-center py-4">
+                                    <CSpinner size="sm" />
+                                    <span className="ms-2">Loading concerns...</span>
+                                </CTableDataCell>
+                            </CTableRow>
+                        ) : concerns.length > 0 ? (
+                            // Concerns list
+                            concerns.map((concern) => {
+                                const latestConcern = concern.concern[concern.concern.length - 1];
+                                const latestReply = latestConcern.replies.length > 0
+                                    ? latestConcern.replies[latestConcern.replies.length - 1]
+                                    : null;
 
-                            return (
-                                <CTableRow key={concern._id}>
-                                    <CTableDataCell>
-                                        {concern?.userId?.firstName || 'User'} ({concern.concernSide})
-                                    </CTableDataCell>
-                                    <CTableDataCell>
-                                        {latestConcern.message}
-                                    </CTableDataCell>
-                                    <CTableDataCell>
-                                        {latestReply ? latestReply.reply : 'No reply yet.'}
-                                    </CTableDataCell>
-                                    <CTableDataCell>
-                                        {latestReply ? latestReply.replyBy : 'N/A'}
-                                    </CTableDataCell>
-                                    <CTableDataCell>
-                                        {moment(concern.createdAt).format('DD MMM YYYY, h:mm A')}
-                                    </CTableDataCell>
-                                    <CTableDataCell>
-                                        <CButton 
-                                            color="info" 
-                                            size="sm" 
-                                            onClick={() => handleReply(concern, concern.concern.length - 1)}
-                                            className="me-2"
-                                        >
-                                            Reply
-                                        </CButton>
-                                        <CButton 
-                                            color="secondary" 
-                                            size="sm" 
-                                            onClick={() => handleViewChat(concern)}
-                                        >
-                                            View
-                                        </CButton>
-                                    </CTableDataCell>
-                                </CTableRow>
-                            );
-                        })}
+                                return (
+                                    <CTableRow key={concern._id}>
+                                        <CTableDataCell>
+                                            {concern?.userId?.firstName || 'User'} ({concern.concernSide})
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            {latestConcern.message}
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            {latestReply ? latestReply.reply : 'No reply yet.'}
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            {latestReply ? latestReply.replyBy : 'N/A'}
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            {moment(concern.createdAt).format('DD MMM YYYY, h:mm A')}
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            <CButton
+                                                color="info"
+                                                size="sm"
+                                                onClick={() => handleReply(concern, concern.concern.length - 1)}
+                                                className="me-2"
+                                            >
+                                                Reply
+                                            </CButton>
+                                            <CButton
+                                                color="secondary"
+                                                size="sm"
+                                                onClick={() => handleViewChat(concern)}
+                                            >
+                                                View
+                                            </CButton>
+                                        </CTableDataCell>
+                                    </CTableRow>
+                                );
+                            })
+                        ) : (
+                            // No concerns found
+                            <CTableRow>
+                                <CTableDataCell colSpan="6" className="text-center py-4 text-muted">
+                                    No concerns found
+                                </CTableDataCell>
+                            </CTableRow>
+                        )}
                     </CTableBody>
                 </CTable>
             </CCardBody>
@@ -199,7 +222,7 @@ const AdminConcernsScreen = () => {
                                         <strong>User Concern ({moment(concernObj.createdAt).format('MMM D, h:mm A')}):</strong>
                                         <p className="mb-0">{concernObj.message}</p>
                                     </div>
-                                    
+
                                     {concernObj.replies.length > 0 ? (
                                         concernObj.replies.map((reply, replyIdx) => (
                                             <div key={`reply-${replyIdx}`} className="admin-reply bg-primary text-white p-3 rounded mb-2 ms-4">
@@ -210,10 +233,10 @@ const AdminConcernsScreen = () => {
                                     ) : (
                                         <div className="text-muted ms-4">No replies yet</div>
                                     )}
-                                    
-                                    <CButton 
-                                        color="info" 
-                                        size="sm" 
+
+                                    <CButton
+                                        color="info"
+                                        size="sm"
                                         onClick={() => {
                                             setVisibleView(false);
                                             handleReply(selectedConcernView, concernIdx);
