@@ -362,7 +362,7 @@ const SubcategoryManagement = () => {
                             <CFormInput type="text" id="sellType" name='sellType' label="Sell Type" value={formData.sellType} onChange={handleInputChange} required />
                         </CCol> */}
                         <CCol md={6}>
-                            <CFormInput type="number" id="price" name='price' label="Price" value={formData.price} onChange={handleInputChange} onWheel={(e) => e.target.blur()}
+                            <CFormInput type="number" id="price" name='price' label="Price(in $)" value={formData.price} onChange={handleInputChange} onWheel={(e) => e.target.blur()}
                                 min={0} required />
                         </CCol>
                         <CCol md={6}>

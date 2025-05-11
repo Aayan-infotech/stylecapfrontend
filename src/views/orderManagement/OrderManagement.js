@@ -171,7 +171,7 @@ const OrderManagement = () => {
                             <p><strong>Total Price:</strong> ${selectedOrder.totalPrice}</p>
                             <p><strong>Payment Method:</strong> {selectedOrder.paymentDetails?.paymentMethod}</p>
                             <p><strong>Last 4 Digits:</strong> {selectedOrder.paymentDetails?.transactionDetails?.payment_method?.card?.last4 || 'N/A'}</p>
-                            <p><strong>Total Price:</strong> ₹{selectedOrder.totalPrice}</p>
+                            {/* <p><strong>Total Price:</strong> ${selectedOrder.totalPrice}</p> */}
                             <p><strong>Items:</strong></p>
                             <ul>
                                 {selectedOrder.items.map((item, index) => (
