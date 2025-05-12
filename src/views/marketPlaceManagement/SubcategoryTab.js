@@ -178,6 +178,7 @@ const SubcategoryManagement = () => {
     const handleEditSubcategory = async (event) => {
         event.preventDefault();
         fetchCategories();
+        setLoading(true);
 
         try {
             const { _id } = selectedSubcategory;
@@ -233,6 +234,8 @@ const SubcategoryManagement = () => {
         } catch (error) {
             setError('Error updating subcategory');
             console.error('Error updating subcategory:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -462,13 +465,23 @@ const SubcategoryManagement = () => {
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="file" id="image" label="Upload Image" accept="image/*" onChange={handleFileChange} />
+                            <CFormInput type="file" id="image" label="Upload Image" accept="image/*" onChange={handleFileChange} required/>
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="description" label="Description" value={formData.description} onChange={handleChange} required />
                         </CCol>
                         <CCol xs="auto">
-                            <CButton type="submit" color="primary">Update</CButton>
+                            {/* <CButton type="submit" color="primary">Update</CButton> */}
+                            <CButton type="submit" color="primary" disabled={loading}>
+                                {loading ? (
+                                    <>
+                                        <CSpinner size="sm" className="me-2" />
+                                        Updating...
+                                    </>
+                                ) : (
+                                    "Update"
+                                )}
+                            </CButton>
                             <CButton color="secondary" className="ms-1" onClick={() => { setEditVisible(false); resetFormData(); }}>Cancel</CButton>
                         </CCol>
                     </CForm>

@@ -95,7 +95,9 @@ const MarketPlaceManagement = () => {
         setFormData({
             id: product._id,
             name: product.name,
+            section: product.section
         });
+        setSelectedFile(null);
     }
 
     const handleFormChange = async (e) => {
@@ -112,6 +114,7 @@ const MarketPlaceManagement = () => {
             const token = localStorage.getItem('token');
             const formDataToSend = new FormData();
             formDataToSend.append('name', formData.name);
+            formDataToSend.append('section', formData.section);
             if (selectedFile) {
                 formDataToSend.append('images', selectedFile);
             }
@@ -159,6 +162,15 @@ const MarketPlaceManagement = () => {
         } finally {
             setLoading(prev => ({ ...prev, add: false }));
         }
+    };
+
+    const handleEditModalClose = () => {
+        setEditProductVisible(false);
+        setFormData({
+            name: '',
+            section: ''
+        });
+        setSelectedFile(null);
     };
 
     const handleDelete = async (id) => {
@@ -227,8 +239,8 @@ const MarketPlaceManagement = () => {
                                     <CButton style={{ margin: '0 2px', padding: '4px' }} onClick={() => handleEditClick(product)}>
                                         <FontAwesomeIcon style={{ color: 'green' }} icon={faEdit} />
                                     </CButton>
-                                    <CButton 
-                                        style={{ margin: '0 2px', padding: '4px' }} 
+                                    <CButton
+                                        style={{ margin: '0 2px', padding: '4px' }}
                                         onClick={() => handleDelete(product._id)}
                                         disabled={loading.delete}
                                     >
@@ -277,6 +289,7 @@ const MarketPlaceManagement = () => {
                                     required
                                 />
                             </CCol>
+
                         </CRow>
                         <CRow>
                             <CCol md="6">
@@ -290,10 +303,9 @@ const MarketPlaceManagement = () => {
                                 />
                             </CCol>
                         </CRow>
-
-                        <CButton 
-                            type="submit" 
-                            color="primary" 
+                        <CButton
+                            type="submit"
+                            color="primary"
                             style={{ marginTop: '10px' }}
                             disabled={loading.add}
                         >
@@ -362,7 +374,7 @@ const MarketPlaceManagement = () => {
                 </CModalBody>
             </CModal>
 
-            <CModal visible={editProductVisible} onClose={() => { setEditProductVisible(false) }}>
+            <CModal visible={editProductVisible} onClose={handleEditModalClose}>
                 <CModalHeader>
                     <CModalTitle>Edit product</CModalTitle>
                 </CModalHeader>
@@ -371,7 +383,20 @@ const MarketPlaceManagement = () => {
                         <CRow>
                             <CCol md='6'>
                                 <CFormLabel htmlFor='name'>Name</CFormLabel>
-                                <CFormInput id='name' name='Name' type='text' value={formData.name} onChange={handleFormChange} />
+                                <CFormInput id='name' name='name' type='text' value={formData.name} onChange={handleFormChange} />
+                            </CCol>
+                            <CCol md='6'>
+                                <CFormLabel htmlFor='section'>Section</CFormLabel>
+                                <CFormSelect
+                                    id="section"
+                                    name="section"
+                                    value={formData.section}
+                                    onChange={handleFormChange}
+                                >
+                                    <option value="Shop by Style">Shop by Style</option>
+                                    <option value="Shop Menswear">Shop Menswear</option>
+                                    <option value="Shop Womenswear">Shop Womenswear</option>
+                                </CFormSelect>
                             </CCol>
                         </CRow>
                         <CRow>
@@ -382,11 +407,11 @@ const MarketPlaceManagement = () => {
                         </CRow>
                     </CForm>
                     <CModalFooter style={{ marginTop: '20px' }}>
-                        <CButton color="secondary" onClick={() => setEditProductVisible(false)}>
+                        <CButton color="secondary" onClick={handleEditModalClose}>
                             Close
                         </CButton>
-                        <CButton 
-                            color="primary" 
+                        <CButton
+                            color="primary"
                             onClick={() => handleFormSubmit(formData.id)}
                             disabled={loading.edit}
                         >
