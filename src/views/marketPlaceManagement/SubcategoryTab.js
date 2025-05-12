@@ -167,8 +167,9 @@ const SubcategoryManagement = () => {
             description: subcategory.description || '',
             price: subcategory.price || '',
             discount: subcategory.discount || '',
+            stock: subcategory.quantityStock || '',
             brand: subcategory.brand || '',
-            quantityStock: subcategory.quantityStock || '',
+            // quantityStock: subcategory.quantityStock || '',
             image: subcategory.image || null,
         });
         setEditVisible(true);
@@ -178,33 +179,56 @@ const SubcategoryManagement = () => {
         event.preventDefault();
         fetchCategories();
 
-        const { _id } = selectedSubcategory;
         try {
-            const imageUrl = formData.image instanceof File ? await uploadImageToCloudinary(formData.image) : formData.image;
-            const updatedSubcategory = {
-                name: formData.name,
-                marketplaceId: formData.marketplaceId,
-                // sellType: formData.sellType,
-                description: formData.description,
-                price: formData.price,
-                discount: formData.discount,
-                brand: formData.brand,
-                quantityStock: formData.quantityStock,
-                image: imageUrl,
-            };
+            const { _id } = selectedSubcategory;
+
+            // const imageUrl = formData.image instanceof File ? await uploadImageToCloudinary(formData.image) : formData.image;
+            // let imageUrl = selectedFile;
+            // if (selectedFile) imageUrl = selectedFile; // Attach image file
+
+            // const updatedSubcategory = {
+            //     name: formData.name,
+            //     marketplaceId: formData.marketplaceId,
+            //     // sellType: formData.sellType,
+            //     description: formData.description,
+            //     price: formData.price,
+            //     discount: formData.discount,
+            //     brand: formData.brand,
+            //     quantityStock: formData.quantityStock,
+            //     image: imageUrl,
+            // };
+
+            const form = new FormData();
+
+            // Append all form data
+            form.append("name", formData.name);
+            form.append("marketplaceId", formData.marketplaceId);
+            form.append("description", formData.description);
+            form.append("price", formData.price);
+            form.append("brand", formData.brand);
+            form.append("discount", formData.discount);
+            form.append("quantityStock", formData.quantityStock);
+
+            // Only append the image if a new one was selected
+            if (selectedFile) {
+                form.append("image", selectedFile);
+            }
+
             console.log(formData, "formData")
-            console.log(updatedSubcategory, "updatedSubcategory")
+            // console.log(updatedSubcategory, "updatedSubcategory")
             const token = localStorage.getItem('token');
             await axios.put(`http://18.209.91.97:3555/api/marketplacesubcat/update-subcategory/${_id}`,
-                updatedSubcategory,
+                form,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                     },
                 },
             );
             setEditVisible(false);
             resetFormData();
+            setSelectedFile(null);
             fetchSubcategories(); // Fetch the latest data
         } catch (error) {
             setError('Error updating subcategory');
@@ -377,6 +401,12 @@ const SubcategoryManagement = () => {
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="file" id="image" label="Upload Image" accept="image/*" onChange={handleFileChange} required />
+                            {!selectedFile && formData.image && (
+                                <div className="mt-2">
+                                    <small>Current Image:</small>
+                                    <img src={formData.image} alt="Current" width="100" className="d-block mt-1" />
+                                </div>
+                            )}
                         </CCol>
                         <CCol md={12}>
                             <CFormInput type="text" id="description" name='description' label="Description" value={formData.description} onChange={handleInputChange} required />
