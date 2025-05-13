@@ -52,14 +52,7 @@ const StylistManagement = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [chatHistory, setChatHistory] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading, setLoading] = useState({
-        fetch: false,
-        add: false,
-        edit: false,
-        delete: false,
-        password: false,
-        chat: false
-    });
+    const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [chatPath, setChatPath] = useState();
@@ -93,7 +86,7 @@ const StylistManagement = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(prev => ({ ...prev, fetch: true }));
+            setLoading(true);
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://18.209.91.97:3555/api/stylist/get-all-stylist-admin`,
                 {
@@ -107,12 +100,12 @@ const StylistManagement = () => {
             console.error(error);
             toast.error("Failed to fetch stylists");
         } finally {
-            setLoading(prev => ({ ...prev, fetch: false }));
+            setLoading(false);
         }
     }
 
     const openPasswordModal = (stylist) => {
-        setSelectedStylist(stylist);
+        setSelectedStylist(stylist._id);
         setShowPasswordModal(true);
     };
 
@@ -142,7 +135,7 @@ const StylistManagement = () => {
     const handleAddStylist = async (event) => {
         event.preventDefault();
         try {
-            setLoading(prev => ({ ...prev, add: true }));
+            setLoading(true);
             const imageUrl = await uploadImageToCloudinary(formData.image);
             const newStylist = {
                 name: formData.name,
@@ -167,14 +160,14 @@ const StylistManagement = () => {
             console.error('Error adding stylist:', error);
             toast.error("Failed to add stylist");
         } finally {
-            setLoading(prev => ({ ...prev, add: false }));
+            setLoading(false);
         }
     };
 
     const handleEditStylist = async (event) => {
         event.preventDefault();
         try {
-            setLoading(prev => ({ ...prev, edit: true }));
+            setLoading(true);
             const imageUrl = formData.image ? await uploadImageToCloudinary(formData.image) : selectedStylist.image;
             const updatedStylist = {
                 name: formData.name,
@@ -199,7 +192,7 @@ const StylistManagement = () => {
             console.error('Error updating stylist:', error);
             toast.error("Failed to update stylist");
         } finally {
-            setLoading(prev => ({ ...prev, edit: false }));
+            setLoading(false);
         }
     };
 
@@ -217,7 +210,8 @@ const StylistManagement = () => {
         }
 
         try {
-            setLoading(prev => ({ ...prev, password: true }));
+            setLoading(true);
+            // fetchStylistDetails(selectedStylist._id);
             const token = localStorage.getItem('token');
             await axios.put(
                 `http://18.209.91.97:3555/api/stylist/update-stylist?id=${selectedStylist._id}`,
@@ -231,7 +225,7 @@ const StylistManagement = () => {
         } catch (err) {
             toast.error("Failed to update password");
         } finally {
-            setLoading(prev => ({ ...prev, password: false }));
+            setLoading(false);
         }
     };
 
@@ -259,19 +253,20 @@ const StylistManagement = () => {
 
     const handleApprove = async (stylistId) => {
         try {
-            setLoading(prev => ({ ...prev, edit: true }));
+            setLoading(true);
             const response = await axios.post(`http://18.209.91.97:3555/api/stylist/approve/${stylistId}`)
             setStylist((prevStylists) =>
                 prevStylists.map((stylist) =>
                     stylist._id === stylistId ? { ...stylist, approved: !stylist.approved } : stylist
                 )
             );
-            toast.success(`Stylist ${response.data.stylist.approved ? "approved" : "disapproved"}`);
+            // console.log(response.data.data.approved, "response.data.stylist")
+            toast.success(`Stylist ${response.data.data.approved ? "approved" : "disapproved"}`);
         } catch (error) {
             console.error(error);
             toast.error("Failed to update approval status");
         } finally {
-            setLoading(prev => ({ ...prev, edit: false }));
+            setLoading(false);
         }
     }
 
@@ -320,12 +315,17 @@ const StylistManagement = () => {
         if (stylist?._id) {
             setSelectedStylist(stylist._id);
         }
+        console.log(stylist);
+        // fetchStylistDetails(stylist._id);
         setModalVisible(true);
     }
 
     const fetchStylistDetails = async (stylistId) => {
-        setLoading(prev => ({ ...prev, fetch: true }));
+        if (!stylistId) return;
+        
+        setLoading(true);
         setError(null);
+        console.log("reached here!")
         try {
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://18.209.91.97:3555/api/stylist/stylist-profile/${stylistId}`,
@@ -340,7 +340,7 @@ const StylistManagement = () => {
             setError(error.message);
             toast.error("Failed to fetch stylist details");
         } finally {
-            setLoading(prev => ({ ...prev, fetch: false }));
+            setLoading(false);
         }
     }
 
@@ -349,7 +349,7 @@ const StylistManagement = () => {
         if (!confirmDelete) return;
         
         try {
-            setLoading(prev => ({ ...prev, delete: true }));
+            setLoading(true);
             const token = localStorage.getItem('token');
             await axios.delete(`http://18.209.91.97:3555/api/stylist/delete-stylist/${stylistId}`,
                 { headers: { 'Authorization': `Bearer ${token}` } }
@@ -360,7 +360,7 @@ const StylistManagement = () => {
             console.error(error);
             toast.error("Failed to delete stylist");
         } finally {
-            setLoading(prev => ({ ...prev, delete: false }));
+            setLoading(false);
         }
     }
 
@@ -379,7 +379,7 @@ const StylistManagement = () => {
     };
 
     const fetchChatHistory = (stylistId) => {
-        setLoading(prev => ({ ...prev, chat: true }));
+        setLoading(true);
         setSelectedStylist(stylistId);
         const chatRef = ref(database, `chats/${stylistId}`);
 
@@ -391,7 +391,7 @@ const StylistManagement = () => {
             } else {
                 setChatHistory([]);
             }
-            setLoading(prev => ({ ...prev, chat: false }));
+            setLoading(false);
         });
 
         setIsModalOpen(true);
@@ -404,10 +404,10 @@ const StylistManagement = () => {
                 <CButton color="primary" onClick={() => setVisible(true)}>Add Stylist</CButton>
             </div>
             
-            {loading.fetch ? (
+            {loading ? (
                 <div className="d-flex justify-content-center my-5">
                     <CSpinner color="primary" />
-                    <span className="ms-2">Loading stylists...</span>
+                    <span className="ms-2">Loading...</span>
                 </div>
             ) : (
                 <CTable responsive>
@@ -474,9 +474,9 @@ const StylistManagement = () => {
                                                 className="p-0"
                                                 onClick={() => handleApprove(stylist._id)}
                                                 style={{ transition: "0.3s ease-in-out" }}
-                                                disabled={loading.edit}
+                                                disabled={loading}
                                             >
-                                                {loading.edit ? (
+                                                {loading ? (
                                                     <CSpinner size="sm" />
                                                 ) : stylist.approved ? (
                                                     <Lock size={15} />
@@ -488,9 +488,9 @@ const StylistManagement = () => {
                                         <CButton
                                             className="p-0"
                                             onClick={() => handleDelete(stylist._id)}
-                                            disabled={loading.delete}
+                                            disabled={loading}
                                         >
-                                            {loading.delete ? (
+                                            {loading ? (
                                                 <CSpinner size="sm" />
                                             ) : (
                                                 <FaTrash color="red" size={16} />
@@ -553,7 +553,7 @@ const StylistManagement = () => {
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} />
+                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} required/>
                         </CCol>
 
                         <CCol md={12}>
@@ -602,8 +602,8 @@ const StylistManagement = () => {
                         </CCol>
 
                         <CCol xs="auto">
-                            <CButton type="submit" color="primary" disabled={loading.add}>
-                                {loading.add ? (
+                            <CButton type="submit" color="primary" disabled={loading}>
+                                {loading ? (
                                     <>
                                         <CSpinner size="sm" /> Saving...
                                     </>
@@ -731,8 +731,8 @@ const StylistManagement = () => {
                             />
                         </CCol>
                         <CCol xs="auto">
-                            <CButton type="submit" color="primary" disabled={loading.edit}>
-                                {loading.edit ? (
+                            <CButton type="submit" color="primary" disabled={loading}>
+                                {loading ? (
                                     <>
                                         <CSpinner size="sm" /> Updating...
                                     </>
@@ -756,7 +756,7 @@ const StylistManagement = () => {
                         <CModalTitle>Stylist Details</CModalTitle>
                     </CModalHeader>
                     <CModalBody>
-                        {loading.fetch ? (
+                        {loading ? (
                             <div className="d-flex justify-content-center">
                                 <CSpinner />
                             </div>
@@ -793,7 +793,7 @@ const StylistManagement = () => {
                     <CModalTitle>Chat with Stylist</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    {loading.chat ? (
+                    {loading ? (
                         <div className="d-flex justify-content-center">
                             <CSpinner />
                         </div>
@@ -844,8 +844,8 @@ const StylistManagement = () => {
                     <CButton color="secondary" onClick={() => setShowPasswordModal(false)}>
                         Cancel
                     </CButton>
-                    <CButton color="primary" onClick={handlePasswordChange} disabled={loading.password}>
-                        {loading.password ? (
+                    <CButton color="primary" onClick={handlePasswordChange} disabled={loading}>
+                        {loading ? (
                             <>
                                 <CSpinner size="sm" /> Updating...
                             </>

@@ -28,6 +28,7 @@ const OrderManagement = () => {
     const [detailsModalVisible, setDetailsModalVisible] = useState(false);
     const [statusModalVisible, setStatusModalVisible] = useState(false);
     const [trackingAgentId, setTrackingAgentId] = useState("");
+    const [trackingAgentName, setTrackingAgentName] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("delivered");
     const [loading, setLoading] = useState(false);
 
@@ -71,10 +72,11 @@ const OrderManagement = () => {
         try {
             setLoading(true);
             await axios.post(
-                `http://18.209.91.97:3555/api/order/update-status/${selectedOrder._id}`,
+                `http://localhost:3555/api/order/update-status/${selectedOrder._id}`,
                 {
                     status: selectedStatus,
-                    trackingAgentId: trackingAgentId
+                    trackingAgentId: trackingAgentId,
+                    trackingAgentName: trackingAgentName
                 },
                 {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -83,6 +85,7 @@ const OrderManagement = () => {
             fetchOrders();
             setStatusModalVisible(false);
             setTrackingAgentId("");
+            setTrackingAgentName("");
         } catch (error) {
             console.error("Error updating order status:", error);
         } finally {
@@ -168,6 +171,9 @@ const OrderManagement = () => {
                             {selectedOrder.trackingAgentId && (
                                 <p><strong>Tracking Agent ID:</strong> {selectedOrder.trackingAgentId}</p>
                             )}
+                            {selectedOrder.trackingAgentName && (
+                                <p><strong>Tracking Agent Name:</strong> {selectedOrder.trackingAgentName}</p>
+                            )}
                             <p><strong>Total Price:</strong> ${selectedOrder.totalPrice}</p>
                             <p><strong>Payment Method:</strong> {selectedOrder.paymentDetails?.paymentMethod}</p>
                             <p><strong>Last 4 Digits:</strong> {selectedOrder.paymentDetails?.transactionDetails?.payment_method?.card?.last4 || 'N/A'}</p>
@@ -218,6 +224,16 @@ const OrderManagement = () => {
                                 placeholder="Enter tracking agent ID"
                                 required />
                         </div>
+                         <div className="mb-3">
+                            <CFormLabel>Tracking Agent Name</CFormLabel>
+                            <CFormInput
+                                type="text"
+                                value={trackingAgentName}
+                                onChange={(e) => setTrackingAgentName(e.target.value)}
+                                placeholder="Enter tracking agent name"
+                                required />
+                        </div>
+                        
                     </CForm>
                 </CModalBody>
                 <CModalFooter>
