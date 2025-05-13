@@ -352,7 +352,7 @@ const AppointmentManagement = () => {
 
               </CButton>
               <CButton
-                onClick={() => handleAction(selectedAppointment._id, 'declined')}
+                onClick={() => handleAction(selectedAppointment.user._id, selectedAppointment._id, 'declined')}
               >
                 <FontAwesomeIcon color="red" icon={faThumbsDown} />
               </CButton>
