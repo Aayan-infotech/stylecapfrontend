@@ -29,6 +29,7 @@ import {
     CBadge,
     CSpinner
 } from '@coreui/react';
+import {  EyeOff } from "lucide-react";
 import { FaLock, FaLockOpen, FaTrash, FaKey } from "react-icons/fa";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -59,6 +60,7 @@ const StylistManagement = () => {
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const chatRef = ref(database, chatPath);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -214,7 +216,7 @@ const StylistManagement = () => {
             // fetchStylistDetails(selectedStylist._id);
             const token = localStorage.getItem('token');
             await axios.put(
-                `http://18.209.91.97:3555/api/stylist/update-stylist?id=${selectedStylist._id}`,
+                `http://18.209.91.97:3555/api/stylist/update-stylist?id=${selectedStylist}`,
                 { password: newPassword },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -322,7 +324,7 @@ const StylistManagement = () => {
 
     const fetchStylistDetails = async (stylistId) => {
         if (!stylistId) return;
-        
+
         setLoading(true);
         setError(null);
         console.log("reached here!")
@@ -347,7 +349,7 @@ const StylistManagement = () => {
     const handleDelete = async (stylistId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this stylist?');
         if (!confirmDelete) return;
-        
+
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
@@ -403,7 +405,7 @@ const StylistManagement = () => {
                 <h5 style={{ margin: 0 }}>Stylist Management</h5>
                 <CButton color="primary" onClick={() => setVisible(true)}>Add Stylist</CButton>
             </div>
-            
+
             {loading ? (
                 <div className="d-flex justify-content-center my-5">
                     <CSpinner color="primary" />
@@ -553,7 +555,7 @@ const StylistManagement = () => {
                                 min={0} required />
                         </CCol>
                         <CCol md={12}>
-                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} required/>
+                            <CFormInput type="file" id="image" label="Upload Image" onChange={handleFileChange} required />
                         </CCol>
 
                         <CCol md={12}>
@@ -817,12 +819,33 @@ const StylistManagement = () => {
                     <CModalTitle>Change Password</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    <CFormInput
+                    {/* <CFormInput
                         type="password"
                         placeholder="Enter new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                    />
+                    /> */}
+                    <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                        <CFormInput
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Enter new password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                        <span
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                cursor: 'pointer',
+                                color: '#6c757d'
+                            }}
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </span>
+                    </div>
                     {newPassword && (
                         <div className="mt-2">
                             <small>Password must contain:</small>
