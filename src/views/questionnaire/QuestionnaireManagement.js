@@ -227,11 +227,11 @@ const QuestionnaireManagement = () => {
                             <CTableDataCell
                                 style={{ cursor: 'pointer' }}
                                 onMouseEnter={(e) => {
-                                    e.target.style.color = 'blue';
+                                    e.target.style.color = 'red';
                                     e.target.style.textDecoration = 'underline';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.target.style.color = 'black';
+                                    e.target.style.color = 'grey';
                                     e.target.style.textDecoration = 'none';
                                 }}
                                 onClick={() => handleView(question)}

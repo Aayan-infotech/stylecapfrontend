@@ -447,7 +447,7 @@ const StylistManagement = () => {
                                         e.target.style.textDecoration = 'underline';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.target.style.color = 'black';
+                                        e.target.style.color = 'grey';
                                         e.target.style.textDecoration = 'none';
                                     }}
                                     onClick={() => handleOpenModal(stylist)}

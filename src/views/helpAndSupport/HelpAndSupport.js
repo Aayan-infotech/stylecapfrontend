@@ -218,8 +218,8 @@ const AdminConcernsScreen = () => {
                         <div className="chat-history">
                             {selectedConcernView.concern.map((concernObj, concernIdx) => (
                                 <div key={`concern-${concernIdx}`} className="mb-4">
-                                    <div className="user-concern bg-light p-3 rounded mb-2">
-                                        <strong>User Concern ({moment(concernObj.createdAt).format('MMM D, h:mm A')}):</strong>
+                                    <div className="user-concern p-3 rounded mb-2" style={{backgroundColor: "#6b7785"}}>
+                                        <strong>User Concern ({moment(concernObj.concernTime).format('MMM D, h:mm A')}):</strong>
                                         <p className="mb-0">{concernObj.message}</p>
                                     </div>
 
