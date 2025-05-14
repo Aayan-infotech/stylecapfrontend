@@ -72,7 +72,7 @@ const OrderManagement = () => {
         try {
             setLoading(true);
             await axios.post(
-                `http://localhost:3555/api/order/update-status/${selectedOrder._id}`,
+                `http://18.209.91.97:3555/api/order/update-status/${selectedOrder._id}`,
                 {
                     status: selectedStatus,
                     trackingAgentId: trackingAgentId,
