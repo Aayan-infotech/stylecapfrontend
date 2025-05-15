@@ -9,6 +9,7 @@ const StyleCapsuleManagement = () => {
 
     const [clothData, setClothData] = useState([]);
     const [userClothsData, setUserClothsData] = useState([]);
+    const [clothesDataUserId, setClothesDataUserId] = useState(null);
     const [userData, setUserData] = useState([]);
     const [singleClothsData, setSingleClothsData] = useState([]);
     const [visibleModel, setVisibleModel] = useState(false);
@@ -62,17 +63,19 @@ const StyleCapsuleManagement = () => {
                 }
             })
             setUserClothsData(response.data.data.styleOfTheDay);
-            console.log(response.data.data.styleOfTheDay)
+            setClothesDataUserId(response.data.data);
+            console.log(response.data.data.styleOfTheDay, "response.data.data.styleOfTheDay")
+            console.log(response.data.data, "response.data.data.styleOfTheDay")
             setVisibleModel(true);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     }
 
-    const fetchStyleData = async (date) => {
+    const fetchStyleData = async (date, userId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://18.209.91.97:3555/api/myStyleCapsule/styleByDate/${date}`, {
+            const response = await axios.get(`http://18.209.91.97:3555/api/myStyleCapsule/styleByDate/${date}?userId=${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
@@ -212,7 +215,7 @@ const StyleCapsuleManagement = () => {
                                         <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                                         <CTableDataCell style={{ textAlign: 'center' }}>{cloths.date}</CTableDataCell>
                                         <CTableDataCell style={{ textAlign: 'center' }}>
-                                            <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchStyleData(cloths.date)}>
+                                            <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => fetchStyleData(cloths.date, clothesDataUserId.userId)}>
                                                 <FontAwesomeIcon icon={faEye} color='blue' />
                                             </button>
                                             {/* <button style={{ backgroundColor: 'transparent', border: 'none' }} onClick={() => handleEditClick(cloths)}>
